@@ -12,6 +12,8 @@
   <a href="#"><img alt="tested with" src="https://img.shields.io/badge/tested%20with-MyWhoosh%205.7-00B2A9"></a>
 </p>
 
+See https://tusharpandey.com/blogs/whoosh-connect/
+
 > Right **`+`** shifts up, left **`−`** shifts down, and the rest of the buttons
 > steer, navigate menus, and switch camera — through a small program that turns
 > your Click pucks into an OpenBikeControl device MyWhoosh already understands.
