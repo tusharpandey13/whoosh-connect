@@ -16,6 +16,10 @@ BATTERY_CHAR = "00002a19-0000-1000-8000-00805f9b34fb"
 RIDE_ON = b"RideOn"
 POST_HANDSHAKE = bytes([0xFF, 0x04, 0x00])
 
+# "I stopped talking": the unit needs a new window before it reports buttons again.
+STOPPED_PREFIXES = (bytes.fromhex("ff0500ea05"), bytes.fromhex("ff0500fa05"))
+RESET = bytes([0x18])  # restarts the unit's button engine (BikeControl/clickbridge)
+
 
 class Button(IntEnum):
     """Bit positions in the active-low button mask."""

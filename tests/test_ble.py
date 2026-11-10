@@ -6,7 +6,7 @@ import pytest
 
 from whoosh_connect.capture import CaptureWriter, read_capture
 from whoosh_connect.ble import BluetoothUnavailable, ClickLink
-from whoosh_connect.zwift import ASYNC, POST_HANDSHAKE, RIDE_ON, SYNC_RX, SYNC_TX
+from whoosh_connect.zwift import ASYNC, POST_HANDSHAKE, RESET, RIDE_ON, SYNC_RX, SYNC_TX
 
 LEFT = bytes.fromhex("0b2d7e")
 RIGHT = bytes.fromhex("0ae89b")
@@ -194,3 +194,27 @@ async def test_b8_capture_roundtrip(tmp_path):
     assert ("rx", "00000004", RIDE_ON.hex()) in evs
     assert ("rx", "00000002", "191050") in evs
     assert rows[0]["ev"] == "adv" and rows[0]["dev"] == "L-AD"
+
+
+async def test_b9_reset_on_device_stopped(caplog):
+    """A unit that says it stopped talking gets one RESET 0x18 per cooldown."""
+    caplog.set_level(logging.INFO)
+    clock = Clock()
+    c = FakeClient(None)
+    link, frames, links = make_link(clock, [("L", LEFT)], [c])
+    task = asyncio.create_task(link.run())
+    while not links:
+        await asyncio.sleep(0.01)
+    c.cbs[ASYNC](None, bytearray.fromhex("ff0500ea05190a0c44383532464141"))
+    await asyncio.sleep(0.02)
+    assert ("write", SYNC_RX[:8], RESET, False) in c.log
+    assert "sent RESET" in caplog.text
+    # a second stopped frame inside the cooldown must not add a RESET
+    c.cbs[ASYNC](None, bytearray.fromhex("ff0500fa05120a0c44383532464141"))
+    await asyncio.sleep(0.02)
+    assert [e for e in c.log if e[:3] == ("write", SYNC_RX[:8], RESET)] == [
+        ("write", SYNC_RX[:8], RESET, False)]
+    # and the stopped frame is still delivered as a vendor frame, not swallowed
+    assert any(type(f).__name__ == "VendorFrame" for f in frames)
+    await link.close()
+    task.cancel()

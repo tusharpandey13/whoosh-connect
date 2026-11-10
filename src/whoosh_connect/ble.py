@@ -6,8 +6,8 @@ import logging
 import time
 
 from . import state
-from .zwift import (ASYNC, BATTERY_CHAR, POST_HANDSHAKE, RIDE_ON, SYNC_RX, SYNC_TX,
-                    RideOnFrame, parse_adv, parse_frame)
+from .zwift import (ASYNC, BATTERY_CHAR, POST_HANDSHAKE, RESET, RIDE_ON, STOPPED_PREFIXES,
+                    SYNC_RX, SYNC_TX, RideOnFrame, parse_adv, parse_frame)
 
 log = logging.getLogger(__name__)
 WAKE_HINT = "Press a Click button to wake it"
@@ -33,7 +33,7 @@ def _map_error(e: Exception) -> Exception:
 class ClickLink:
     def __init__(self, on_frame, on_link, scanner_factory=None, client_factory=None,
                  clock=time.monotonic, sleep=asyncio.sleep, zwift_running=state.zwift_running,
-                 capture=None, handshake_timeout=5.0, pair_wait=10.0):
+                 capture=None, handshake_timeout=5.0, pair_wait=10.0, reset_cooldown=2.0):
         if scanner_factory is None or client_factory is None:
             from bleak import BleakClient, BleakScanner
             scanner_factory = scanner_factory or BleakScanner
@@ -42,6 +42,7 @@ class ClickLink:
         self.scanner_factory, self.client_factory = scanner_factory, client_factory
         self.clock, self.sleep, self.zwift_running = clock, sleep, zwift_running
         self.capture, self.handshake_timeout, self.pair_wait = capture, handshake_timeout, pair_wait
+        self.reset_cooldown = reset_cooldown
         self._closed = False
         self._client = None
 
@@ -82,15 +83,38 @@ class ClickLink:
             raise _map_error(e) from e
         raise asyncio.CancelledError
 
+    async def _reset(self, client, tag) -> None:
+        """Restart a unit that announced it stopped talking (clickbridge's 0x18).
+
+        A Click goes quiet roughly a minute after waking, or shortly after it has
+        asked for an unlock it never got. `0x18` brings the button engine back for
+        another window, which is enough to keep a ride alive without an unlock.
+        """
+        try:
+            await client.write_gatt_char(SYNC_RX, RESET, response=False)
+            self._cap("tx", tag, ch=SYNC_RX[:8], hex=RESET.hex())
+            log.info("Click stopped talking; sent RESET 0x18 for another window")
+        except Exception as e:
+            log.debug("RESET failed: %r", e)
+
     async def _session(self, device, info) -> None:
         tag = device.address
         queue: asyncio.Queue = asyncio.Queue()
         ack, gone = asyncio.Event(), asyncio.Event()
+        last_reset = [-1e9]
+        resets: set = set()
 
         def on_notify(char):
             def cb(_, data):
                 data = bytes(data)
                 self._cap("rx", tag, ch=char[:8], hex=data.hex())
+                if data.startswith(STOPPED_PREFIXES) and self._client is client:
+                    now = self.clock()
+                    if now - last_reset[0] >= self.reset_cooldown:
+                        last_reset[0] = now
+                        task = asyncio.create_task(self._reset(client, tag))
+                        resets.add(task)
+                        task.add_done_callback(resets.discard)
                 frame = parse_frame(data)
                 if isinstance(frame, RideOnFrame):
                     ack.set()
@@ -137,6 +161,8 @@ class ClickLink:
         finally:
             if pump:
                 pump.cancel()
+            for t in list(resets):
+                t.cancel()
             try:
                 await client.disconnect()
             except Exception:
