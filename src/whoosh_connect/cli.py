@@ -12,14 +12,14 @@ from .ble import BluetoothUnavailable, ClickLink
 from .capture import CaptureWriter, replay
 from .keyboard import KeyboardSink
 from .mapping import ConfigError, load_map
-from .obc_server import DEFAULT_PORT, ObcServer, ObcSink, PortsBusy
+from .obc_server import DEFAULT_PORT, AlreadyRunning, ObcServer, ObcSink, PortsBusy
 from .pipeline import Pipeline, PrintSink
 from .spy import Spy
 from .state import StateStore, default_state_path, unlock_flow, zwift_running
 from .zwift import POST_HANDSHAKE, TYPE_CLICK_V2_LEFT
 
 log = logging.getLogger("whoosh_connect")
-OK, USAGE, BT, PORTS, DLOCK = 0, 2, 3, 4, 5
+OK, USAGE, BT, PORTS, DLOCK, RUNNING = 0, 2, 3, 4, 5, 6
 WAIT_MSG = "Waiting for MyWhoosh: open the connection screen, tap the OpenBikeControl icon, pick whoosh-connect"
 
 
@@ -71,7 +71,9 @@ async def preflight(store, ps=zwift_running, clock=time.time, sleep=asyncio.slee
             await sleep(2)
     age = store.unlock_age(clock())
     if age is None or age > 24 * 3600:
-        say("Clicks probably locked: run `whoosh-connect unlock`")
+        # Not a blocker: a locked puck still streams for ~50 s after each press.
+        # Only mention it in verbose logs (notes/unlock-analysis.md, 11-Nov-2026).
+        log.debug("no recent unlock recorded; buttons will be press-gated (~50 s windows)")
 
 
 async def _make_sink(kind: str, port: int):
@@ -273,6 +275,9 @@ def main(argv=None) -> int:
     except BluetoothUnavailable as e:
         print(str(e), file=sys.stderr)
         return BT
+    except AlreadyRunning as e:
+        print(str(e), file=sys.stderr)
+        return RUNNING
     except PortsBusy as e:
         print(str(e), file=sys.stderr)
         return PORTS

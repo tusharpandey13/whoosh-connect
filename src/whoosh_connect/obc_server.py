@@ -30,6 +30,10 @@ def primary_ip() -> str:
         s.close()
 
 
+class AlreadyRunning(Exception):
+    """Another whoosh-connect already advertises the OpenBikeControl name."""
+
+
 class ZeroconfAdvertiser:
     def __init__(self):
         self._az = self._info = None
@@ -37,12 +41,22 @@ class ZeroconfAdvertiser:
     async def register(self, name: str, port: int, ip: str, txt: dict[str, str]) -> None:
         from zeroconf import ServiceInfo
         from zeroconf.asyncio import AsyncZeroconf
+        try:
+            from zeroconf.exceptions import NonUniqueNameException
+        except ModuleNotFoundError:  # zeroconf >= 0.132 keeps it private
+            from zeroconf._exceptions import NonUniqueNameException
 
         self._info = ServiceInfo(
             SERVICE_TYPE, f"{name}.{SERVICE_TYPE}", port=port,
             addresses=[socket.inet_aton(ip)], properties=txt, server=f"{name}.local.")
         self._az = AsyncZeroconf()
-        await self._az.async_register_service(self._info)
+        try:
+            await self._az.async_register_service(self._info)
+        except NonUniqueNameException as e:
+            await self.unregister()
+            raise AlreadyRunning(
+                f"{name} is already advertised on this machine: another `whoosh-connect run` is "
+                f"still alive. Stop it first (pkill -f whoosh_connect) or use that one.") from e
 
     async def unregister(self) -> None:
         if self._az:

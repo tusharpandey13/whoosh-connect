@@ -20,7 +20,7 @@ make install                       # creates .venv, installs the package + bleak
 4. Optional: `--sink keyboard` sends K/I/A/D through System Events (needs Accessibility permission, MyWhoosh frontmost). `--capture FILE.jsonl` records the BLE traffic; `whoosh-connect replay FILE --sink print` replays it with no Bluetooth. `-v` shows raw hex.
 5. Remap buttons in `~/.config/whoosh-connect/config.toml`: `[map]` with `SHIFT_R = "SHIFT_UP"`, `Z = "NONE"`, etc.
 
-Troubleshooting: no button events means the puck is asleep or has sent its `ff 05 00 ea/fa 05` stopped frame - press a button to open a new ~50 s window. An unanswered `ff 03` does **not** stop buttons (verified 11-Nov-2026, see `notes/unlock-analysis.md`); `unlock` only makes a window last longer. `run` now logs `Click sent an unlock challenge (ff 03): the pucks are locked` the moment the puck asks, instead of waiting for the 60 s timer. Exit codes: 2 usage/config, 3 Bluetooth unavailable, 4 no free port in 36867-36877, 5 the D-Lock service signed nothing. Design: `docs/`. Tests: `make test` (fully offline).
+Troubleshooting: no button events means the puck is asleep or has sent its `ff 05 00 ea/fa 05` stopped frame - press a button to open a new ~50 s window. An unanswered `ff 03` does **not** stop buttons (verified 11-Nov-2026, see `notes/unlock-analysis.md`); `unlock` only makes a window last longer. `run` now logs `Click sent an unlock challenge (ff 03): the pucks are locked` the moment the puck asks, instead of waiting for the 60 s timer. Exit codes: 2 usage/config, 3 Bluetooth unavailable, 4 no free port in 36867-36877, 5 the D-Lock service signed nothing, 6 another `whoosh-connect run` is already advertising (stop it first). Design: `docs/`. Tests: `make test` (fully offline).
 
 ---
 

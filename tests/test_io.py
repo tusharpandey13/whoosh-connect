@@ -200,7 +200,8 @@ async def test_c3_preflight(tmp_path):
     st = StateStore(tmp_path / "st.json")
     msgs = []
     await cli.preflight(st, ps=lambda: False, clock=lambda: 1e6, say=msgs.append)
-    assert any("unlock" in m for m in msgs)
+    # a missing/lapsed unlock is no longer a blocking message: it is only a debug note
+    assert msgs == []
     st.record_unlock(1e6 - 100)
     msgs.clear()
     await cli.preflight(st, ps=lambda: False, clock=lambda: 1e6, say=msgs.append)
@@ -247,3 +248,30 @@ def test_c4_exit_codes(tmp_path, monkeypatch):
     monkeypatch.setattr(cli.ObcServer, "start", busy)
     assert cli.main(["run"]) == 4
     assert cli.main(["replay", str(tmp_path / "missing.jsonl")]) == 2
+
+
+async def test_c6_second_instance_says_so(monkeypatch):
+    """A second `run` must explain the mDNS collision, not raise NonUniqueNameException."""
+    try:
+        from zeroconf.exceptions import NonUniqueNameException
+    except ModuleNotFoundError:
+        from zeroconf._exceptions import NonUniqueNameException
+
+    from whoosh_connect.obc_server import AlreadyRunning, ZeroconfAdvertiser
+
+    class Boom:
+        async def async_register_service(self, info):
+            raise NonUniqueNameException("whoosh-connect._openbikecontrol._tcp.local.")
+
+        async def async_unregister_service(self, info):
+            pass
+
+        async def async_close(self):
+            pass
+
+    adv = ZeroconfAdvertiser()
+    monkeypatch.setattr("zeroconf.asyncio.AsyncZeroconf", lambda: Boom())
+    with pytest.raises(AlreadyRunning) as e:
+        await adv.register("whoosh-connect", 36867, "192.168.1.7", {"version": "1"})
+    assert "already advertised" in str(e.value)
+    assert adv._az is None
