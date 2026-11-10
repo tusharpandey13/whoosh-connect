@@ -283,3 +283,46 @@ with the run (`SLEEP` + 3 beeps before the scan).
 2. `02 02` / `00 09 00` on `0100`, with a real press in the window.
 3. Whether `0x18` RESET restores an unpaired state that streams buttons, as
    clickbridge claims ("restarts and works for another short time").
+
+## It rides without an unlock (11-Nov, 00:40–01:20)
+
+Two hours after every `ff 03` we sent got 204, the pair still worked end to end:
+Click → bridge → MyWhoosh, gear changes included. The lock does **not** stop
+button reporting on this firmware.
+
+### What actually gated the buttons
+
+| state | buttons |
+|---|---|
+| unit asleep, LED off | none until a press |
+| first ~50 s after a press | flow freely, **even with `ff 03` unanswered** |
+| after `ff 05 00 ea 05` / `fa 05` ("stopped") | none until the next press |
+| while a locked unit is being RESET (`0x18`) | reset drops the link, the unit re-arms and says "stopped" again → reconnect loop |
+
+So the window is opened by a **press**, not by an unlock, and it lasts ~50 s.
+`whoosh-connect --reset` therefore stays opt-in: on a locked unit it loops.
+
+### The two real bugs that were blocking MyWhoosh
+
+1. MyWhoosh pings the OBC socket with a bare `0x00` every ~4 s. `split_messages`
+   treated it as an unknown type and returned, discarding the whole buffer —
+   so the ping, and anything coalesced behind it, was lost. Ping is now a
+   1-byte message and `_handle` answers it with the current device status.
+2. The device status (`02 <battery> <connected>`) was written only once, when
+   the TCP client connected, i.e. **before** the app-info handshake. It is now
+   also re-sent immediately after `app_info` is parsed.
+
+With those two fixed, MyWhoosh applied the shifts: `-> 01 01 01` / `01 01 00`
+for SHIFT_UP, `01 02 ...` for SHIFT_DOWN, `01 18/19` steering, `01 11` DOWN.
+
+### Verified journey (no Zwift at any point)
+
+```
+whoosh-connect -v run          # OBC server + mDNS + BLE link
+# MyWhoosh: connection screen -> OpenBikeControl -> whoosh-connect
+# press a Click, shift with right + / left -
+```
+
+Observed: `Clicks connected (left puck 2D7E, battery 70 %)`,
+`MyWhoosh connected (app mywhoosh v5.7.0, supports: 01 02 03 10…19 40)`,
+64 ping replies, shift frames applied. Battery 80 → 70 % over ~1.5 h of poking.
