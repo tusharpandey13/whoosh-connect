@@ -254,3 +254,67 @@ def test_cli_dlock_needs_token(fix, monkeypatch, capsys):
     monkeypatch.setattr(dlock, "acquire_token", lambda *a: None)
     assert cli.main(["dlock", str(fix / "probe2_burst.jsonl")]) == 2
     assert "no Zwift token" in capsys.readouterr().err
+
+
+# --- live: catch, sign, push ---------------------------------------------
+
+class LiveClient(FakeClient):
+    def __init__(self, challenge: bytes | None, buttons_after=None):
+        super().__init__()
+        self.challenge = challenge
+        self.buttons_after = buttons_after
+        self.rideon = []
+
+    async def connect(self):
+        pass
+
+    async def disconnect(self):
+        pass
+
+    async def write_gatt_char(self, ch, data, response=False):
+        self.writes.append(bytes(data))
+        if data == b"RideOn":
+            self.rideon.append(True)
+        if self.challenge and data == b"RideOn":
+            self.subs[0][1](ch, self.challenge)
+        if self.buttons_after and bytes(data).startswith(self.buttons_after):
+            self.subs[0][1](ch, bytes([0x23, 0x08, 0xFF]))
+
+
+async def test_live_signs_and_pushes_challenge():
+    chal = bytes.fromhex(CHAL_HEX)
+    c = LiveClient(chal, buttons_after=bytes([0xFF, 0x04, 0x00]))
+    seen = []
+
+    async def fake_sign(challenge, token, **kw):
+        seen.append((challenge.raw, token))
+        return dlock.SignResult(200, ANSWER)
+
+    res = await dlock.live(c, "tok", sleep=lambda s: asyncio.sleep(0), wait=1, listen=0,
+                           signer=fake_sign, on_log=lambda *_: None)
+    assert c.rideon == [True]
+    assert seen == [(chal, "tok")]
+    assert res.answer == ANSWER
+    assert res.push and res.push[0].buttons == 1
+    assert c.writes[1] == bytes([0xFF, 0x04, 0x00]) + ANSWER
+
+
+async def test_live_reports_still_unlocked():
+    c = LiveClient(None)
+    res = await dlock.live(c, "tok", sleep=lambda s: asyncio.sleep(0), wait=0.1, listen=0,
+                           signer=lambda *a, **k: None, on_log=lambda *_: None)
+    assert res.challenge is None and res.answer == b""
+    assert c.writes == [b"RideOn"]
+
+
+async def test_live_stops_when_service_signs_nothing():
+    c = LiveClient(bytes.fromhex(CHAL_HEX))
+
+    async def fake_sign(challenge, token, **kw):
+        return dlock.SignResult(204, b"")
+
+    res = await dlock.live(c, "tok", sleep=lambda s: asyncio.sleep(0), wait=1, listen=0,
+                           signer=fake_sign, on_log=lambda *_: None)
+    assert res.challenge is not None and res.answer == b""
+    assert res.push is None
+    assert len(c.writes) == 1  # RideOn only, no answer to push

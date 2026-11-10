@@ -98,6 +98,35 @@ whoosh-connect dlock raw/ble/unlock.jsonl --push         # writes the answer to 
 real one. Note that Zwift must still be running when `dlock` reads the token out
 of the game process (`--token FILE` otherwise).
 
+## Update, evening of 10-Nov (live experiments)
+
+The D-Lock service does sign, and the puck does not care yet. Hard numbers:
+
+| challenge (device -> `0002`) | payload | f1 / f3 | `POST /device/authenticate` | pushed back |
+|---|---|---|---|---|
+| 20:34:49, spontaneous, no RideOn | 94 B | 33 B (`03…`) / 52 B | **200, 23 B** `0a157af1…0af090` | not tried |
+| live run, after RideOn | 82 B | 33 B (`02…`) / 40 B | 204, 0 B | n/a |
+| `probe2` (locked, after RideOn) | 82 B | 33 B (`03…`) / 40 B | 204, 0 B | n/a |
+| live run #2, after RideOn | 100 B | 33 B (`02…`) / 58 B | **200, 23 B** `0a153507…044b6d` | **rejected** |
+
+So: *registration*-shaped challenges (94/100 B) are signed by the cloud, and the
+82-byte one is not. The answer is protobuf `field1 = 21 bytes`. None of
+`ff0400+answer`, `ff04+answer`, bare `answer` made the puck talk
+(`raw/ble/push_negative_2026-11-10.log`), and an empty answer `ff 04 00` alone is
+not enough either (`raw/ble/empty_reply_negative_2026-11-10.log`). A stored
+answer is not valid for a different challenge — every shape carries a fresh
+33-byte `0x02/0x03` blob and a fresh 40-58 byte nonce.
+
+Consequences:
+- The unlock is not replayable and not a constant secret: sign per challenge.
+- The missing piece is the *write format* of the answer (sub-opcode/prefix/wrapper),
+  not the signature. Only Zwift's own bytes can tell us that, which needs a
+  peripheral-side proxy on a second radio (macOS will not loop a local
+  advertisement back — `tools/fake_click.swift`).
+- Unlock lifetime is **not** 24 h: last Zwift auth 19:24, first re-challenge
+  20:34:49 (~70 min, and it re-challenged on every reconnect after that). The
+  bridge should watch `0002` for `ff 03` and warn instead of trusting a timestamp.
+
 ## Experiments still worth running
 
 1. **Fresh challenge → our own API call.** During the next lock window (~24 h

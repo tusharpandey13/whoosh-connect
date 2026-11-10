@@ -138,7 +138,8 @@ class PushResult:
     buttons: int
 
 
-async def push(client, answer: bytes, sleep=asyncio.sleep, listen=8.0) -> list[PushResult]:
+async def push(client, answer: bytes, sleep=asyncio.sleep, listen=8.0, seen: dict | None = None,
+               subscribe: bool = True) -> list[PushResult]:
     """Write each candidate framing to 0003 and watch for button frames.
 
     `client` is anything bleak-shaped: it is already connected; we subscribe to
@@ -146,13 +147,15 @@ async def push(client, answer: bytes, sleep=asyncio.sleep, listen=8.0) -> list[P
     buttons only when it accepted the answer, so a non-zero count is proof.
     """
     from .zwift import SYNC_RX
-    seen = {"n": 0, "stop": False}
+    seen = seen if seen is not None else {"n": 0}
+    stop = {"v": False}
 
     def on_frame(_c, data):
-        if not seen["stop"] and bytes(data)[:2] == bytes([0x23, 0x08]):
+        if not stop["v"] and bytes(data)[:2] == bytes([0x23, 0x08]):
             seen["n"] += 1
 
-    await client.start_notify(ASYNC, on_frame)
+    if subscribe:
+        await client.start_notify(ASYNC, on_frame)
     results = []
     for name, frame in framing_candidates(answer).items():
         seen["n"] = 0
@@ -161,9 +164,69 @@ async def push(client, answer: bytes, sleep=asyncio.sleep, listen=8.0) -> list[P
         results.append(PushResult(name, True, seen["n"]))
         if seen["n"]:
             break
-    seen["stop"] = True
+    stop["v"] = True
     return results
 
 
 def challenges_in_file(path) -> list[Challenge]:
     return challenges(read_capture(path))
+
+
+@dataclass
+class LiveResult:
+    challenge: Challenge | None = None
+    answer: bytes = b""
+    status: int = 0
+    frames_seen: int = 0
+    push: list = None  # list[PushResult] once we tried writing
+
+
+async def live(client, token, sleep=asyncio.sleep, wait=30.0, listen=8.0, signer=None,
+               on_log=print) -> LiveResult:
+    """Connect to a puck, catch its own challenge, sign it, write it back.
+
+    This is the full offline unlock: the only thing Zwift is still needed for is
+    a bearer token. `client` must be bleak-shaped and already connected.
+    """
+    from .zwift import RIDE_ON, SYNC_RX
+
+    signer = signer or sign
+    res = LiveResult()
+    pending: list[Challenge] = []
+    buttons = {"n": 0}
+
+    def on_frame(_c, data):
+        data = bytes(data)
+        if data.startswith(HEADER):
+            pending.append(Challenge(data))
+        elif data[:2] == bytes([0x23, 0x08]):
+            buttons["n"] += 1
+
+    await client.start_notify(ASYNC, on_frame)
+    await client.write_gatt_char(SYNC_RX, RIDE_ON, response=False)
+    on_log("sent RideOn; waiting for a challenge (the puck only asks when its unlock lapsed)")
+
+    waited = 0.0
+    step = 0.25
+    while not pending and waited < wait:
+        await sleep(step)
+        waited += step
+    res.frames_seen = buttons["n"]
+    if not pending:
+        on_log(f"no challenge in {int(wait)} s: the puck is still unlocked "
+               f"({buttons['n']} button frames seen)")
+        return res
+
+    res.challenge = pending[-1]
+    on_log(f"challenge {len(res.challenge.raw)} B: {res.challenge.raw.hex()}")
+    result = await signer(res.challenge, token)
+    res.status = result.status
+    on_log("  " + result.describe())
+    if not result.signed:
+        return res
+    res.answer = result.body
+    res.push = await push(client, res.answer, sleep=sleep, listen=listen, seen=buttons,
+                          subscribe=False)
+    for p in res.push:
+        on_log(f"  {p.framing}: {'accepted, ' + str(p.buttons) + ' button frames' if p.buttons else 'silent'}")
+    return res

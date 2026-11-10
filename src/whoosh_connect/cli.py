@@ -35,7 +35,10 @@ def _parser() -> argparse.ArgumentParser:
     u = sub.add_parser("unlock", help="guide the daily Zwift unlock")
     u.add_argument("--capture", help="also record the BLE traffic (catches the ff 03 challenge)")
     d = sub.add_parser("dlock", help="sign a captured unlock challenge via Zwift's D-Lock service")
-    d.add_argument("file", help="capture holding the ff 03 challenge")
+    d.add_argument("file", nargs="?", help="capture holding the ff 03 challenge (omit with --live)")
+    d.add_argument("--live", action="store_true",
+                   help="connect to the puck, catch its own challenge, sign and push it")
+    d.add_argument("--wait", type=float, default=30.0, help="--live: seconds to wait for a challenge")
     d.add_argument("--token", help="file with the game's bearer token (default: read it from the Zwift process)")
     d.add_argument("--all", action="store_true", help="try every challenge in the file")
     d.add_argument("--push", action="store_true", help="write the answer to the puck and watch for buttons")
@@ -164,7 +167,33 @@ async def _find_puck(timeout: float = 60.0):
     return left[0] if left else next(iter(found.values()))[0]
 
 
+async def _live(args) -> int:
+    token = _read_token(args.token) or dlock.acquire_token()
+    if not token:
+        print("no Zwift token: start Zwift (signed in) once, or pass --token FILE", file=sys.stderr)
+        return USAGE
+    try:
+        from bleak import BleakClient
+        device = await _find_puck()
+        async with BleakClient(device) as client:
+            res = await dlock.live(client, token, wait=args.wait, listen=args.listen, on_log=print)
+    except BluetoothUnavailable as e:
+        print(str(e), file=sys.stderr)
+        return BT
+    if res.challenge is None:
+        return OK
+    if not res.answer:
+        return DLOCK
+    if any(p.buttons for p in res.push or []):
+        StateStore().record_unlock(time.time())
+        print("signed and accepted: the unlock now works without Zwift")
+        return OK
+    return DLOCK
+
+
 async def _dlock(args) -> int:
+    if args.live:
+        return await _live(args)
     chs = dlock.challenges_in_file(args.file)
     if not chs:
         print(f"no ff 03 challenge in {args.file} (was Zwift connected while capturing?)",
