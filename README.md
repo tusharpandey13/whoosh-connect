@@ -110,3 +110,16 @@ Shortcut for the bridge: the left puck (2D7E) reports **all** buttons, right one
 
 Run with: `python3 -m venv .venv && .venv/bin/pip install bleak && .venv/bin/python scripts/probe2.py 60 raw/ble/out.jsonl ff0400`
 The terminal app needs Bluetooth permission. Press a Click button first to wake it, because the pucks only advertise for a short time after a press.
+
+## Zwift unlock, in detail (10-Nov-2026)
+
+`notes/unlock-analysis.md` has the measured sequence and the evidence. Short
+version: the puck sends `ff 03` + an 82-byte challenge, and only streams buttons
+once a Zwift **cloud** service has signed it (`POST .../api/d-lock-service/device/authenticate`,
+23-byte answer, written back to char `0003`). No local secret, so nothing
+offline can answer it — hence the daily Zwift session.
+
+Tools added while investigating: `scripts/spy.py` (passive listener: connect,
+subscribe, never write — shows the device side of Zwift's own handshake) and
+`tools/fake_click.swift` (impersonates a Click; blocked on macOS because a
+locally generated advertisement is not delivered to a local scan).
