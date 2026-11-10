@@ -1,134 +1,191 @@
 # whoosh-connect
 
-## Usage
-
-Bridges a Zwift Click v2 pair to MyWhoosh (macOS): right shift = gear up, left shift = gear down, other buttons = steering and menu. The bridge speaks OpenBikeControl to MyWhoosh; the trainer stays paired in MyWhoosh.
+Use a **Zwift Click v2** shifter pair with **MyWhoosh** on macOS.
+No Zwift app, no daily unlock, and the trainer stays paired in MyWhoosh.
 
 ```
-make install                       # creates .venv, installs the package + bleak + zeroconf
-.venv/bin/whoosh-connect run       # ride, no Zwift needed (see the note on the lock below)
-.venv/bin/whoosh-connect unlock    # optional: one Zwift pairing, if you want long uninterrupted windows
-.venv/bin/whoosh-connect unlock --capture raw/ble/unlock.jsonl   # same, plus a passive BLE recording (catches the ff 03 challenge)
-.venv/bin/whoosh-connect dlock raw/ble/unlock.jsonl [--push]     # try signing that challenge via Zwift's D-Lock service
-.venv/bin/whoosh-connect dlock --live --ff0400 --push            # catch, sign and answer a live challenge (prompts for a press)
-.venv/bin/whoosh-connect run       # ride: OpenBikeControl server + mDNS + BLE link to the left puck
+Zwift Click v2  ──────BLE──────►  whoosh-connect  ──────TCP──────►  MyWhoosh
+ 23 08 <bitmask>                  decode + map      OpenBikeControl   01 01 01
+                                                                    (gear up)
 ```
 
-1. Allow Bluetooth for your terminal on the first `run` (System Settings -> Privacy & Security -> Bluetooth).
-2. Quit Zwift before riding (`run` waits until it exits). Press a Click button to wake it.
-3. In MyWhoosh: connection screen, tap the OpenBikeControl icon, pick `whoosh-connect`.
-4. Optional: `--sink keyboard` sends K/I/A/D through System Events (needs Accessibility permission, MyWhoosh frontmost). `--capture FILE.jsonl` records the BLE traffic; `whoosh-connect replay FILE --sink print` replays it with no Bluetooth. `-v` shows raw hex.
-5. Remap buttons in `~/.config/whoosh-connect/config.toml`: `[map]` with `SHIFT_R = "SHIFT_UP"`, `Z = "NONE"`, etc.
-
-Troubleshooting: no button events means the puck is asleep or has sent its `ff 05 00 ea/fa 05` stopped frame - press a button to open a new ~50 s window. An unanswered `ff 03` does **not** stop buttons (verified 11-Nov-2026, see `notes/unlock-analysis.md`); `unlock` only makes a window last longer. `run` now logs `Click sent an unlock challenge (ff 03): the pucks are locked` the moment the puck asks, instead of waiting for the 60 s timer. Exit codes: 2 usage/config, 3 Bluetooth unavailable, 4 no free port in 36867-36877, 5 the D-Lock service signed nothing, 6 another `whoosh-connect run` is already advertising (stop it first). Design: `docs/`. Tests: `make test` (fully offline).
+Right `+` shifts up, left `−` shifts down, the other buttons steer and open
+menus. Verified end to end on 11-Nov-2026: MyWhoosh 5.7.0, Click v2 firmware
+1.2.0, Van Rysel D-series trainer, macOS.
 
 ---
 
-## Research notes: Zwift Click v2 + Cog → MyWhoosh
+## Requirements
 
-Goal: use the owner's Zwift Click v2 controllers (and Zwift Cog) for virtual shifting in MyWhoosh on macOS.
-Status as of 11-Nov-2026: BLE interface understood and **riding without any Zwift unlock**. Buttons flow for ~50 s after each press even while the puck is still asking for an unlock it never gets; `run` bridges them to MyWhoosh over OpenBikeControl, gear changes included. MyWhoosh pings the socket with `0x00` every ~4 s and expects a device status back - that reply is what makes it accept the controller.
-
-## Hardware
-
-| Thing | Facts |
+| | |
 |---|---|
-| Trainer | `VANRYSEL-HT-b50b` (Van Rysel D-series). CoreBluetooth id `BB48099E-F6E0-EDBB-DC8E-E471222C122F`. Firmware 0.108, software "Jan 7 2025". Exposes FTMS **and** Zwift's trainer service `00000001-19CA-…` ("configured for Zwift Protocol" in Zwift logs). |
-| Zwift Cog | Passive cog, no electronics, no BLE. Gives a fixed chainline; the app makes "gears" by changing resistance. |
-| Click v2 **left** | Name `Zwift Click`, adv mfr data (0x094A) `0b 2d7e`, CoreBluetooth id `15018857-AF57-60C6-E4C3-49E31712DED0`, serial `0B-D852FAA92D7E`, HW `B.0`, FW `1.2.0`, battery 80 %. Zwift name "Zwift Click 2D7E". |
-| Click v2 **right** | Adv `0a e89b`, CoreBluetooth id `F2640CDB-976F-2DB0-8780-2AA8386B5FFE`, serial `0A-6C1AEAD9E89B`, HW `B.0`, FW `1.2.0`, battery 80 %. Zwift name "Zwift Click E89B". |
+| OS | macOS (bleak's CoreBluetooth backend; nothing here is Mac-specific apart from keyboard mode) |
+| Python | 3.11 or newer |
+| Game | MyWhoosh with the **OpenBikeControl** icon on its connection screen |
+| Shifter | Zwift Click v2, one or both pucks. **The left puck relays the right puck's buttons**, so one connection is enough |
+| Trainer | paired in MyWhoosh as usual — whoosh-connect never touches it |
 
-The left/right meaning of the 0x0B/0x0A mfr byte comes from BikeControl, where it's marked "unconfirmed". The button data agrees with it: the 2D7E unit reported nav plus shift-up-left.
+## Install
 
-## Click v2 BLE interface (measured)
-
-GATT, the same on both pucks:
-```
-180A Device Information   2A29 "Zwift Inc"  2A25 serial  2A27 "B.0"  2A26 "1.2.0"
-FC82 Zwift controller
-  00000002-19ca-4651-86e5-fa29dcdd09d1  notify        device→host async messages
-  00000003-19ca-4651-86e5-fa29dcdd09d1  write-no-rsp  host→device commands
-  00000004-19ca-4651-86e5-fa29dcdd09d1  read,indicate device→host sync replies
-  00000100/101/102-19ca-…               write/notify  unused by BikeControl (probably firmware update/unlock)
-180F Battery               2A19 = 0x50 (80 %)
+```sh
+git clone https://github.com/tusharpandey13/whoosh-connect.git
+cd whoosh-connect
+make install                 # .venv + the package + bleak + zeroconf
 ```
 
-Session:
-1. Write `RideOn` (`52 69 64 65 4f 6e`) to 0003 without response. A write *with* response fails with "Write Not Permitted".
-2. 0004 indicates `RideOn` back in plain text. There's no ECDH or encryption.
-3. 0002 then sends:
-   - `2a …` log record
-   - `ff 05 00 fa/ea 05 …` vendor status (contains the serial in ASCII)
-   - `ff 03 00 0a 21 …` ~90-byte **unlock challenge**, which Zwift answers
-   - `19 10 50` battery heartbeat every 5 s
-4. Buttons: `23 08 <varint>`, where the varint (LEB128) is an **active-low** bitmask; all-released is `ff ff ff ff 0f`.
+The first `run` makes macOS ask for Bluetooth access for your terminal
+(System Settings → Privacy & Security → Bluetooth). Denying it exits with code 3.
 
-Physical layout confirmed by a labelled run (probe5: 4–5 rounds of up/right/down/left plus shift×4, left puck then right puck):
+## Ride
 
-| puck | position | bit | mask | Zwift name | use |
-|---|---|---|---|---|---|
-| left | up | 1 | 0x2 | UP | |
-| left | right | 2 | 0x4 | RIGHT | |
-| left | down | 3 | 0x8 | DOWN | |
-| left | left | 0 | 0x1 | LEFT | |
-| left | shift | 8 | 0x100 | SHIFT_UP_L ("−") | **shift down** |
-| right | up | 6 | 0x40 | Y | |
-| right | right | 4 | 0x10 | A | |
-| right | down | 5 | 0x20 | B | |
-| right | left | 7 | 0x80 | Z | |
-| right | shift | 12 | 0x1000 | SHIFT_UP_R ("+") | **shift up** |
+1. **Quit Zwift** if it is running — it grabs the Clicks and keeps them.
+2. Start the bridge:
 
-The left puck (2D7E) reports both pucks' buttons; the right puck (E89B) reports only its own.
+   ```sh
+   .venv/bin/whoosh-connect run
+   ```
 
-### The unlock challenge (no longer a blocker)
-- `raw/ble/probe2.jsonl`: button events arrived **only for about 6 s right after connecting** (154 messages), then only the battery heartbeat.
-- `probe3_labelled.jsonl` (110 s, slow labelled presses): **0 button events** — but no press was made inside the window, so it proves nothing (same for the first `02 02` run).
-- `probe4_ff0400.jsonl` (`RideOn` then `ff 04 00`): **0 button events**; `ff 04 00` itself silences a locked unit's stream, which is what this capture shows.
-- BikeControl's TROUBLESHOOTING says firmware 1.2.0 Click v2 only sends buttons if it connected to the **real Zwift app within ~24 h**. Zwift answers the `ff 03` challenge; BikeControl's answering code is closed source (a stub in the public repo).
-- The Zwift logs show the Clicks last connected to Zwift on 05-Nov-2026, so they're locked now.
+   It advertises `whoosh-connect` over mDNS and prints
+   `Waiting for MyWhoosh: open the connection screen, tap the OpenBikeControl icon, pick whoosh-connect`.
+3. **Press a Click button** to wake the puck:
+   `Clicks connected (left puck 2D7E, battery 80 %)`.
+4. In MyWhoosh: connection screen → **OpenBikeControl** → **whoosh-connect**.
+   The bridge prints `MyWhoosh connected (app mywhoosh v5.7.0, supports: …)`.
+5. Ride. Shift with `+` / `−`. Ctrl-C stops cleanly (mDNS unregistered, socket
+   closed, BLE disconnected).
 
-**Overtaken 11-Nov-2026**: the lock is not a gate for button reporting. With a fresh press and continuous riding, a puck that had answered nothing but 204s streamed every press for a 30 s window, sent a second `ff 03` at 20.5 s, and kept going; a full ride in MyWhoosh followed, gear changes included. What ends a window is the unit's own `ff 05 00 ea 05` stopped frame ~50 s after the press. See `notes/unlock-analysis.md`.
+If the buttons go quiet, **press a Click button once** — see the next section.
 
-**Confirmed 10-Nov-2026** (`probe5_after_zwift_unlock.jsonl`): after pairing in Zwift, buttons flowed for a whole 75 s capture — the unlocked case still looks like this (an unlocked unit also streams idle `23 08` frames continuously, which a locked one does not).
+## Controls
 
-Shortcut for the bridge: the left puck (2D7E) reports **all** buttons, right ones included, so one connection is enough.
+Defaults, no configuration needed:
 
-## MyWhoosh side (v6.2.3, bundle `com.whoosh.whooshgame`, Unreal Engine 5)
-- There are no text logs. Saved hardware map: `raw/mywhoosh/HardwareSaveData.sav` (plain-text extract in `HardwareSaveData.strings.txt`), which has the trainer under `E_PowerSource`/`E_Controllable`/`E_Cadence` plus a HR strap. There's no controller entry.
-- Binary strings (`raw/mywhoosh/binary_strings_controls.txt`): `EVirtualGears::E_Gear1..30`, `GearUp`/`GearDown`, `IsVirtualGearShiftingFeatureEnabled`, `ConnectAppGearChange`, `ConnectToOpenBike`, `EInGameControlsParameter::{E_GearShift,E_Steering,E_UTurn,E_Tuck,E_Emote,E_CameraAngle}`. There's no Zwift FC82 controller UUID, so **MyWhoosh can't read a Click itself**.
-- There are three ways to inject gear changes (details in `notes/bikecontrol-protocols.md`):
-  1. **Keyboard**: `K` shift up, `I` shift down, `A`/`D` steer, `H` toggle the UI, `1`–`7` emotes.
-  2. **MyWhoosh Link** (legacy): MyWhoosh connects over TCP to the bridge on port 21587 and receives JSON lines such as `{"MessageType":"Controls","InGameControls":{"GearShifting":"1"}}`.
-  3. **OpenBikeControl** (current, official): the bridge advertises mDNS `_openbikecontrol._tcp` on TCP 36867 and sends binary `01 <btn> <state>` (01 ShiftUp, 02 ShiftDown, 18/19 steer). In MyWhoosh: connection screen, OBC icon top right.
-- Virtual shifting: MyWhoosh has 30 virtual gears and runs them on an FTMS trainer itself (sim resistance). The Van Rysel pairs in MyWhoosh as a normal FTMS trainer, and the Cog is fine with that.
+| Click | Physical | Action sent to MyWhoosh | OBC id |
+|---|---|---|---|
+| right | `+` (shift) | **gear up** | `01` |
+| left | `−` (shift) | **gear down** | `02` |
+| left | ◀ ▶ | steer left / right (hold) | `18` / `19` |
+| left | ▲ ▼ | up / down | `10` / `11` |
+| right | A | select | `14` |
+| right | B | back | `15` |
+| right | Y | camera | `40` |
+| right | Z | menu | `16` |
 
-## Options
-| Option | Effort | Caveat |
-|---|---|---|
-| **BikeControl** (Mac App Store, MyWhoosh partner) | none | Handles the unlock (automatic, or "connect in Zwift once a day"); may be paid |
-| Own bridge: bleak → OpenBikeControl/keyboard | ~100 lines | Works with an unanswered unlock challenge; windows are press-gated (~50 s) |
-| Own bridge, unlock handled too | sign each `ff 03` with the rider's own token via the D-Lock service; write-format still being pinned down | Fragile across firmware; needs a Zwift login once for a token |
+One tap is one gear. Shifting only registers **in a ride**, not on the
+connection screen.
 
-## Layout
-- `scripts/scan.py`: advert scan. `scripts/probe.py`: GATT dump plus handshake. `scripts/probe2.py DUR OUT [hexwrites]`: concurrent capture from both pucks to JSONL. `scripts/decode.py FILE`: button bitmask → press events.
-- `raw/ble/`: all captures. `raw/zwift/`: Zwift `prefs.xml` / `knowndevices.xml` plus the BLE/connectivity log lines. `raw/mywhoosh/`: saved hardware and settings, binary strings.
-- `notes/bikecontrol-protocols.md`: BikeControl source analysis (commit edd1e2a), with file:line citations.
+## What "the lock" means here
 
-Run with: `python3 -m venv .venv && .venv/bin/pip install bleak && .venv/bin/python scripts/probe2.py 60 raw/ble/out.jsonl ff0400`
-The terminal app needs Bluetooth permission. Press a Click button first to wake it, because the pucks only advertise for a short time after a press.
+The Click v2 asks for a Zwift-cloud-signed unlock (`ff 03` + a challenge) and
+mutes itself if the answer never arrives. On this firmware that does **not**
+stop button reporting:
 
-## Zwift unlock, in detail (10-Nov-2026)
+- **A press opens a ~50 s window** in which every button is streamed, answered
+  challenge or not. A full ride works like that; just press again when it ends.
+- An unlocked puck instead streams continuously, and idles with `23 08 ff ff ff ff 0f`.
+- `whoosh-connect unlock` (one Zwift pairing) only makes windows last longer. It
+  is optional, and answering the challenge offline is unsolved — see
+  `notes/unlock-analysis.md`.
 
-`notes/unlock-analysis.md` has the measured sequence and the evidence. Short
-version: the puck sends `ff 03` + an 82-byte challenge, and only streams buttons
-once a Zwift **cloud** service has signed it (`POST .../api/d-lock-service/device/authenticate`,
-23-byte answer, written back to char `0003`). No local secret, so nothing
-offline can answer it — hence the daily Zwift session.
+## Commands
 
-Tools added while investigating: `scripts/spy.py` (passive listener: connect,
-subscribe, never write — shows the device side of Zwift's own handshake),
-`tools/fake_click.swift` (impersonates a Click; blocked on macOS because a
-locally generated advertisement is not delivered to a local scan) and
-`tools/trace_zwift_writes.sh` (attaches lldb to your own Zwift game and logs every
-CoreBluetooth write: the missing host→puck framing, with characteristic UUID and
-write type. Observation only, no patching).
+| Command | What it does |
+|---|---|
+| `whoosh-connect run` | the bridge: OpenBikeControl server + mDNS + BLE link (default `--sink obc`) |
+| `whoosh-connect run --capture ride.jsonl` | same, and record every BLE event for later replay |
+| `whoosh-connect run --sink keyboard` | no OBC: sends `K`/`I`/`A`/`D` via System Events (needs Accessibility, MyWhoosh frontmost) |
+| `whoosh-connect replay ride.jsonl` | feed a capture through the whole pipeline, no Bluetooth |
+| `whoosh-connect unlock` | optional: guide one Zwift pairing and remember when it happened |
+| `whoosh-connect dlock --live --push` | research: sign a live `ff 03` challenge with your own Zwift token and try to answer it |
+
+`-v` adds raw hex and debug detail. Exit codes: `2` usage/config, `3` Bluetooth
+unavailable, `4` no free port in 36867–36877, `5` the D-Lock service signed
+nothing, `6` another `whoosh-connect run` is already advertising.
+
+## Troubleshooting
+
+| Symptom | Cause and fix |
+|---|---|
+| `Press a Click button to wake it` keeps repeating | the puck is asleep; it only advertises for a while after a press. Press it |
+| Buttons scroll in the terminal, game ignores them | MyWhoosh is not attached to the socket: `no app connected; dropping 010101`. Do the OpenBikeControl step *on the connection screen* |
+| Everything stops after ~50 s of riding | the puck's `ff 05 00 ea 05` "stopped" frame. One press opens the next window |
+| `Click asked for an unlock (ff 03); ignoring it` | informational, not an error — buttons keep working |
+| Gear number never moves, other buttons do | MyWhoosh only shifts inside a ride, and needs a trainer supporting virtual shifting paired to it |
+| `another whoosh-connect run is still alive` (exit 6) | one socket per machine: `pkill -f whoosh_connect`, then start once |
+| Exit 3 | Bluetooth off or the terminal lacks permission |
+| Zwift keeps stealing the link | quit Zwift; the bridge survives it, but the Clicks do not |
+
+## Configuration
+
+Optional `~/.config/whoosh-connect/config.toml`; buttons are named by their
+position on the puck, actions by OBC name.
+
+```toml
+[map]
+SHIFT_R  = "SHIFT_UP"     # right +
+SHIFT_L  = "SHIFT_DOWN"   # left -
+LEFT     = "STEER_LEFT"
+RIGHT    = "STEER_RIGHT"
+UP       = "UP"
+DOWN     = "DOWN"
+A        = "SELECT"
+B        = "BACK"
+Y        = "CAMERA"
+Z        = "NONE"         # disable a button
+```
+
+Any of `SHIFT_UP SHIFT_DOWN GEAR_SET UP DOWN LEFT RIGHT SELECT BACK MENU HOME
+STEER_LEFT STEER_RIGHT CAMERA HUD` or `NONE`.
+
+## How it works
+
+1. **BLE.** `RideOn` is written to char `0003`; the puck echoes it on `0004` and
+   streams `23 08 <varint>` button frames on `0002`, where the varint is an
+   active-low bitmask (all released = `ff ff ff ff 0f`). No pairing, no crypto.
+2. **Decode and map.** Frames are diffed against the previous button set, so a
+   hold produces one press, and each change maps to an OBC action
+   (`A → SELECT → 0x14`).
+3. **OpenBikeControl.** The bridge advertises `_openbikecontrol._tcp` on TCP
+   36867, accepts the app's info handshake, and sends `01 <id> <01|00>` per
+   change. MyWhoosh pings with a bare `00` every ~4 s and expects a device
+   status (`02 <battery> <connected>`) back — that reply is what makes the game
+   treat the controller as live. Miss it and everything else still "works" and
+   is ignored, which cost us an evening.
+
+Measured details, captures and the protocol table: [docs/hardware.md](docs/hardware.md).
+The unlock saga: [notes/unlock-analysis.md](notes/unlock-analysis.md).
+Design: [docs/journey.md](docs/journey.md), [docs/dev-spec.md](docs/dev-spec.md).
+
+## Development
+
+```sh
+make test        # 80 tests, fully offline: no Bluetooth, network, Zwift or MyWhoosh
+make lint        # compileall
+```
+
+- `whoosh-connect run --capture ride.jsonl` turns a real ride into a fixture;
+  `whoosh-connect replay ride.jsonl` runs it back through the same pipeline.
+- `src/whoosh_connect/`: `ble.py` (link, handshake, reconnect, opt-in reset),
+  `pipeline.py` (decode → map → sinks), `obc*.py` (protocol + TCP server),
+  `zwift.py` (frame parsing), `dlock.py` (the cloud-unlock research),
+  `capture.py`, `mapping.py`, `keyboard.py`, `state.py`, `spy.py`.
+- `scripts/`: standalone probes (`scan.py`, `probe.py`, `probe2.py`,
+  `decode.py`, `spy.py`). `raw/`: captures and the Zwift/MyWhoosh evidence.
+- Tests never inject keystrokes: a stray `K` would really shift the owner's bike.
+
+## Known limits
+
+- Windows last ~50 s per press until a real unlock; the challenge answer is only
+  obtainable from Zwift's cloud for some challenge shapes (52/58-byte `f3`).
+- One OBC client per socket, one bridge per machine.
+- No haptics, no trainer proxying, no virtual shifting in the bridge — MyWhoosh
+  does that itself.
+- macOS only in practice; the BLE and OBC layers are portable, keyboard mode is not.
+
+## Credits
+
+Protocol facts from [BikeControl](https://github.com/jonasbark/swiftcontrol),
+[clickbridge](https://github.com/jasasonc/clickbridge),
+[zwoosh](https://github.com/amith2368/zwoosh) and the
+[OpenBikeControl](https://github.com/OpenBikeControl/openbikecontrol-protocol)
+spec. Not affiliated with Zwift or MyWhoosh. MIT licensed.

@@ -237,11 +237,13 @@ not reproduce.
 `sign()` over a fresh TLS connection measured **0.31–0.34 s**, against a 2.4 s
 grace window. Latency was never the blocker; drop that suspect.
 
-### `ff 04 00` silences a locked unit's button stream
+### `ff 04 00` does not silence a locked unit (corrected)
 
-`probe5` (unlocked) streamed 675 `23 08` idle frames *through* a `ff 04 00`
-write; `probe4` (locked) emitted **zero** after it. So `ff 04 00` is not a
-harmless wake: on a locked puck it costs the stream you are trying to observe.
+`probe4` (locked) emitted **zero** frames after `ff 04 00`, which looked like the
+write muting the stream. It was not: that capture had no press in its window.
+The shipped bridge writes `RideOn` **then `ff 04 00`** on every connection and a
+locked puck streams every press for ~50 s (`raw/ble` plus the 11-Nov live runs at
+00:49 and 01:20). Treat `probe4` as another unpresssed negative, not evidence.
 
 ### Press-free unlock indicator (when a unit is awake)
 

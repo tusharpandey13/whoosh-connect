@@ -7,7 +7,7 @@ Ride in MyWhoosh on the Mac with the Zwift Click v2 pair as shifters: right shif
 
 ## Actors
 - **Rider**: the owner, on the bike, Mac in front, hands on the bars.
-- **Clicks**: Zwift Click v2 left puck (adv `0x094A: 0b…`, relays all buttons) and right puck (`0a…`, own buttons only). Firmware 1.2.0, Zwift-locked unless Zwift connected them in the last ~24 h.
+- **Clicks**: Zwift Click v2 left puck (adv `0x094A: 0b…`, relays all buttons) and right puck (`0a…`, own buttons only). Firmware 1.2.0. The unlock challenge does **not** gate buttons (verified 11-Nov-2026); a press opens a ~50 s window, and an unanswered `ff 03` is informational.
 - **Zwift app**: used only to unlock the Clicks; must be quit before riding.
 - **whoosh-connect**: this tool. A Python CLI on the Mac.
 - **MyWhoosh 6.2.3**: the OpenBikeControl (OBC) client. It browses mDNS `_openbikecontrol._tcp`, connects over TCP, and receives button messages.
@@ -19,7 +19,10 @@ Ride in MyWhoosh on the Mac with the Zwift Click v2 pair as shifters: right shif
    - If permission is denied, whoosh-connect exits with "Bluetooth permission denied: System Settings → Privacy & Security → Bluetooth → enable your terminal", exit code 3.
 3. Optional, keyboard mode only: macOS asks for Accessibility permission on the first injected key.
 
-## Journey B: pre-ride unlock (daily)
+## Journey B: pre-ride unlock (optional since 11-Nov-2026)
+
+Riding needs no Zwift at all: a press opens a ~50 s window even while the puck is
+asking for an unlock. This journey is only for longer uninterrupted windows.
 1. Rider runs `whoosh-connect unlock`.
 2. The tool prints the checklist: wake the trainer, open Zwift, pair the trainer first and then the Clicks, keep them connected for 30 s and press a few buttons, quit Zwift with Cmd-Q.
 3. The tool waits for a Zwift process to appear, then for it to exit (it polls the process list every 2 s and accepts Ctrl-C).
@@ -31,14 +34,16 @@ Ride in MyWhoosh on the Mac with the Zwift Click v2 pair as shifters: right shif
 1. Rider runs `whoosh-connect run`. Default sink is `obc`.
 2. Pre-flight:
    - If Zwift is running, the tool warns "Zwift is running and will grab the Clicks; quit it (Cmd-Q)" and waits until Zwift exits.
-   - If the recorded unlock is missing or older than 24 h, it warns "Clicks probably locked: run `whoosh-connect unlock`" and continues.
+   - If the recorded unlock is missing or older than 24 h, it notes at debug level that windows will be press-gated (~50 s) and continues. Since 11-Nov-2026 this is not a warning: an unanswered `ff 03` does not stop buttons.
 3. OBC server: the tool listens on TCP (port 36867, or the next free port) and advertises mDNS `whoosh-connect._openbikecontrol._tcp.local.` with the TXT record from MDNS.md, then prints "Waiting for MyWhoosh: open the connection screen, tap the OpenBikeControl icon, pick whoosh-connect".
 4. BLE: the tool scans for Zwift controllers (manufacturer data 0x094A, type byte 0x0A or 0x0B) and prints "Press a Click button to wake it".
    - It prefers the left puck (0x0B). If only the right puck shows up within 10 s of the first advert, it uses the right puck and warns "right puck only: left-side buttons unavailable".
-5. Connect: subscribe to notify on 0002 and indicate on 0004, write `RideOn` to 0003 without response, wait for the `RideOn` reply on 0004 (timeout 5 s, then retry the connection), then write `ff 04 00`.
+5. Connect: subscribe to notify on 0002 and indicate on 0004, write `RideOn` to 0003 without response, wait for the `RideOn` reply on 0004 (timeout 5 s, then retry the connection), then write `ff 04 00` (harmless; it does not mute a locked unit — that earlier reading came from a capture with no press in it).
    - Print "Clicks connected (left puck 2D7E, battery 80 %). Press right shift to test".
+   - If the puck sends `ff 05 00 ea/fa 05` ("stopped talking"), the tool notes it; the next press opens a new window. `--reset` (off by default) would send `0x18`, which on a locked unit loops: restart, drop, reconnect, "stopped" again.
 6. MyWhoosh connects to the TCP server and sends App Info (0x04). The tool prints "MyWhoosh connected (app mywhoosh v…, supports: …)".
-   - The tool sends Device Status `02 <battery> 01`, and sends it again whenever the battery level changes.
+   - The tool sends Device Status `02 <battery> 01` when the client connects, again right after App Info arrives, and again whenever the battery level changes.
+   - MyWhoosh pings with a bare `00` every ~4 s; the tool answers each ping with the current status. Without that reply the game accepts the socket and ignores every button.
 7. Riding: each button press or release on the Click becomes a 0x23 frame, which is decoded to a set of pressed buttons and diffed against the previous set.
    - Each change maps to an OBC action and is sent as `01 <id> <01|00>` to every connected app client.
    - The tool logs each action on one line, e.g. `12:03:04 SHIFT_UP ▲`.
@@ -53,7 +58,7 @@ Ride in MyWhoosh on the Mac with the Zwift Click v2 pair as shifters: right shif
 |---|---|---|
 | F1 | Clicks asleep / not advertising | Keep scanning, repeating "press a Click button" every 30 s. |
 | F2 | BLE disconnect mid-ride | Log it, tell OBC clients `02 <batt> 00`, rescan and reconnect with backoff (1, 2, 4… max 10 s), redo the handshake, then send `02 <batt> 01`. Buttons held at the disconnect are released (`01 <id> 00`). |
-| F3 | Clicks locked (no button frames) | Not detectable from the status frames. If no 0x23 frame arrives within 60 s of connecting, print the unlock hint once. |
+| F3 | No button frames for 60 s | Print the press-again hint once per link: a press opens a window; `unlock` only makes it last longer. |
 | F4 | Zwift starts while running | The Clicks get grabbed and the BLE link drops, so F2 applies. On every reconnect attempt, if Zwift is running, print the F-pre-flight warning. |
 | F5 | MyWhoosh disconnects | Keep the server and mDNS up. Drop actions while no client is connected (never queue; stale shifts are worse than lost ones). Log "no app connected" at most once per 30 s. |
 | F6 | Port 36867 busy | Try 36868…36877; advertise the port actually bound. If none is free, exit code 4. |
@@ -63,6 +68,8 @@ Ride in MyWhoosh on the Mac with the Zwift Click v2 pair as shifters: right shif
 | F10 | Same frame repeated | No output (diff is empty). |
 | F11 | Bluetooth off or unauthorised | Clear message, exit code 3. |
 | F12 | Two OBC clients | Broadcast to both. |
+| F13 | A second `run` on the same machine | mDNS name is taken: explain "another `whoosh-connect run` is still alive", exit 6. |
+| F14 | App pings with `00` | Treat as a 1-byte message, answer with the current device status. |
 
 ## Journey E: diagnostics
 - `whoosh-connect run --capture FILE.jsonl` also writes every BLE event in the `probe2.py` JSONL format, so a real ride becomes a test fixture.

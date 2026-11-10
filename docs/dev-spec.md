@@ -42,7 +42,7 @@ src/whoosh_connect/
 - `encode_button_state(changes: list[tuple[int, bool]]) -> bytes` produces `01 id st id st …`, where st is 01 or 00.
 - `encode_device_status(battery: int | None, connected: bool) -> bytes` produces `02 <0-100 or 0xFF> <00|01>`.
 - `parse_app_info(data) -> AppInfo(app_id, version, buttons: frozenset[int])` follows the spec layout. It raises `ValueError` on malformed input, and buttons are empty when the count is 0 (meaning all supported).
-- `split_messages(buffer) -> (messages, rest)` frames the TCP stream from the app. Known app→device types are 0x03 haptic (fixed 4 bytes) and 0x04 app info (self-describing length). Unknown type: drop the buffer and log.
+- `split_messages(buffer) -> (messages, rest)` frames the TCP stream from the app. Known app→device types are 0x00 ping (1 byte), 0x03 haptic (fixed 4 bytes) and 0x04 app info (self-describing length). Unknown type: drop the buffer and log. The ping matters: MyWhoosh sends one every ~4 s and used to be discarded together with whatever followed it.
 - `txt_record(name, device_id) -> dict` returns `version=1, id, name, service-uuids=d273f680-d548-419d-b9d1-fa0472345229, manufacturer=whoosh-connect, model=Zwift Click v2 bridge`.
 
 ### mapping.py
@@ -69,12 +69,13 @@ src/whoosh_connect/
   5. Call `on_link(True, battery)`, reading the battery from 2A19 (best effort).
 - Disconnect callback triggers `on_link(False)` and a reconnect with backoff 1, 2, 4, 8, 10, 10… s (F2). Before each attempt, call `state.zwift_running()` and warn if Zwift is running (F4).
 - Map bleak errors for Bluetooth off or unauthorised to `BluetoothUnavailable`, which the CLI turns into exit code 3 (F11).
+- A `ff 05 00 ea/fa 05` "stopped talking" frame may earn one `0x18` RESET (`reset_enabled`, **off by default**, cooldown 30 s, max 3 per session, ignored during the first 3 s after connecting). On a locked unit the reset restarts it, drops the link and re-arms the same "stopped" frame — a reconnect loop — so the CLI only turns it on with `--reset`.
 - Optional `capture` writer that records adv, tx, rx and link events.
 
 ### obc_server.py
 - `ObcServer(host="0.0.0.0", port=36867, advertiser=ZeroconfAdvertiser, name="whoosh-connect")`.
-- `start()` binds the first free port in 36867–36877 (F6; if none is free, raise `PortsBusy`, exit 4) and registers mDNS for the bound port and the primary IPv4. Tests inject a fake advertiser plus host `127.0.0.1` and port 0.
-- Per client: read loop → `split_messages`; App Info is stored and logged (journey C6), haptic is ignored. On connect, the server sends the current device status.
+- `start()` binds the first free port in 36867–36877 (F6; if none is free, raise `PortsBusy`, exit 4) and registers mDNS for the bound port and the primary IPv4. A taken mDNS name means another bridge is running: raise `AlreadyRunning`, exit 6 (F13). Tests inject a fake advertiser plus host `127.0.0.1` and port 0.
+- Per client: read loop → `split_messages`; App Info is stored and logged (journey C6), haptic is ignored, and a `0x00` ping is answered with the current device status (F14). The status is written when the client connects **and** again right after the App Info handshake — MyWhoosh ignores buttons if it never sees the second one.
 - `broadcast(bytes)` writes to all clients (F12) and removes dead ones. With no clients, it drops the message and logs "no app connected" at most once per 30 s (F5).
 - `stop()` unregisters mDNS and closes the clients and the server.
 
@@ -100,15 +101,15 @@ src/whoosh_connect/
   - `speed=0` means no sleeping.
 
 ### cli.py
-- `whoosh-connect run [--sink obc|keyboard] [--config PATH] [--capture FILE] [--port N] [-v]`
+- `whoosh-connect run [--sink obc|keyboard] [--config PATH] [--capture FILE] [--port N] [--reset] [-v]`
 - `whoosh-connect unlock`
 - `whoosh-connect replay FILE [--sink print|obc|keyboard] [--speed N] [--device ID]`
-- Exit codes: 0 ok, 2 usage/config error, 3 Bluetooth unavailable, 4 ports busy.
+- Exit codes: 0 ok, 2 usage/config error, 3 Bluetooth unavailable, 4 ports busy, 5 D-Lock signed nothing, 6 another bridge is already advertising.
 - Graceful Ctrl-C (journey C9): cancel tasks, then `sink.close()`, `server.stop()`, `link.close()`, all within 3 s.
 - Logging: `HH:MM:SS message` to stderr; `-v` sets DEBUG with hex.
 
 ## Repo hygiene
-- Keep the existing `README.md` (research), `raw/`, `notes/` and `scripts/` (research probes). Add a top section "Usage" to the README (install, unlock, run, MyWhoosh steps, troubleshooting).
+- `README.md` is the user-facing document (what it is, install, ride, controls, troubleshooting, how it works). Measured hardware/protocol facts live in `docs/hardware.md`; the unlock investigation in `notes/unlock-analysis.md`; `raw/` and `scripts/` stay as evidence and probes.
 - Copy the probe5, probe2 and probe3 captures into `tests/fixtures/` (or reference them from `raw/ble/`).
 - `.gitignore`: `.venv/`, `__pycache__/`, `*.egg-info/`, `.pytest_cache/`, `dist/`.
 - No secrets and no personal data; `raw/zwift/prefs.xml` is already redacted.
