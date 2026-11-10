@@ -235,11 +235,13 @@ class LiveResult:
 
 
 async def live(client, token, sleep=asyncio.sleep, wait=30.0, listen=8.0, signer=None,
-               on_log=print) -> LiveResult:
+               on_log=print, prelude: bytes | None = None) -> LiveResult:
     """Connect to a puck, catch its own challenge, sign it, write it back.
 
     This is the full offline unlock: the only thing Zwift is still needed for is
     a bearer token. `client` must be bleak-shaped and already connected.
+    `prelude` is written right after RideOn (e.g. `ff 04 00`); the challenge shape
+    seems to change with it (82 B after RideOn alone, 100 B after RideOn + ff 04 00).
     """
     from .zwift import RIDE_ON, SYNC_RX
 
@@ -258,6 +260,10 @@ async def live(client, token, sleep=asyncio.sleep, wait=30.0, listen=8.0, signer
     await client.start_notify(ASYNC, on_frame)
     await client.write_gatt_char(SYNC_RX, RIDE_ON, response=False)
     on_log("sent RideOn; waiting for a challenge (the puck only asks when its unlock lapsed)")
+    if prelude:
+        await sleep(0.3)
+        await client.write_gatt_char(SYNC_RX, prelude, response=False)
+        on_log(f"sent prelude {prelude.hex()}")
 
     waited = 0.0
     step = 0.25

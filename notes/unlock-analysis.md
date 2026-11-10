@@ -139,6 +139,24 @@ the 94 B (spontaneous) and 100 B (RideOn, no press) shapes were signed. The
 service is deciding on the *payload contents*, so never assume an `ff 03` is
 signable: POST it and require 200 with a body.
 
+### Evening timeline (local time) and the shape hypothesis
+
+| time | connection | challenge | POST |
+|---|---|---|---|
+| 19:24 | Zwift pairs the Clicks | (Zwift signed) | unlock starts |
+| 20:34:49 | passive spy, no RideOn, no writes | 94 B / f3=52 | 200, 23 B |
+| 20:45 | our live run, **RideOn only** | 82 B / f3=40 | 204 |
+| 20:47 | RideOn then empty `ff 04 00` reply | 82 B | not signed |
+| 20:48:50 | reconnect | 100 B / f3=58 | stored answer pushed |
+| 20:50:22 | reconnect | 100 B / f3=58 | 200, 23 B, pushed |
+
+The unlock lapsed at 20:34:49, i.e. 70 min after the 19:24 auth. The shape seems
+to follow the last host command: RideOn alone → 82 B (204); after the puck has
+seen `ff 04 00` → 100 B (signed). The passive 94 B at 20:34 arrived after Zwift
+had been talking to the puck, consistent with the same effect. This is a
+hypothesis with n=1, which is why `dlock --live --ff0400` exists: send RideOn,
+then `ff 04 00`, and see whether the signable 100 B shape comes back.
+
 Consequences:
 - The unlock is not replayable and not a constant secret: sign per challenge.
 - The missing piece is the *write format* of the answer (prefix/wrapper,

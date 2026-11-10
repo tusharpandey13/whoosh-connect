@@ -9,6 +9,7 @@ make install                       # creates .venv, installs the package + bleak
 .venv/bin/whoosh-connect unlock    # daily: follow the Zwift checklist (pair trainer, then Clicks, ~30 s, Cmd-Q)
 .venv/bin/whoosh-connect unlock --capture raw/ble/unlock.jsonl   # same, plus a passive BLE recording (catches the ff 03 challenge)
 .venv/bin/whoosh-connect dlock raw/ble/unlock.jsonl [--push]     # try signing that challenge via Zwift's D-Lock service
+.venv/bin/whoosh-connect dlock --live --ff0400 --push            # catch, sign and answer a live challenge (prompts for a press)
 .venv/bin/whoosh-connect run       # ride: OpenBikeControl server + mDNS + BLE link to the left puck
 ```
 

@@ -16,7 +16,7 @@ from .obc_server import DEFAULT_PORT, ObcServer, ObcSink, PortsBusy
 from .pipeline import Pipeline, PrintSink
 from .spy import Spy
 from .state import StateStore, default_state_path, unlock_flow, zwift_running
-from .zwift import TYPE_CLICK_V2_LEFT
+from .zwift import POST_HANDSHAKE, TYPE_CLICK_V2_LEFT
 
 log = logging.getLogger("whoosh_connect")
 OK, USAGE, BT, PORTS, DLOCK = 0, 2, 3, 4, 5
@@ -43,6 +43,8 @@ def _parser() -> argparse.ArgumentParser:
     d.add_argument("--all", action="store_true", help="try every challenge in the file")
     d.add_argument("--push", action="store_true", help="write the answer to the puck and watch for buttons")
     d.add_argument("--listen", type=float, default=8.0, help="seconds to watch for buttons per framing")
+    d.add_argument("--ff0400", action="store_true",
+                   help="--live: send ff 04 00 after RideOn (the 100 B / signable challenge shape)")
     p2 = sub.add_parser("replay", help="feed a capture through the pipeline")
     p2.add_argument("file")
     p2.add_argument("--sink", choices=["print", "obc", "keyboard"], default="print")
@@ -176,7 +178,8 @@ async def _live(args) -> int:
         from bleak import BleakClient
         device = await _find_puck()
         async with BleakClient(device) as client:
-            res = await dlock.live(client, token, wait=args.wait, listen=args.listen, on_log=print)
+            res = await dlock.live(client, token, wait=args.wait, listen=args.listen, on_log=print,
+                                   prelude=POST_HANDSHAKE if args.ff0400 else None)
     except BluetoothUnavailable as e:
         print(str(e), file=sys.stderr)
         return BT

@@ -346,6 +346,15 @@ async def test_live_signs_and_pushes_challenge():
     assert c.writes[1] == bytes([0xFF, 0x04, 0x00]) + ANSWER
 
 
+async def test_live_sends_the_ff0400_prelude_after_rideon():
+    c = LiveClient(None)
+    res = await dlock.live(c, "tok", sleep=lambda s: asyncio.sleep(0), wait=0.1, listen=0,
+                           signer=lambda *a, **k: None, on_log=lambda *_: None,
+                           prelude=bytes([0xFF, 0x04, 0x00]))
+    assert c.writes == [b"RideOn", bytes([0xFF, 0x04, 0x00])]
+    assert res.challenge is None
+
+
 async def test_live_reports_still_unlocked():
     c = LiveClient(None)
     res = await dlock.live(c, "tok", sleep=lambda s: asyncio.sleep(0), wait=0.1, listen=0,
