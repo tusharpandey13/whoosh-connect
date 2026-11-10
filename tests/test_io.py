@@ -66,6 +66,8 @@ async def test_s3_s4_register_status_appinfo_broadcast():
     w.write(APP_INFO)
     await until(lambda: s.app_infos)
     assert s.app_infos[0].app_id == "mywhoosh" and s.app_infos[0].buttons == {1, 2, 0x18, 0x19}
+    # status is re-sent after the app-info handshake, so the app knows we are ready
+    assert await r.readexactly(3) == obc.encode_device_status(None, False)
     w.write(bytes([3, 0, 0, 0]))  # haptic ignored
     s.broadcast(bytes.fromhex("010101"))
     assert await r.readexactly(3) == bytes.fromhex("010101")

@@ -114,3 +114,12 @@ def test_m3_tracker():
     assert t.update(set()) == [(B.A, False), (B.SHIFT_R, False)]
     t.update({B.UP, B.Y})
     assert t.release_all() == [(B.UP, False), (B.Y, False)]
+
+
+def test_ping_is_a_message_not_garbage():
+    """MyWhoosh pings with a bare 0x00 every ~4 s; it must survive splitting."""
+    from whoosh_connect.obc import split_messages
+    msgs, rest = split_messages(bytes.fromhex("00"))
+    assert msgs == [b"\x00"] and rest == b""
+    msgs, rest = split_messages(bytes.fromhex("00") + bytes.fromhex("03000000"))
+    assert msgs == [b"\x00", bytes.fromhex("03000000")] and rest == b""

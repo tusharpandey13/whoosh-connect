@@ -107,8 +107,14 @@ class ObcServer:
                             info = self._clients[writer] = obc.parse_app_info(m)
                             log.info("MyWhoosh connected (app %s v%s, supports: %s)", info.app_id,
                                      info.version, " ".join(f"{b:02x}" for b in sorted(info.buttons)) or "all")
+                            writer.write(self._status)  # status after the handshake, not only before
                         except ValueError:
                             log.debug("bad app info %s", m.hex())
+                    elif m[0] == 0x00:
+                        # MyWhoosh pings every ~4 s; answer with the current status so it
+                        # keeps believing a controller is present.
+                        log.debug("ping from app, replying with status %s", self._status.hex())
+                        writer.write(self._status)
         except (ConnectionError, OSError):
             pass
         finally:
@@ -166,6 +172,7 @@ class ObcSink:
                 self._warned.add(a.obc)
                 log.warning("MyWhoosh may ignore %s", a.name)
         self.server.broadcast(obc.encode_button_state([(a.obc, d) for a, d in changes]))
+        log.debug("-> %s", obc.encode_button_state([(a.obc, d) for a, d in changes]).hex())
 
     async def status(self, battery, connected):
         self.server.set_status(battery, connected)

@@ -19,6 +19,7 @@ NAMES = {
 IDS = {v: k for k, v in NAMES.items()}
 SERVICE_UUID = "d273f680-d548-419d-b9d1-fa0472345229"
 MSG_BUTTONS, MSG_STATUS, MSG_HAPTIC, MSG_APP_INFO = 0x01, 0x02, 0x03, 0x04
+MSG_PING = 0x00  # MyWhoosh sends one every ~4 s; answering with status keeps it happy
 
 
 def encode_button_state(changes: list[tuple[int, bool]]) -> bytes:
@@ -67,7 +68,10 @@ def split_messages(buffer: bytes) -> tuple[list[bytes], bytes]:
     msgs: list[bytes] = []
     while buffer:
         t = buffer[0]
-        n = 4 if t == MSG_HAPTIC else _app_info_len(buffer) if t == MSG_APP_INFO else -1
+        n = (1 if t == MSG_PING
+             else 4 if t == MSG_HAPTIC
+             else _app_info_len(buffer) if t == MSG_APP_INFO
+             else -1)
         if n == -1:
             log.debug("unknown OBC message type 0x%02x, dropping %s", t, buffer.hex())
             return msgs, b""
