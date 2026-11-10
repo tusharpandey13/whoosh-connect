@@ -85,6 +85,19 @@ no answer, no buttons. That is exactly `probe2/probe3/probe4` from our side.
   `startAdvertising -> ok`, and neither bleak nor Zwift ever sees it). A
   peripheral-side MITM needs a second radio (Pi/ESP32/nRF), not this host.
 
+## Tooling for the next attempt
+
+```sh
+whoosh-connect unlock --capture raw/ble/unlock.jsonl     # records the ff 03 challenge passively
+whoosh-connect dlock raw/ble/unlock.jsonl                # POSTs it to the D-Lock service, own bearer token
+whoosh-connect dlock raw/ble/unlock.jsonl --push         # writes the answer to the puck, watches for buttons
+```
+
+`--push` tries the three candidate framings and counts `23 08` notifications for
+`--listen` seconds each: the first framing that makes the puck talk again is the
+real one. Note that Zwift must still be running when `dlock` reads the token out
+of the game process (`--token FILE` otherwise).
+
 ## Experiments still worth running
 
 1. **Fresh challenge → our own API call.** During the next lock window (~24 h

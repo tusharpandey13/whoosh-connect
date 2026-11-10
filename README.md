@@ -7,6 +7,8 @@ Bridges a Zwift Click v2 pair to MyWhoosh (macOS): right shift = gear up, left s
 ```
 make install                       # creates .venv, installs the package + bleak + zeroconf
 .venv/bin/whoosh-connect unlock    # daily: follow the Zwift checklist (pair trainer, then Clicks, ~30 s, Cmd-Q)
+.venv/bin/whoosh-connect unlock --capture raw/ble/unlock.jsonl   # same, plus a passive BLE recording (catches the ff 03 challenge)
+.venv/bin/whoosh-connect dlock raw/ble/unlock.jsonl [--push]     # try signing that challenge via Zwift's D-Lock service
 .venv/bin/whoosh-connect run       # ride: OpenBikeControl server + mDNS + BLE link to the left puck
 ```
 
@@ -16,7 +18,7 @@ make install                       # creates .venv, installs the package + bleak
 4. Optional: `--sink keyboard` sends K/I/A/D through System Events (needs Accessibility permission, MyWhoosh frontmost). `--capture FILE.jsonl` records the BLE traffic; `whoosh-connect replay FILE --sink print` replays it with no Bluetooth. `-v` shows raw hex.
 5. Remap buttons in `~/.config/whoosh-connect/config.toml`: `[map]` with `SHIFT_R = "SHIFT_UP"`, `Z = "NONE"`, etc.
 
-Troubleshooting: no button events means the Clicks are locked (run `unlock`; the unlock lasts about 24 h). Exit codes: 2 usage/config, 3 Bluetooth unavailable, 4 no free port in 36867-36877. Design: `docs/`. Tests: `make test` (fully offline).
+Troubleshooting: no button events means the Clicks are locked (run `unlock`; the unlock lasts about 24 h). Exit codes: 2 usage/config, 3 Bluetooth unavailable, 4 no free port in 36867-36877, 5 the D-Lock service signed nothing. Design: `docs/`. Tests: `make test` (fully offline).
 
 ---
 
