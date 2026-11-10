@@ -18,7 +18,7 @@ make install                       # creates .venv, installs the package + bleak
 4. Optional: `--sink keyboard` sends K/I/A/D through System Events (needs Accessibility permission, MyWhoosh frontmost). `--capture FILE.jsonl` records the BLE traffic; `whoosh-connect replay FILE --sink print` replays it with no Bluetooth. `-v` shows raw hex.
 5. Remap buttons in `~/.config/whoosh-connect/config.toml`: `[map]` with `SHIFT_R = "SHIFT_UP"`, `Z = "NONE"`, etc.
 
-Troubleshooting: no button events means the Clicks are locked (run `unlock`; the unlock lasts about 24 h). Exit codes: 2 usage/config, 3 Bluetooth unavailable, 4 no free port in 36867-36877, 5 the D-Lock service signed nothing. Design: `docs/`. Tests: `make test` (fully offline).
+Troubleshooting: no button events means the Clicks are locked (run `unlock`; the unlock window measured ~70 min on 10-Nov-2026, not 24 h). `run` now logs `Click sent an unlock challenge (ff 03): the pucks are locked` the moment the puck asks, instead of waiting for the 60 s timer. Exit codes: 2 usage/config, 3 Bluetooth unavailable, 4 no free port in 36867-36877, 5 the D-Lock service signed nothing. Design: `docs/`. Tests: `make test` (fully offline).
 
 ---
 
@@ -85,7 +85,7 @@ The left puck (2D7E) reports both pucks' buttons; the right puck (E89B) reports 
 - BikeControl's TROUBLESHOOTING says firmware 1.2.0 Click v2 only sends buttons if it connected to the **real Zwift app within ~24 h**. Zwift answers the `ff 03` challenge; BikeControl's answering code is closed source (a stub in the public repo).
 - The Zwift logs show the Clicks last connected to Zwift on 05-Nov-2026, so they're locked now.
 
-**Confirmed 10-Nov-2026** (`probe5_after_zwift_unlock.jsonl`): after pairing the trainer and then the Clicks in Zwift (~30 s), quitting Zwift, and connecting with `RideOn` + `ff 04 00`, buttons flowed for the whole 75 s capture (115 presses; every button in the table seen, repeatedly). A local bridge therefore works once Zwift has unlocked the Clicks. The unlock lasts ~24 h according to BikeControl; not yet measured here.
+**Confirmed 10-Nov-2026** (`probe5_after_zwift_unlock.jsonl`): after pairing the trainer and then the Clicks in Zwift (~30 s), quitting Zwift, and connecting with `RideOn` + `ff 04 00`, buttons flowed for the whole 75 s capture (115 presses; every button in the table seen, repeatedly). A local bridge therefore works once Zwift has unlocked the Clicks. The unlock lasts ~70 min in practice (measured 10-Nov-2026), not 24 h; BikeControl's "within ~24 h" is only an upper bound.
 
 Shortcut for the bridge: the left puck (2D7E) reports **all** buttons, right ones included, so one connection is enough.
 
@@ -103,7 +103,7 @@ Shortcut for the bridge: the left puck (2D7E) reports **all** buttons, right one
 |---|---|---|
 | **BikeControl** (Mac App Store, MyWhoosh partner) | none | Handles the unlock (automatic, or "connect in Zwift once a day"); may be paid |
 | Own bridge: bleak → OpenBikeControl/keyboard | ~100 lines | Needs a daily Zwift unlock, since the challenge response isn't public |
-| Own bridge, unlock handled too | reverse-engineering the `ff 03` exchange with a BLE sniffer | Fragile across firmware; not worth it |
+| Own bridge, unlock handled too | sign each `ff 03` with the rider's own token via the D-Lock service; write-format still being pinned down | Fragile across firmware; needs a Zwift login once for a token |
 
 ## Layout
 - `scripts/scan.py`: advert scan. `scripts/probe.py`: GATT dump plus handshake. `scripts/probe2.py DUR OUT [hexwrites]`: concurrent capture from both pucks to JSONL. `scripts/decode.py FILE`: button bitmask → press events.
@@ -122,6 +122,9 @@ once a Zwift **cloud** service has signed it (`POST .../api/d-lock-service/devic
 offline can answer it — hence the daily Zwift session.
 
 Tools added while investigating: `scripts/spy.py` (passive listener: connect,
-subscribe, never write — shows the device side of Zwift's own handshake) and
+subscribe, never write — shows the device side of Zwift's own handshake),
 `tools/fake_click.swift` (impersonates a Click; blocked on macOS because a
-locally generated advertisement is not delivered to a local scan).
+locally generated advertisement is not delivered to a local scan) and
+`tools/trace_zwift_writes.sh` (attaches lldb to your own Zwift game and logs every
+CoreBluetooth write: the missing host→puck framing, with characteristic UUID and
+write type. Observation only, no patching).

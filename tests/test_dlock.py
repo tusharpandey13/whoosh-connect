@@ -57,6 +57,26 @@ def test_framing_candidates_order():
     assert cands["answer"] == ANSWER
 
 
+def test_unwrap_field1_peels_the_21_byte_signature():
+    wrapped = bytes.fromhex("0a15350723904da4e3051a654e2766ae1b87500b044b6d")
+    assert dlock.unwrap_field1(wrapped) == wrapped[2:]
+    assert len(dlock.unwrap_field1(wrapped)) == 21
+    assert dlock.unwrap_field1(ANSWER) is None          # not a field-1 wrapper
+    assert dlock.unwrap_field1(b"\x0a\x15short") is None
+
+
+def test_write_candidates_cover_sig_and_write_types():
+    wrapped = bytes.fromhex("0a15350723904da4e3051a654e2766ae1b87500b044b6d")
+    cands = dlock.write_candidates(wrapped)
+    names = [c.framing for c in cands]
+    assert names[:4] == ["ff0400+answer", "ff0400+sig", "ff04+answer", "answer"]
+    assert names[-1] == "answer->0004"
+    assert all(c.char == dlock.SYNC_RX for c in cands[:-1])
+    assert [c.response for c in cands] == [False] * 4 + [True] * 4 + [False]
+    sig = next(c for c in cands if c.framing == "ff0400+sig")
+    assert sig.data == bytes([0xFF, 0x04, 0x00]) + wrapped[2:]
+
+
 # --- signing --------------------------------------------------------------
 
 async def test_sign_posts_payload_with_protobuf_and_bearer():
@@ -137,9 +157,36 @@ async def test_push_stops_at_first_accepted_framing():
 async def test_push_tries_all_framings_when_silent():
     c = FakeClient()
     res = await dlock.push(c, ANSWER, sleep=lambda s: asyncio.sleep(0), listen=0)
-    assert [r.framing for r in res] == ["ff0400+answer", "ff04+answer", "answer"]
+    assert [r.framing for r in res] == ["ff0400+answer", "ff04+answer", "answer",
+                                        "ff0400+answer resp", "ff04+answer resp",
+                                        "answer resp", "answer->0004"]
     assert all(r.buttons == 0 for r in res)
-    assert len(c.writes) == 3
+    assert len(c.writes) == 7
+
+
+async def test_push_prompts_to_press_and_counts_any_traffic():
+    c = FakeClient()
+    prompts, seen = [], {"n": 0}
+
+    def prompt(name, secs):
+        prompts.append(name)
+
+    res = await dlock.push(c, ANSWER, sleep=lambda s: asyncio.sleep(0), listen=0, seen=seen,
+                           prompt=prompt)
+    assert prompts == [r.framing for r in res]   # one prompt per write window
+    assert [r.wrote for r in res] == [True] * 7
+
+
+async def test_push_records_unwritable_candidate_and_keeps_going():
+    class PickyClient(FakeClient):
+        async def write_gatt_char(self, ch, data, response=False):
+            if ch == dlock.SYNC_TX:
+                raise RuntimeError("characteristic does not support write")
+            await super().write_gatt_char(ch, data, response=response)
+
+    c = PickyClient()
+    res = await dlock.push(c, ANSWER, sleep=lambda s: asyncio.sleep(0), listen=0)
+    assert res[-1].wrote is False and "does not support write" in res[-1].error
 
 
 # --- passive spy ----------------------------------------------------------
@@ -305,6 +352,20 @@ async def test_live_reports_still_unlocked():
                            signer=lambda *a, **k: None, on_log=lambda *_: None)
     assert res.challenge is None and res.answer == b""
     assert c.writes == [b"RideOn"]
+
+
+async def test_live_warns_when_the_answer_is_late(monkeypatch):
+    chal = bytes.fromhex(CHAL_HEX)
+    c = LiveClient(chal)
+    monkeypatch.setattr(dlock, "GRACE_S", 0.0)
+    logs = []
+
+    async def fake_sign(challenge, token, **kw):
+        return dlock.SignResult(200, ANSWER)
+
+    await dlock.live(c, "tok", sleep=lambda s: asyncio.sleep(0), wait=1, listen=0,
+                     signer=fake_sign, on_log=logs.append)
+    assert any("late" in m for m in logs)
 
 
 async def test_live_stops_when_service_signs_nothing():

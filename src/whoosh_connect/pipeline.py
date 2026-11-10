@@ -7,10 +7,12 @@ import time
 from typing import Protocol
 
 from .mapping import Action, ButtonTracker
-from .zwift import BatteryFrame, ButtonsFrame, Frame
+from .zwift import BatteryFrame, ButtonsFrame, ChallengeFrame, Frame
 
 log = logging.getLogger(__name__)
 LOCKED_AFTER_S = 60
+LOCKED_MSG = ("Click sent an unlock challenge (ff 03): the pucks are locked. "
+              "Run `whoosh-connect unlock` (or `dlock --live`) to sign it.")
 UNLOCK_HINT = ("No button frames 60 s after connecting: the Clicks are probably locked. "
                "Run `whoosh-connect unlock`.")
 
@@ -41,6 +43,7 @@ class Pipeline:
         self.connected = False
         self._link_at: float | None = None
         self._saw_buttons = self._hinted = False
+        self.locked = False
 
     async def _each(self, method: str, *args) -> None:
         for s in self.sinks:
@@ -71,6 +74,10 @@ class Pipeline:
             if frame.percent != self.battery:
                 self.battery = frame.percent
                 await self._each("status", self.battery, self.connected)
+        elif isinstance(frame, ChallengeFrame):
+            self.locked = True
+            self._hinted = True  # the challenge is better evidence than the 60 s timer
+            log.warning(LOCKED_MSG)
         else:
             log.debug("frame %r", frame)
 
@@ -79,6 +86,7 @@ class Pipeline:
         if connected:
             self.battery = battery if battery is not None else self.battery
             self._link_at, self._saw_buttons, self._hinted = self.clock(), False, False
+            self.locked = False
         else:
             self._link_at = None
             await self._emit(self.tracker.release_all())

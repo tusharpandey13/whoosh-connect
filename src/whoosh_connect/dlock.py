@@ -16,16 +16,18 @@ from __future__ import annotations
 import asyncio
 import json
 import re
+import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
 
 from .capture import read_capture
-from .zwift import ASYNC, SYNC_TX
+from .zwift import ASYNC, SYNC_RX, SYNC_TX, decode_varint
 
 GAME_API = "https://us-or-rly101.zwift.com"
 ENDPOINT = GAME_API + "/api/d-lock-service/device/authenticate"
 HEADER = bytes([0xFF, 0x03, 0x00])
+GRACE_S = 2.4  # puck stops streaming buttons this long after an unanswered challenge
 _RX = {ASYNC[:8], SYNC_TX[:8]}
 _TOKEN_RE = re.compile(r"--token=(\{.*\})")
 
@@ -55,13 +57,49 @@ def challenges(rows) -> list[Challenge]:
     return out
 
 
+def unwrap_field1(blob: bytes) -> bytes | None:
+    """`0a <len> <len bytes>` -> the inner bytes.
+
+    The 23 B cloud answer is `0a 15` + 21 B, i.e. protobuf field 1; Zwift may write
+    the inner 21 B to the puck rather than the wrapper, so both are tried.
+    """
+    if len(blob) < 3 or blob[0] != 0x0A:
+        return None
+    try:
+        n, i = decode_varint(blob, 1)
+    except ValueError:
+        return None
+    return blob[i:] if n and i + n == len(blob) else None
+
+
+def _shapes(answer: bytes) -> list[tuple[str, bytes]]:
+    sig = unwrap_field1(answer)
+    shapes = [("ff0400+answer", bytes([0xFF, 0x04, 0x00]) + answer)]
+    if sig:
+        shapes.append(("ff0400+sig", bytes([0xFF, 0x04, 0x00]) + sig))
+    shapes += [("ff04+answer", bytes([0xFF, 0x04]) + answer), ("answer", answer)]
+    return shapes
+
+
 def framing_candidates(answer: bytes) -> dict[str, bytes]:
-    """Host->puck writes to try, most likely first (the framing is not yet known)."""
-    return {
-        "ff0400+answer": bytes([0xFF, 0x04, 0x00]) + answer,
-        "ff04+answer": bytes([0xFF, 0x04]) + answer,
-        "answer": answer,
-    }
+    """Host->puck data shapes to try, most likely first (the framing is not yet known)."""
+    return dict(_shapes(answer))
+
+
+@dataclass(frozen=True)
+class WriteCandidate:
+    framing: str
+    char: bytes
+    data: bytes
+    response: bool = False
+
+
+def write_candidates(answer: bytes) -> list[WriteCandidate]:
+    """Every (characteristic, data, write type) worth trying, best guess first."""
+    out = [WriteCandidate(n, SYNC_RX, d) for n, d in _shapes(answer)]
+    out += [WriteCandidate(n + " resp", SYNC_RX, d, True) for n, d in _shapes(answer)]
+    out.append(WriteCandidate("answer->0004", SYNC_TX, answer))
+    return out
 
 
 @dataclass(frozen=True)
@@ -136,32 +174,47 @@ class PushResult:
     framing: str
     wrote: bool
     buttons: int
+    frames: int = 0  # any notification during the window, not just buttons
+    error: str | None = None
 
 
 async def push(client, answer: bytes, sleep=asyncio.sleep, listen=8.0, seen: dict | None = None,
-               subscribe: bool = True) -> list[PushResult]:
-    """Write each candidate framing to 0003 and watch for button frames.
+               subscribe: bool = True, prompt=None) -> list[PushResult]:
+    """Write each candidate framing and watch for button frames.
 
     `client` is anything bleak-shaped: it is already connected; we subscribe to
     0002 and count `23 08` notifications after each write. The puck streams
-    buttons only when it accepted the answer, so a non-zero count is proof.
+    buttons only when it accepted the answer *and* a button is pressed, so
+    `prompt(name, seconds)` is called before each window: without a press a zero
+    count proves nothing. `seen` is shared with the caller (live()) to keep the
+    running button total.
     """
-    from .zwift import SYNC_RX
     seen = seen if seen is not None else {"n": 0}
+    seen.setdefault("any", 0)
     stop = {"v": False}
 
     def on_frame(_c, data):
-        if not stop["v"] and bytes(data)[:2] == bytes([0x23, 0x08]):
+        if stop["v"]:
+            return
+        seen["any"] += 1
+        if bytes(data)[:2] == bytes([0x23, 0x08]):
             seen["n"] += 1
 
     if subscribe:
         await client.start_notify(ASYNC, on_frame)
     results = []
-    for name, frame in framing_candidates(answer).items():
-        seen["n"] = 0
-        await client.write_gatt_char(SYNC_RX, frame, response=False)
-        await sleep(listen)
-        results.append(PushResult(name, True, seen["n"]))
+    for cand in write_candidates(answer):
+        seen["n"] = seen["any"] = 0
+        wrote, error = True, None
+        try:
+            await client.write_gatt_char(cand.char, cand.data, response=cand.response)
+        except Exception as e:  # unsupported char/write type must not end the search
+            wrote, error = False, str(e)
+        if wrote:
+            if prompt:
+                prompt(cand.framing, listen)
+            await sleep(listen)
+        results.append(PushResult(cand.framing, wrote, seen["n"], seen["any"], error))
         if seen["n"]:
             break
     stop["v"] = True
@@ -219,14 +272,23 @@ async def live(client, token, sleep=asyncio.sleep, wait=30.0, listen=8.0, signer
 
     res.challenge = pending[-1]
     on_log(f"challenge {len(res.challenge.raw)} B: {res.challenge.raw.hex()}")
+    started = time.monotonic()
     result = await signer(res.challenge, token)
+    elapsed = time.monotonic() - started
     res.status = result.status
-    on_log("  " + result.describe())
+    on_log(f"  {result.describe()} in {elapsed:.2f} s")
+    if elapsed > GRACE_S:
+        on_log(f"  warning: the puck mutes itself {GRACE_S:.1f} s after the challenge; "
+               f"this answer arrived {elapsed - GRACE_S:.1f} s late")
     if not result.signed:
         return res
     res.answer = result.body
     res.push = await push(client, res.answer, sleep=sleep, listen=listen, seen=buttons,
-                          subscribe=False)
+                          subscribe=False,
+                          prompt=lambda name, secs: on_log(
+                              f"  {name}: press Click buttons now ({secs:.0f} s)"))
     for p in res.push:
-        on_log(f"  {p.framing}: {'accepted, ' + str(p.buttons) + ' button frames' if p.buttons else 'silent'}")
+        verdict = (f"accepted, {p.buttons} button frames" if p.buttons
+                   else ("write failed: " + p.error if p.error else "silent, no button press seen"))
+        on_log(f"  {p.framing}: {verdict}")
     return res

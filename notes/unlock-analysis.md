@@ -107,25 +107,67 @@ The D-Lock service does sign, and the puck does not care yet. Hard numbers:
 | 20:34:49, spontaneous, no RideOn | 94 B | 33 B (`03…`) / 52 B | **200, 23 B** `0a157af1…0af090` | not tried |
 | live run, after RideOn | 82 B | 33 B (`02…`) / 40 B | 204, 0 B | n/a |
 | `probe2` (locked, after RideOn) | 82 B | 33 B (`03…`) / 40 B | 204, 0 B | n/a |
-| live run #2, after RideOn | 100 B | 33 B (`02…`) / 58 B | **200, 23 B** `0a153507…044b6d` | **rejected** |
+| live run #2, RideOn only, **no button pressed** | 100 B | 33 B (`02…`) / 58 B | **200, 23 B** `0a153507…044b6d` | pushed, 0 frames |
 
-So: *registration*-shaped challenges (94/100 B) are signed by the cloud, and the
-82-byte one is not. The answer is protobuf `field1 = 21 bytes`. None of
-`ff0400+answer`, `ff04+answer`, bare `answer` made the puck talk
-(`raw/ble/push_negative_2026-11-10.log`), and an empty answer `ff 04 00` alone is
-not enough either (`raw/ble/empty_reply_negative_2026-11-10.log`). A stored
-answer is not valid for a different challenge — every shape carries a fresh
-33-byte `0x02/0x03` blob and a fresh 40-58 byte nonce.
+So: challenges with a 52/58-byte `f3` are signed by the cloud, and every
+40-byte one we tried got 204. The answer is protobuf `field1 = 21 bytes`. A
+stored answer is not valid for a different challenge — every shape carries a
+fresh 33-byte `0x02/0x03` blob and a fresh 40-58 byte nonce.
+
+### Correction: the push test was not a real test
+
+The only push test that had a signed answer (live run #2) was run **without
+pressing any Click button** (owner, 10-Nov). The puck emits `23 08` only when a
+button is pressed; with no press, zero frames is the expected result for *every*
+framing, accepted or not. `raw/ble/push_negative_2026-11-10.log` therefore does
+**not** show that `ff0400+answer`, `ff04+answer` or bare `answer` are wrong — the
+framing search has not actually been run yet. (The empty `ff 04 00` reply,
+`empty_reply_negative_2026-11-10.log`, was also unpresssed.)
+
+## Challenge payload shape (all three came from the same left puck, 1501/2D7E)
+
+    protobuf: 0a 21 <0x02|0x03 + 32 B> 10 80 80 8c 10 1a <n> <n B>
+
+- field 1: 33 B, a compressed P-256-style point (SEC1 prefix `02`/`03` + 32 B X).
+  Fresh on every challenge, so it is a key, not an id.
+- field 2: the same varint `0x02030000` (33751040) in all three captures.
+- field 3: 40 / 52 / 58 B of high-entropy bytes. Only the 52 and 58 B variants
+  were signed (200 + 23 B); the 40 B variant got 204.
+
+The 82 B / f3=40 shape is the one seen after a press and it mutes the buttons;
+the 94 B (spontaneous) and 100 B (RideOn, no press) shapes were signed. The
+service is deciding on the *payload contents*, so never assume an `ff 03` is
+signable: POST it and require 200 with a body.
 
 Consequences:
 - The unlock is not replayable and not a constant secret: sign per challenge.
-- The missing piece is the *write format* of the answer (sub-opcode/prefix/wrapper),
-  not the signature. Only Zwift's own bytes can tell us that, which needs a
-  peripheral-side proxy on a second radio (macOS will not loop a local
-  advertisement back — `tools/fake_click.swift`).
+- The missing piece is the *write format* of the answer (prefix/wrapper,
+  characteristic, write type) — and possibly latency, below.
 - Unlock lifetime is **not** 24 h: last Zwift auth 19:24, first re-challenge
   20:34:49 (~70 min, and it re-challenged on every reconnect after that). The
-  bridge should watch `0002` for `ff 03` and warn instead of trusting a timestamp.
+  bridge now watches `0002` for `ff 03` and logs "pucks are locked" immediately
+  (`Pipeline.locked`) instead of trusting a timestamp.
+
+## Latency is a second suspect (2.4 s budget)
+
+The puck stops streaming buttons **2.4 s after its `ff 03`**. Our signing path is
+DNS + TLS + POST through `urllib`, a new connection every time; if that round trip
+is over 2.4 s the answer is written after the puck muted itself and no framing can
+work. `dlock --live` now prints the signing time and warns when it exceeds the
+grace window. Measure that before blaming the framing. If it is slow, keep the TLS
+connection alive (or pre-resolve/pre-connect) so the POST is one RTT.
+
+## Candidate list now tried by `dlock.write_candidates`
+
+1. `ff 04 00` + full 23 B answer, char `0003`, write-without-response
+2. `ff 04 00` + **21 B inner signature** (`0a15` wrapper peeled), char `0003`
+3. `ff 04` + answer, char `0003`
+4. bare answer, char `0003`
+5. the same four as write-with-response
+6. last resort: `ff 04 00` + answer on `0004` (indication char; may reject the write)
+
+`push()` prompts "press Click buttons now" before each window, counts all
+notifications (not just `23 08`), and records write errors instead of aborting.
 
 ## Experiments still worth running
 
@@ -140,8 +182,9 @@ Consequences:
 2. **Replay test.** If the 23-byte answer is accepted for a *different* nonce,
    one captured answer is a permanent unlock. Test: send the old answer after a
    fresh `ff 03`, watch for button frames past the 2.4 s deadline.
-3. **Framing search** (needs the answer, no MITM): the host→puck write is one of
-   `ff 04 00 + answer`, `ff 04 + answer`, bare answer. Each candidate is testable
-   because success is visible (buttons keep flowing; failure = silence).
+3. **Framing search with a press** (the real test): `dlock --live --push` against
+   a locked puck, pressing a button in every prompted window. Silence only counts
+   if the press happened. Check the printed signing time first: if it is > 2.4 s,
+   fix latency before drawing conclusions.
 4. Confirm the exact validity window: our unlock was recorded by Zwift at
    ~19:24 (10-Nov); poll with `scripts/spy.py` until `ff 03` reappears.

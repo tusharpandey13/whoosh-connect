@@ -5,8 +5,9 @@ from whoosh_connect import cli
 from whoosh_connect.capture import replay
 from whoosh_connect.mapping import DEFAULT_MAP
 from whoosh_connect.pipeline import Pipeline
-from whoosh_connect.zwift import BatteryFrame, Button, ButtonsFrame
+from whoosh_connect.zwift import BatteryFrame, Button, ButtonsFrame, parse_frame
 
+TEST_CHAL = "ff03000a2102aabbcc"
 EXPECTED = {"SHIFT_UP": 18, "SHIFT_DOWN": 17, "STEER_LEFT": 4, "UP": 5, "STEER_RIGHT": 5,
             "DOWN": 8, "SELECT": 4, "BACK": 6, "CAMERA": 6, "MENU": 4}
 
@@ -76,6 +77,21 @@ async def test_p4_unlock_hint_once(caplog):
     t[0] = 200
     p.tick()
     assert caplog.text.count("probably locked") == 1
+
+
+async def test_p4b_challenge_frame_warns_locked_immediately(caplog):
+    t = [0.0]
+    p = Pipeline(DEFAULT_MAP, [Rec()], clock=lambda: t[0])
+    await p.on_link(True, 80)
+    caplog.set_level(logging.INFO)
+    await p.on_frame(parse_frame(bytes.fromhex(TEST_CHAL)))
+    assert p.locked is True
+    assert "pucks are locked" in caplog.text
+    t[0] = 200
+    p.tick()  # the challenge is better evidence than the 60 s timer; do not double-log
+    assert caplog.text.count("probably locked") == 0
+    await p.on_link(True, 80)  # fresh link clears the flag until the next ff 03
+    assert p.locked is False
 
 
 async def test_p5_locked_fixtures(fix):
