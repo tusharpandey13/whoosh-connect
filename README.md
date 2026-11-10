@@ -6,7 +6,8 @@ Bridges a Zwift Click v2 pair to MyWhoosh (macOS): right shift = gear up, left s
 
 ```
 make install                       # creates .venv, installs the package + bleak + zeroconf
-.venv/bin/whoosh-connect unlock    # daily: follow the Zwift checklist (pair trainer, then Clicks, ~30 s, Cmd-Q)
+.venv/bin/whoosh-connect run       # ride, no Zwift needed (see the note on the lock below)
+.venv/bin/whoosh-connect unlock    # optional: one Zwift pairing, if you want long uninterrupted windows
 .venv/bin/whoosh-connect unlock --capture raw/ble/unlock.jsonl   # same, plus a passive BLE recording (catches the ff 03 challenge)
 .venv/bin/whoosh-connect dlock raw/ble/unlock.jsonl [--push]     # try signing that challenge via Zwift's D-Lock service
 .venv/bin/whoosh-connect dlock --live --ff0400 --push            # catch, sign and answer a live challenge (prompts for a press)
@@ -19,14 +20,14 @@ make install                       # creates .venv, installs the package + bleak
 4. Optional: `--sink keyboard` sends K/I/A/D through System Events (needs Accessibility permission, MyWhoosh frontmost). `--capture FILE.jsonl` records the BLE traffic; `whoosh-connect replay FILE --sink print` replays it with no Bluetooth. `-v` shows raw hex.
 5. Remap buttons in `~/.config/whoosh-connect/config.toml`: `[map]` with `SHIFT_R = "SHIFT_UP"`, `Z = "NONE"`, etc.
 
-Troubleshooting: no button events means the Clicks are locked (run `unlock`; the unlock window measured ~70 min on 10-Nov-2026, not 24 h). `run` now logs `Click sent an unlock challenge (ff 03): the pucks are locked` the moment the puck asks, instead of waiting for the 60 s timer. Exit codes: 2 usage/config, 3 Bluetooth unavailable, 4 no free port in 36867-36877, 5 the D-Lock service signed nothing. Design: `docs/`. Tests: `make test` (fully offline).
+Troubleshooting: no button events means the puck is asleep or has sent its `ff 05 00 ea/fa 05` stopped frame - press a button to open a new ~50 s window. An unanswered `ff 03` does **not** stop buttons (verified 11-Nov-2026, see `notes/unlock-analysis.md`); `unlock` only makes a window last longer. `run` now logs `Click sent an unlock challenge (ff 03): the pucks are locked` the moment the puck asks, instead of waiting for the 60 s timer. Exit codes: 2 usage/config, 3 Bluetooth unavailable, 4 no free port in 36867-36877, 5 the D-Lock service signed nothing. Design: `docs/`. Tests: `make test` (fully offline).
 
 ---
 
 ## Research notes: Zwift Click v2 + Cog → MyWhoosh
 
 Goal: use the owner's Zwift Click v2 controllers (and Zwift Cog) for virtual shifting in MyWhoosh on macOS.
-Status as of 10-Nov-2026: BLE interface understood; buttons are **gated by Zwift's unlock**. The practical route is BikeControl, or a self-made bridge after a Zwift unlock.
+Status as of 11-Nov-2026: BLE interface understood and **riding without any Zwift unlock**. Buttons flow for ~50 s after each press even while the puck is still asking for an unlock it never gets; `run` bridges them to MyWhoosh over OpenBikeControl, gear changes included. MyWhoosh pings the socket with `0x00` every ~4 s and expects a device status back - that reply is what makes it accept the controller.
 
 ## Hardware
 
@@ -79,14 +80,16 @@ Physical layout confirmed by a labelled run (probe5: 4–5 rounds of up/right/do
 
 The left puck (2D7E) reports both pucks' buttons; the right puck (E89B) reports only its own.
 
-### The blocker: Zwift unlock
+### The unlock challenge (no longer a blocker)
 - `raw/ble/probe2.jsonl`: button events arrived **only for about 6 s right after connecting** (154 messages), then only the battery heartbeat.
-- `probe3_labelled.jsonl` (110 s, slow labelled presses): **0 button events**.
-- `probe4_ff0400.jsonl` (`RideOn` then `ff 04 00`, which is BikeControl's unlocked-path command): **0 button events**.
+- `probe3_labelled.jsonl` (110 s, slow labelled presses): **0 button events** — but no press was made inside the window, so it proves nothing (same for the first `02 02` run).
+- `probe4_ff0400.jsonl` (`RideOn` then `ff 04 00`): **0 button events**; `ff 04 00` itself silences a locked unit's stream, which is what this capture shows.
 - BikeControl's TROUBLESHOOTING says firmware 1.2.0 Click v2 only sends buttons if it connected to the **real Zwift app within ~24 h**. Zwift answers the `ff 03` challenge; BikeControl's answering code is closed source (a stub in the public repo).
 - The Zwift logs show the Clicks last connected to Zwift on 05-Nov-2026, so they're locked now.
 
-**Confirmed 10-Nov-2026** (`probe5_after_zwift_unlock.jsonl`): after pairing the trainer and then the Clicks in Zwift (~30 s), quitting Zwift, and connecting with `RideOn` + `ff 04 00`, buttons flowed for the whole 75 s capture (115 presses; every button in the table seen, repeatedly). A local bridge therefore works once Zwift has unlocked the Clicks. The unlock lasts ~70 min in practice (measured 10-Nov-2026), not 24 h; BikeControl's "within ~24 h" is only an upper bound.
+**Overtaken 11-Nov-2026**: the lock is not a gate for button reporting. With a fresh press and continuous riding, a puck that had answered nothing but 204s streamed every press for a 30 s window, sent a second `ff 03` at 20.5 s, and kept going; a full ride in MyWhoosh followed, gear changes included. What ends a window is the unit's own `ff 05 00 ea 05` stopped frame ~50 s after the press. See `notes/unlock-analysis.md`.
+
+**Confirmed 10-Nov-2026** (`probe5_after_zwift_unlock.jsonl`): after pairing in Zwift, buttons flowed for a whole 75 s capture — the unlocked case still looks like this (an unlocked unit also streams idle `23 08` frames continuously, which a locked one does not).
 
 Shortcut for the bridge: the left puck (2D7E) reports **all** buttons, right ones included, so one connection is enough.
 
@@ -103,7 +106,7 @@ Shortcut for the bridge: the left puck (2D7E) reports **all** buttons, right one
 | Option | Effort | Caveat |
 |---|---|---|
 | **BikeControl** (Mac App Store, MyWhoosh partner) | none | Handles the unlock (automatic, or "connect in Zwift once a day"); may be paid |
-| Own bridge: bleak → OpenBikeControl/keyboard | ~100 lines | Needs a daily Zwift unlock, since the challenge response isn't public |
+| Own bridge: bleak → OpenBikeControl/keyboard | ~100 lines | Works with an unanswered unlock challenge; windows are press-gated (~50 s) |
 | Own bridge, unlock handled too | sign each `ff 03` with the rider's own token via the D-Lock service; write-format still being pinned down | Fragile across firmware; needs a Zwift login once for a token |
 
 ## Layout
