@@ -67,16 +67,16 @@ async def test_p4_unlock_hint_once(caplog):
     caplog.set_level(logging.INFO)
     t[0] = 59
     p.tick()
-    assert "locked" not in caplog.text
+    assert "No button frames" not in caplog.text
     t[0] = 61
     p.tick()
     p.tick()
-    assert caplog.text.count("probably locked") == 1
+    assert caplog.text.count("No button frames") == 1
     await p.on_link(True, 80)  # new link: armed again, but a frame silences it
     await p.on_frame(ButtonsFrame(frozenset()))
     t[0] = 200
     p.tick()
-    assert caplog.text.count("probably locked") == 1
+    assert caplog.text.count("No button frames") == 1
 
 
 async def test_p4b_challenge_frame_warns_locked_immediately(caplog):
@@ -89,7 +89,7 @@ async def test_p4b_challenge_frame_warns_locked_immediately(caplog):
     assert "asked for an unlock" in caplog.text
     t[0] = 200
     p.tick()  # the challenge is better evidence than the 60 s timer; do not double-log
-    assert caplog.text.count("probably locked") == 0
+    assert caplog.text.count("No button frames") == 0
     await p.on_link(True, 80)  # fresh link clears the flag until the next ff 03
     assert p.locked is False
 
