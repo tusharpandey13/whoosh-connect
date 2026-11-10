@@ -89,6 +89,12 @@ class ObcServer:
     async def _handle(self, reader, writer):
         self._clients[writer] = None
         peer = writer.get_extra_info("peername")
+        sock = writer.get_extra_info("socket")
+        if sock is not None:  # tiny shift messages must not wait for Nagle batching
+            try:
+                sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            except OSError:
+                pass
         log.info("app connected from %s", peer)
         writer.write(self._status)
         buf = b""
