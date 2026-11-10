@@ -1,0 +1,13 @@
+21:26:54 === watching right for 600s (log /tmp/watch_right.log)
+21:26:57 --- found F2640CDB-976F-2DB0-8780-2AA8386B5FFE, connecting
+21:26:59     RideOn sent
+21:26:59        2.46s rx 526964654f6e
+21:27:16       18.93s rx ff0500fa05120a0c3643314145414439453839421008186b
+21:27:58     link closed, reconnecting
+21:28:21 not advertising; will retry
+21:28:41 not advertising; will retry
+21:29:02 not advertising; will retry
+21:29:22 not advertising; will retry
+21:29:31 --- found F2640CDB-976F-2DB0-8780-2AA8386B5FFE, connecting
+21:29:32     RideOn sent
+21:29:32        1.56s rx 526964654f6e

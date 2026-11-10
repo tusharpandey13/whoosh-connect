@@ -269,9 +269,16 @@ connections that write no commands at all. Re-arming needs the unit to sleep
 must therefore be one-shot per cycle, and the wake press has to be coordinated
 with the run (`SLEEP` + 3 beeps before the scan).
 
+### Evidence kept in the repo
+
+`raw/ble/2026-11-11/` holds this pass: `ride_obc_verbose.log` (the end-to-end proof,
+with the 64 ping replies and the `-> 01 …` frames), `ride_obc_capture.jsonl`, the
+`0x18` reset loop, the unpresssed `02 02` run, and the dormant right puck. The
+probes that produced them are in `tools/probes/`.
+
 ### Tooling used in this pass
 
-- `/tmp/unlock_shot.py` — one shot per wake: `MODE=passive|rideon|ff0400`,
+- `tools/probes/unlock_shot.py` — one shot per wake: `MODE=passive|rideon|ff0400`,
   optional `SLEEP` (quiet, then 3 beeps = press now), signs, then pushes every
   framing with beeps before each press window. Beeps: 1 = challenge, 2 = press
   now, 3+3 = accepted.

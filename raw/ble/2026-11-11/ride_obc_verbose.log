@@ -1,0 +1,898 @@
+01:12:22 Using selector: KqueueSelector
+01:12:23 OpenBikeControl listening on 192.168.1.7:36867
+01:12:23 Waiting for MyWhoosh: open the connection screen, tap the OpenBikeControl icon, pick whoosh-connect
+01:12:23 Press a Click button to wake it
+01:12:23 centralManagerDidUpdateState_
+01:12:23 Bluetooth powered on
+01:12:23 centralManager_didDiscoverPeripheral_advertisementData_RSSI_
+01:12:23 centralManager_didDiscoverPeripheral_advertisementData_RSSI_
+01:12:23 Discovered device 15018857-AF57-60C6-E4C3-49E31712DED0: Zwift Click @ RSSI: -53 (kCBAdvData <nsdict_keys(['kCBAdvDataManufacturerData', 'kCBAdvDataTimestamp', 'kCBAdvDataServiceData', 'kCBAdvDataRxPrimaryPHY', 'kCBAdvDataIsConnectable', 'kCBAdvDataRxSecondaryPHY', 'kCBAdvDataServiceUUIDs'])>) and Central: <CBCentralManager: 0x9e7374000>
+01:12:23 Discovered device 15018857-AF57-60C6-E4C3-49E31712DED0: Zwift Click @ RSSI: -53 (kCBAdvData <nsdict_keys(['kCBAdvDataManufacturerData', 'kCBAdvDataTimestamp', 'kCBAdvDataServiceData', 'kCBAdvDataRxPrimaryPHY', 'kCBAdvDataIsConnectable', 'kCBAdvDataRxSecondaryPHY', 'kCBAdvDataLocalName', 'kCBAdvDataServiceUUIDs'])>) and Central: <CBCentralManager: 0x9e7374000>
+01:12:24 centralManager_didDiscoverPeripheral_advertisementData_RSSI_
+01:12:24 centralManager_didDiscoverPeripheral_advertisementData_RSSI_
+01:12:24 Discovered device 15018857-AF57-60C6-E4C3-49E31712DED0: Zwift Click @ RSSI: -52 (kCBAdvData <nsdict_keys(['kCBAdvDataManufacturerData', 'kCBAdvDataTimestamp', 'kCBAdvDataServiceData', 'kCBAdvDataRxPrimaryPHY', 'kCBAdvDataIsConnectable', 'kCBAdvDataRxSecondaryPHY', 'kCBAdvDataLocalName', 'kCBAdvDataServiceUUIDs'])>) and Central: <CBCentralManager: 0x9e7374000>
+01:12:24 Discovered device 15018857-AF57-60C6-E4C3-49E31712DED0: Zwift Click @ RSSI: -53 (kCBAdvData <nsdict_keys(['kCBAdvDataManufacturerData', 'kCBAdvDataTimestamp', 'kCBAdvDataServiceData', 'kCBAdvDataRxPrimaryPHY', 'kCBAdvDataIsConnectable', 'kCBAdvDataRxSecondaryPHY', 'kCBAdvDataLocalName', 'kCBAdvDataServiceUUIDs'])>) and Central: <CBCentralManager: 0x9e7374000>
+01:12:24 CentralManagerDelegate at <bleak.backends.corebluetooth.CentralManagerDelegate.CentralManagerDelegate object at 0x10e3f42f0>
+01:12:24 Connecting to BLE device @ 15018857-AF57-60C6-E4C3-49E31712DED0
+01:12:24 centralManager_didConnectPeripheral_
+01:12:24 Retrieving services...
+01:12:25 peripheral_didDiscoverServices_
+01:12:25 Services discovered
+01:12:25 Retrieving characteristics for service 180A
+01:12:25 peripheral_didDiscoverCharacteristicsForService_error_
+01:12:25 Characteristics discovered
+01:12:25 Retrieving descriptors for characteristic 2A29
+01:12:25 peripheral_didDiscoverDescriptorsForCharacteristic_error_
+01:12:25 Descriptor discovered 17
+01:12:25 Retrieving descriptors for characteristic 2A25
+01:12:25 peripheral_didDiscoverDescriptorsForCharacteristic_error_
+01:12:25 Descriptor discovered 19
+01:12:25 Retrieving descriptors for characteristic 2A27
+01:12:25 peripheral_didDiscoverDescriptorsForCharacteristic_error_
+01:12:25 Descriptor discovered 21
+01:12:25 Retrieving descriptors for characteristic 2A26
+01:12:25 peripheral_didDiscoverDescriptorsForCharacteristic_error_
+01:12:25 Descriptor discovered 23
+01:12:25 Retrieving characteristics for service FC82
+01:12:25 peripheral_didDiscoverCharacteristicsForService_error_
+01:12:25 Characteristics discovered
+01:12:25 Retrieving descriptors for characteristic 00000002-19CA-4651-86E5-FA29DCDD09D1
+01:12:25 peripheral_didDiscoverDescriptorsForCharacteristic_error_
+01:12:25 Descriptor discovered 26
+01:12:25 Retrieving descriptors for characteristic 00000003-19CA-4651-86E5-FA29DCDD09D1
+01:12:25 peripheral_didDiscoverDescriptorsForCharacteristic_error_
+01:12:25 Descriptor discovered 29
+01:12:25 Retrieving descriptors for characteristic 00000004-19CA-4651-86E5-FA29DCDD09D1
+01:12:25 peripheral_didDiscoverDescriptorsForCharacteristic_error_
+01:12:25 Descriptor discovered 31
+01:12:25 Retrieving descriptors for characteristic 00000100-19CA-4651-86E5-FA29DCDD09D1
+01:12:25 peripheral_didDiscoverDescriptorsForCharacteristic_error_
+01:12:25 Descriptor discovered 34
+01:12:25 Retrieving descriptors for characteristic 00000101-19CA-4651-86E5-FA29DCDD09D1
+01:12:25 peripheral_didDiscoverDescriptorsForCharacteristic_error_
+01:12:25 Descriptor discovered 38
+01:12:25 Retrieving descriptors for characteristic 00000102-19CA-4651-86E5-FA29DCDD09D1
+01:12:25 peripheral_didDiscoverDescriptorsForCharacteristic_error_
+01:12:25 Descriptor discovered 42
+01:12:25 Retrieving characteristics for service 180F
+01:12:25 peripheral_didDiscoverCharacteristicsForService_error_
+01:12:25 Characteristics discovered
+01:12:25 Retrieving descriptors for characteristic 2A19
+01:12:25 peripheral_didDiscoverDescriptorsForCharacteristic_error_
+01:12:25 Descriptor discovered 47
+01:12:25 Services resolved for BleakClientCoreBluetooth (15018857-AF57-60C6-E4C3-49E31712DED0)
+01:12:25 peripheral_didUpdateNotificationStateForCharacteristic_error_
+01:12:25 Character Notify Update
+01:12:25 peripheral_didUpdateNotificationStateForCharacteristic_error_
+01:12:25 Character Notify Update
+01:12:25 Write Characteristic 00000003-19ca-4651-86e5-fa29dcdd09d1 : b'RideOn'
+01:12:25 peripheralIsReadyToSendWriteWithoutResponse_
+01:12:25 peripheral_didUpdateValueForCharacteristic_error_
+01:12:25 Write Characteristic 00000003-19ca-4651-86e5-fa29dcdd09d1 : b'\xff\x04\x00'
+01:12:25 peripheralIsReadyToSendWriteWithoutResponse_
+01:12:26 peripheral_didUpdateValueForCharacteristic_error_
+01:12:26 Read characteristic value
+01:12:26 Read Characteristic 00002a19-0000-1000-8000-00805f9b34fb: bytearray(b'F')
+01:12:26 Clicks connected (left puck 2D7E, battery 70 %). Press right shift to test
+01:12:26 peripheral_didUpdateValueForCharacteristic_error_
+01:12:26 peripheral_didUpdateValueForCharacteristic_error_
+01:12:26 frame LogFrame(raw=b'*\x08\x03\x12\x12\x12\x10\x08\x18\x10\x00\x18H"\x05\xff\xff\xff\xff\x1f(\xfb\x01')
+01:12:26 frame VendorFrame(raw=b'\xff\x05\x00\xfa\x05\x18\n\x0cD852FAA92D7E F(P0\xbf\x168\xbb\x16')
+01:12:27 peripheral_didUpdateValueForCharacteristic_error_
+01:12:27 frame VendorFrame(raw=b'\xff\x05\x00\xfa\x05\x12\n\x0cD852FAA92D7E\x10\x13\x18\x00')
+01:12:28 peripheral_didUpdateValueForCharacteristic_error_
+01:12:33 peripheral_didUpdateValueForCharacteristic_error_
+01:12:38 peripheral_didUpdateValueForCharacteristic_error_
+01:12:43 peripheral_didUpdateValueForCharacteristic_error_
+01:12:48 peripheral_didUpdateValueForCharacteristic_error_
+01:12:53 peripheral_didUpdateValueForCharacteristic_error_
+01:12:58 peripheral_didUpdateValueForCharacteristic_error_
+01:13:02 peripheral_didUpdateValueForCharacteristic_error_
+01:13:02 peripheral_didUpdateValueForCharacteristic_error_
+01:13:02 frame VendorFrame(raw=b'\xff\x05\x00\xfa\x05\x18\n\x0cD852FAA92D7E F(P0\xa7\x168\xbb\x16')
+01:13:03 peripheral_didUpdateValueForCharacteristic_error_
+01:13:08 peripheral_didUpdateValueForCharacteristic_error_
+01:13:13 peripheral_didUpdateValueForCharacteristic_error_
+01:13:18 peripheral_didUpdateValueForCharacteristic_error_
+01:13:23 peripheral_didUpdateValueForCharacteristic_error_
+01:13:28 No button frames 60 s after connecting: the Clicks are probably locked. Run `whoosh-connect unlock`.
+01:13:29 peripheral_didUpdateValueForCharacteristic_error_
+01:13:34 peripheral_didUpdateValueForCharacteristic_error_
+01:13:38 app connected from ('192.168.1.7', 57829)
+01:13:38 MyWhoosh connected (app mywhoosh v5.7.0, supports: 01 02 03 10 11 12 13 14 15 16 17 18 19 40)
+01:13:40 peripheral_didUpdateValueForCharacteristic_error_
+01:13:40 ping from app, replying with status 024601
+01:13:40 app disconnected (('192.168.1.7', 57829))
+01:13:43 app connected from ('192.168.1.7', 57839)
+01:13:43 MyWhoosh connected (app mywhoosh v5.7.0, supports: 01 02 03 10 11 12 13 14 15 16 17 18 19 40)
+01:13:44 ping from app, replying with status 024601
+01:13:45 peripheral_didUpdateValueForCharacteristic_error_
+01:13:48 ping from app, replying with status 024601
+01:13:50 peripheral_didUpdateValueForCharacteristic_error_
+01:13:52 ping from app, replying with status 024601
+01:13:56 peripheral_didUpdateValueForCharacteristic_error_
+01:13:56 ping from app, replying with status 024601
+01:14:00 ping from app, replying with status 024601
+01:14:01 peripheral_didUpdateValueForCharacteristic_error_
+01:14:04 ping from app, replying with status 024601
+01:14:07 peripheral_didUpdateValueForCharacteristic_error_
+01:14:08 ping from app, replying with status 024601
+01:14:12 ping from app, replying with status 024601
+01:14:12 peripheral_didUpdateValueForCharacteristic_error_
+01:14:15 app disconnected (('192.168.1.7', 57839))
+01:14:17 app connected from ('192.168.1.7', 57879)
+01:14:17 MyWhoosh connected (app mywhoosh v5.7.0, supports: 01 02 03 10 11 12 13 14 15 16 17 18 19 40)
+01:14:18 peripheral_didUpdateValueForCharacteristic_error_
+01:14:20 ping from app, replying with status 024601
+01:14:23 peripheral_didUpdateValueForCharacteristic_error_
+01:14:24 ping from app, replying with status 024601
+01:14:28 ping from app, replying with status 024601
+01:14:29 peripheral_didUpdateValueForCharacteristic_error_
+01:14:32 ping from app, replying with status 024601
+01:14:34 peripheral_didUpdateValueForCharacteristic_error_
+01:14:36 ping from app, replying with status 024601
+01:14:39 peripheral_didUpdateValueForCharacteristic_error_
+01:14:40 ping from app, replying with status 024601
+01:14:44 ping from app, replying with status 024601
+01:14:45 peripheral_didUpdateValueForCharacteristic_error_
+01:14:48 ping from app, replying with status 024601
+01:14:50 peripheral_didUpdateValueForCharacteristic_error_
+01:14:52 ping from app, replying with status 024601
+01:14:56 peripheral_didUpdateValueForCharacteristic_error_
+01:14:56 ping from app, replying with status 024601
+01:15:00 ping from app, replying with status 024601
+01:15:01 peripheral_didUpdateValueForCharacteristic_error_
+01:15:04 ping from app, replying with status 024601
+01:15:07 peripheral_didUpdateValueForCharacteristic_error_
+01:15:08 ping from app, replying with status 024601
+01:15:12 ping from app, replying with status 024601
+01:15:12 peripheral_didUpdateValueForCharacteristic_error_
+01:15:16 ping from app, replying with status 024601
+01:15:17 peripheral_didUpdateValueForCharacteristic_error_
+01:15:20 ping from app, replying with status 024601
+01:15:23 peripheral_didUpdateValueForCharacteristic_error_
+01:15:24 ping from app, replying with status 024601
+01:15:28 ping from app, replying with status 024601
+01:15:28 peripheral_didUpdateValueForCharacteristic_error_
+01:15:31 peripheral_didUpdateValueForCharacteristic_error_
+01:15:31 SHIFT_UP ▲
+01:15:31 -> 010101
+01:15:32 peripheral_didUpdateValueForCharacteristic_error_
+01:15:32 peripheral_didUpdateValueForCharacteristic_error_
+01:15:32 -> 010100
+01:15:32 peripheral_didUpdateValueForCharacteristic_error_
+01:15:32 peripheral_didUpdateValueForCharacteristic_error_
+01:15:32 peripheral_didUpdateValueForCharacteristic_error_
+01:15:32 ping from app, replying with status 024601
+01:15:32 peripheral_didUpdateValueForCharacteristic_error_
+01:15:32 SHIFT_UP ▲
+01:15:32 -> 010101
+01:15:32 peripheral_didUpdateValueForCharacteristic_error_
+01:15:32 -> 010100
+01:15:32 peripheral_didUpdateValueForCharacteristic_error_
+01:15:32 peripheral_didUpdateValueForCharacteristic_error_
+01:15:32 peripheral_didUpdateValueForCharacteristic_error_
+01:15:32 SHIFT_UP ▲
+01:15:32 -> 010101
+01:15:33 peripheral_didUpdateValueForCharacteristic_error_
+01:15:33 -> 010100
+01:15:33 peripheral_didUpdateValueForCharacteristic_error_
+01:15:33 SHIFT_UP ▲
+01:15:33 -> 010101
+01:15:33 peripheral_didUpdateValueForCharacteristic_error_
+01:15:33 -> 010100
+01:15:33 peripheral_didUpdateValueForCharacteristic_error_
+01:15:33 SHIFT_UP ▲
+01:15:33 -> 010101
+01:15:33 peripheral_didUpdateValueForCharacteristic_error_
+01:15:33 -> 010100
+01:15:33 peripheral_didUpdateValueForCharacteristic_error_
+01:15:33 peripheral_didUpdateValueForCharacteristic_error_
+01:15:33 peripheral_didUpdateValueForCharacteristic_error_
+01:15:33 peripheral_didUpdateValueForCharacteristic_error_
+01:15:34 peripheral_didUpdateValueForCharacteristic_error_
+01:15:34 peripheral_didUpdateValueForCharacteristic_error_
+01:15:34 peripheral_didUpdateValueForCharacteristic_error_
+01:15:34 peripheral_didUpdateValueForCharacteristic_error_
+01:15:34 peripheral_didUpdateValueForCharacteristic_error_
+01:15:34 peripheral_didUpdateValueForCharacteristic_error_
+01:15:35 peripheral_didUpdateValueForCharacteristic_error_
+01:15:35 SHIFT_DOWN ▲
+01:15:35 -> 010201
+01:15:35 peripheral_didUpdateValueForCharacteristic_error_
+01:15:35 peripheral_didUpdateValueForCharacteristic_error_
+01:15:35 -> 010200
+01:15:35 peripheral_didUpdateValueForCharacteristic_error_
+01:15:35 peripheral_didUpdateValueForCharacteristic_error_
+01:15:35 SHIFT_DOWN ▲
+01:15:35 -> 010201
+01:15:35 peripheral_didUpdateValueForCharacteristic_error_
+01:15:35 -> 010200
+01:15:35 peripheral_didUpdateValueForCharacteristic_error_
+01:15:35 peripheral_didUpdateValueForCharacteristic_error_
+01:15:35 peripheral_didUpdateValueForCharacteristic_error_
+01:15:35 SHIFT_DOWN ▲
+01:15:35 -> 010201
+01:15:36 peripheral_didUpdateValueForCharacteristic_error_
+01:15:36 peripheral_didUpdateValueForCharacteristic_error_
+01:15:36 -> 010200
+01:15:36 peripheral_didUpdateValueForCharacteristic_error_
+01:15:36 peripheral_didUpdateValueForCharacteristic_error_
+01:15:36 ping from app, replying with status 024601
+01:15:36 peripheral_didUpdateValueForCharacteristic_error_
+01:15:36 peripheral_didUpdateValueForCharacteristic_error_
+01:15:36 peripheral_didUpdateValueForCharacteristic_error_
+01:15:36 SHIFT_DOWN ▲
+01:15:36 -> 010201
+01:15:36 peripheral_didUpdateValueForCharacteristic_error_
+01:15:36 peripheral_didUpdateValueForCharacteristic_error_
+01:15:36 peripheral_didUpdateValueForCharacteristic_error_
+01:15:36 -> 010200
+01:15:37 peripheral_didUpdateValueForCharacteristic_error_
+01:15:37 peripheral_didUpdateValueForCharacteristic_error_
+01:15:37 SHIFT_DOWN ▲
+01:15:37 -> 010201
+01:15:37 peripheral_didUpdateValueForCharacteristic_error_
+01:15:37 peripheral_didUpdateValueForCharacteristic_error_
+01:15:37 -> 010200
+01:15:37 peripheral_didUpdateValueForCharacteristic_error_
+01:15:37 peripheral_didUpdateValueForCharacteristic_error_
+01:15:37 peripheral_didUpdateValueForCharacteristic_error_
+01:15:37 SHIFT_DOWN ▲
+01:15:37 -> 010201
+01:15:37 peripheral_didUpdateValueForCharacteristic_error_
+01:15:37 peripheral_didUpdateValueForCharacteristic_error_
+01:15:37 -> 010200
+01:15:38 peripheral_didUpdateValueForCharacteristic_error_
+01:15:38 peripheral_didUpdateValueForCharacteristic_error_
+01:15:38 peripheral_didUpdateValueForCharacteristic_error_
+01:15:38 peripheral_didUpdateValueForCharacteristic_error_
+01:15:38 peripheral_didUpdateValueForCharacteristic_error_
+01:15:38 peripheral_didUpdateValueForCharacteristic_error_
+01:15:38 peripheral_didUpdateValueForCharacteristic_error_
+01:15:38 peripheral_didUpdateValueForCharacteristic_error_
+01:15:38 peripheral_didUpdateValueForCharacteristic_error_
+01:15:39 peripheral_didUpdateValueForCharacteristic_error_
+01:15:40 ping from app, replying with status 024601
+01:15:44 ping from app, replying with status 024601
+01:15:45 peripheral_didUpdateValueForCharacteristic_error_
+01:15:48 ping from app, replying with status 024601
+01:15:50 peripheral_didUpdateValueForCharacteristic_error_
+01:15:52 ping from app, replying with status 024601
+01:15:56 peripheral_didUpdateValueForCharacteristic_error_
+01:15:56 ping from app, replying with status 024601
+01:16:00 ping from app, replying with status 024601
+01:16:01 peripheral_didUpdateValueForCharacteristic_error_
+01:16:04 ping from app, replying with status 024601
+01:16:06 peripheral_didUpdateValueForCharacteristic_error_
+01:16:08 ping from app, replying with status 024601
+01:16:12 peripheral_didUpdateValueForCharacteristic_error_
+01:16:12 ping from app, replying with status 024601
+01:16:16 ping from app, replying with status 024601
+01:16:17 peripheral_didUpdateValueForCharacteristic_error_
+01:16:20 ping from app, replying with status 024601
+01:16:23 peripheral_didUpdateValueForCharacteristic_error_
+01:16:24 ping from app, replying with status 024601
+01:16:28 ping from app, replying with status 024601
+01:16:28 peripheral_didUpdateValueForCharacteristic_error_
+01:16:31 peripheral_didUpdateValueForCharacteristic_error_
+01:16:31 SHIFT_UP ▲
+01:16:31 -> 010101
+01:16:31 peripheral_didUpdateValueForCharacteristic_error_
+01:16:31 peripheral_didUpdateValueForCharacteristic_error_
+01:16:31 -> 010100
+01:16:31 peripheral_didUpdateValueForCharacteristic_error_
+01:16:31 peripheral_didUpdateValueForCharacteristic_error_
+01:16:31 peripheral_didUpdateValueForCharacteristic_error_
+01:16:31 peripheral_didUpdateValueForCharacteristic_error_
+01:16:32 peripheral_didUpdateValueForCharacteristic_error_
+01:16:32 SHIFT_UP ▲
+01:16:32 -> 010101
+01:16:32 peripheral_didUpdateValueForCharacteristic_error_
+01:16:32 peripheral_didUpdateValueForCharacteristic_error_
+01:16:32 -> 010100
+01:16:32 peripheral_didUpdateValueForCharacteristic_error_
+01:16:32 peripheral_didUpdateValueForCharacteristic_error_
+01:16:32 ping from app, replying with status 024601
+01:16:32 peripheral_didUpdateValueForCharacteristic_error_
+01:16:32 peripheral_didUpdateValueForCharacteristic_error_
+01:16:32 peripheral_didUpdateValueForCharacteristic_error_
+01:16:32 peripheral_didUpdateValueForCharacteristic_error_
+01:16:32 peripheral_didUpdateValueForCharacteristic_error_
+01:16:33 peripheral_didUpdateValueForCharacteristic_error_
+01:16:33 peripheral_didUpdateValueForCharacteristic_error_
+01:16:33 peripheral_didUpdateValueForCharacteristic_error_
+01:16:33 SHIFT_UP ▲
+01:16:33 -> 010101
+01:16:33 peripheral_didUpdateValueForCharacteristic_error_
+01:16:33 peripheral_didUpdateValueForCharacteristic_error_
+01:16:33 -> 010100
+01:16:33 peripheral_didUpdateValueForCharacteristic_error_
+01:16:33 peripheral_didUpdateValueForCharacteristic_error_
+01:16:33 SHIFT_UP ▲
+01:16:33 -> 010101
+01:16:33 peripheral_didUpdateValueForCharacteristic_error_
+01:16:33 -> 010100
+01:16:33 peripheral_didUpdateValueForCharacteristic_error_
+01:16:34 peripheral_didUpdateValueForCharacteristic_error_
+01:16:34 SHIFT_UP ▲
+01:16:34 -> 010101
+01:16:34 peripheral_didUpdateValueForCharacteristic_error_
+01:16:34 -> 010100
+01:16:34 peripheral_didUpdateValueForCharacteristic_error_
+01:16:34 peripheral_didUpdateValueForCharacteristic_error_
+01:16:34 peripheral_didUpdateValueForCharacteristic_error_
+01:16:34 peripheral_didUpdateValueForCharacteristic_error_
+01:16:34 peripheral_didUpdateValueForCharacteristic_error_
+01:16:34 peripheral_didUpdateValueForCharacteristic_error_
+01:16:34 peripheral_didUpdateValueForCharacteristic_error_
+01:16:34 peripheral_didUpdateValueForCharacteristic_error_
+01:16:34 peripheral_didUpdateValueForCharacteristic_error_
+01:16:35 peripheral_didUpdateValueForCharacteristic_error_
+01:16:36 ping from app, replying with status 024601
+01:16:39 peripheral_didUpdateValueForCharacteristic_error_
+01:16:40 ping from app, replying with status 024601
+01:16:44 ping from app, replying with status 024601
+01:16:45 peripheral_didUpdateValueForCharacteristic_error_
+01:16:47 peripheral_didUpdateValueForCharacteristic_error_
+01:16:47 SHIFT_DOWN ▲
+01:16:47 -> 010201
+01:16:47 peripheral_didUpdateValueForCharacteristic_error_
+01:16:47 peripheral_didUpdateValueForCharacteristic_error_
+01:16:47 -> 010200
+01:16:47 peripheral_didUpdateValueForCharacteristic_error_
+01:16:47 SHIFT_DOWN ▲
+01:16:47 -> 010201
+01:16:47 peripheral_didUpdateValueForCharacteristic_error_
+01:16:47 -> 010200
+01:16:47 peripheral_didUpdateValueForCharacteristic_error_
+01:16:47 SHIFT_DOWN ▲
+01:16:47 -> 010201
+01:16:47 peripheral_didUpdateValueForCharacteristic_error_
+01:16:47 -> 010200
+01:16:47 peripheral_didUpdateValueForCharacteristic_error_
+01:16:47 peripheral_didUpdateValueForCharacteristic_error_
+01:16:48 peripheral_didUpdateValueForCharacteristic_error_
+01:16:48 peripheral_didUpdateValueForCharacteristic_error_
+01:16:48 peripheral_didUpdateValueForCharacteristic_error_
+01:16:48 peripheral_didUpdateValueForCharacteristic_error_
+01:16:48 peripheral_didUpdateValueForCharacteristic_error_
+01:16:48 ping from app, replying with status 024601
+01:16:48 peripheral_didUpdateValueForCharacteristic_error_
+01:16:48 peripheral_didUpdateValueForCharacteristic_error_
+01:16:50 peripheral_didUpdateValueForCharacteristic_error_
+01:16:51 peripheral_didUpdateValueForCharacteristic_error_
+01:16:51 SHIFT_DOWN ▲
+01:16:51 -> 010201
+01:16:51 peripheral_didUpdateValueForCharacteristic_error_
+01:16:51 -> 010200
+01:16:51 peripheral_didUpdateValueForCharacteristic_error_
+01:16:51 peripheral_didUpdateValueForCharacteristic_error_
+01:16:51 SHIFT_DOWN ▲
+01:16:51 -> 010201
+01:16:51 peripheral_didUpdateValueForCharacteristic_error_
+01:16:51 -> 010200
+01:16:51 peripheral_didUpdateValueForCharacteristic_error_
+01:16:51 SHIFT_DOWN ▲
+01:16:51 -> 010201
+01:16:51 peripheral_didUpdateValueForCharacteristic_error_
+01:16:51 -> 010200
+01:16:51 peripheral_didUpdateValueForCharacteristic_error_
+01:16:51 peripheral_didUpdateValueForCharacteristic_error_
+01:16:51 peripheral_didUpdateValueForCharacteristic_error_
+01:16:52 peripheral_didUpdateValueForCharacteristic_error_
+01:16:52 peripheral_didUpdateValueForCharacteristic_error_
+01:16:52 peripheral_didUpdateValueForCharacteristic_error_
+01:16:52 peripheral_didUpdateValueForCharacteristic_error_
+01:16:52 ping from app, replying with status 024601
+01:16:52 peripheral_didUpdateValueForCharacteristic_error_
+01:16:52 peripheral_didUpdateValueForCharacteristic_error_
+01:16:56 peripheral_didUpdateValueForCharacteristic_error_
+01:16:56 ping from app, replying with status 024601
+01:16:57 peripheral_didUpdateValueForCharacteristic_error_
+01:16:57 SHIFT_DOWN ▲
+01:16:57 -> 010201
+01:16:57 peripheral_didUpdateValueForCharacteristic_error_
+01:16:57 -> 010200
+01:16:57 peripheral_didUpdateValueForCharacteristic_error_
+01:16:57 peripheral_didUpdateValueForCharacteristic_error_
+01:16:57 peripheral_didUpdateValueForCharacteristic_error_
+01:16:58 peripheral_didUpdateValueForCharacteristic_error_
+01:16:58 SHIFT_DOWN ▲
+01:16:58 -> 010201
+01:16:58 peripheral_didUpdateValueForCharacteristic_error_
+01:16:58 -> 010200
+01:16:58 peripheral_didUpdateValueForCharacteristic_error_
+01:16:58 peripheral_didUpdateValueForCharacteristic_error_
+01:16:58 SHIFT_DOWN ▲
+01:16:58 -> 010201
+01:16:58 peripheral_didUpdateValueForCharacteristic_error_
+01:16:58 peripheral_didUpdateValueForCharacteristic_error_
+01:16:58 -> 010200
+01:16:58 peripheral_didUpdateValueForCharacteristic_error_
+01:16:58 peripheral_didUpdateValueForCharacteristic_error_
+01:16:58 peripheral_didUpdateValueForCharacteristic_error_
+01:16:58 peripheral_didUpdateValueForCharacteristic_error_
+01:16:59 peripheral_didUpdateValueForCharacteristic_error_
+01:16:59 peripheral_didUpdateValueForCharacteristic_error_
+01:16:59 peripheral_didUpdateValueForCharacteristic_error_
+01:16:59 peripheral_didUpdateValueForCharacteristic_error_
+01:17:00 ping from app, replying with status 024601
+01:17:01 peripheral_didUpdateValueForCharacteristic_error_
+01:17:04 ping from app, replying with status 024601
+01:17:07 peripheral_didUpdateValueForCharacteristic_error_
+01:17:08 ping from app, replying with status 024601
+01:17:12 ping from app, replying with status 024601
+01:17:12 peripheral_didUpdateValueForCharacteristic_error_
+01:17:16 ping from app, replying with status 024601
+01:17:17 peripheral_didUpdateValueForCharacteristic_error_
+01:17:17 BACK ▲
+01:17:17 -> 011501
+01:17:17 peripheral_didUpdateValueForCharacteristic_error_
+01:17:17 peripheral_didUpdateValueForCharacteristic_error_
+01:17:17 peripheral_didUpdateValueForCharacteristic_error_
+01:17:17 -> 011500
+01:17:17 peripheral_didUpdateValueForCharacteristic_error_
+01:17:18 peripheral_didUpdateValueForCharacteristic_error_
+01:17:18 peripheral_didUpdateValueForCharacteristic_error_
+01:17:18 peripheral_didUpdateValueForCharacteristic_error_
+01:17:18 peripheral_didUpdateValueForCharacteristic_error_
+01:17:18 peripheral_didUpdateValueForCharacteristic_error_
+01:17:18 peripheral_didUpdateValueForCharacteristic_error_
+01:17:18 peripheral_didUpdateValueForCharacteristic_error_
+01:17:18 peripheral_didUpdateValueForCharacteristic_error_
+01:17:18 MENU ▲
+01:17:18 -> 011601
+01:17:18 peripheral_didUpdateValueForCharacteristic_error_
+01:17:19 peripheral_didUpdateValueForCharacteristic_error_
+01:17:19 -> 011600
+01:17:19 peripheral_didUpdateValueForCharacteristic_error_
+01:17:19 peripheral_didUpdateValueForCharacteristic_error_
+01:17:19 peripheral_didUpdateValueForCharacteristic_error_
+01:17:19 peripheral_didUpdateValueForCharacteristic_error_
+01:17:19 peripheral_didUpdateValueForCharacteristic_error_
+01:17:19 peripheral_didUpdateValueForCharacteristic_error_
+01:17:19 SELECT ▲
+01:17:19 -> 011401
+01:17:19 peripheral_didUpdateValueForCharacteristic_error_
+01:17:19 -> 011400
+01:17:19 peripheral_didUpdateValueForCharacteristic_error_
+01:17:19 peripheral_didUpdateValueForCharacteristic_error_
+01:17:20 peripheral_didUpdateValueForCharacteristic_error_
+01:17:20 peripheral_didUpdateValueForCharacteristic_error_
+01:17:20 SELECT ▲
+01:17:20 -> 011401
+01:17:20 peripheral_didUpdateValueForCharacteristic_error_
+01:17:20 peripheral_didUpdateValueForCharacteristic_error_
+01:17:20 CAMERA ▲
+01:17:20 -> 0114004001
+01:17:20 ping from app, replying with status 024601
+01:17:20 peripheral_didUpdateValueForCharacteristic_error_
+01:17:20 peripheral_didUpdateValueForCharacteristic_error_
+01:17:20 -> 014000
+01:17:20 peripheral_didUpdateValueForCharacteristic_error_
+01:17:20 peripheral_didUpdateValueForCharacteristic_error_
+01:17:20 peripheral_didUpdateValueForCharacteristic_error_
+01:17:20 peripheral_didUpdateValueForCharacteristic_error_
+01:17:20 STEER_RIGHT ▲
+01:17:20 -> 011901
+01:17:20 peripheral_didUpdateValueForCharacteristic_error_
+01:17:20 DOWN ▲
+01:17:20 -> 011101
+01:17:21 peripheral_didUpdateValueForCharacteristic_error_
+01:17:21 peripheral_didUpdateValueForCharacteristic_error_
+01:17:21 -> 0119001100
+01:17:21 peripheral_didUpdateValueForCharacteristic_error_
+01:17:21 peripheral_didUpdateValueForCharacteristic_error_
+01:17:21 peripheral_didUpdateValueForCharacteristic_error_
+01:17:21 peripheral_didUpdateValueForCharacteristic_error_
+01:17:21 peripheral_didUpdateValueForCharacteristic_error_
+01:17:21 peripheral_didUpdateValueForCharacteristic_error_
+01:17:21 peripheral_didUpdateValueForCharacteristic_error_
+01:17:21 peripheral_didUpdateValueForCharacteristic_error_
+01:17:21 peripheral_didUpdateValueForCharacteristic_error_
+01:17:21 peripheral_didUpdateValueForCharacteristic_error_
+01:17:21 peripheral_didUpdateValueForCharacteristic_error_
+01:17:21 peripheral_didUpdateValueForCharacteristic_error_
+01:17:21 peripheral_didUpdateValueForCharacteristic_error_
+01:17:22 peripheral_didUpdateValueForCharacteristic_error_
+01:17:22 peripheral_didUpdateValueForCharacteristic_error_
+01:17:22 peripheral_didUpdateValueForCharacteristic_error_
+01:17:22 STEER_RIGHT ▲
+01:17:22 -> 011901
+01:17:22 peripheral_didUpdateValueForCharacteristic_error_
+01:17:22 STEER_LEFT ▲
+01:17:22 UP ▲
+01:17:22 -> 01180110011900
+01:17:22 peripheral_didUpdateValueForCharacteristic_error_
+01:17:22 peripheral_didUpdateValueForCharacteristic_error_
+01:17:22 -> 0118001000
+01:17:22 peripheral_didUpdateValueForCharacteristic_error_
+01:17:22 STEER_LEFT ▲
+01:17:22 DOWN ▲
+01:17:22 -> 0118011101
+01:17:22 peripheral_didUpdateValueForCharacteristic_error_
+01:17:22 UP ▲
+01:17:22 -> 0110011100
+01:17:22 peripheral_didUpdateValueForCharacteristic_error_
+01:17:22 -> 0118001000
+01:17:22 peripheral_didUpdateValueForCharacteristic_error_
+01:17:23 peripheral_didUpdateValueForCharacteristic_error_
+01:17:23 peripheral_didUpdateValueForCharacteristic_error_
+01:17:23 peripheral_didUpdateValueForCharacteristic_error_
+01:17:23 peripheral_didUpdateValueForCharacteristic_error_
+01:17:23 peripheral_didUpdateValueForCharacteristic_error_
+01:17:23 peripheral_didUpdateValueForCharacteristic_error_
+01:17:23 peripheral_didUpdateValueForCharacteristic_error_
+01:17:23 peripheral_didUpdateValueForCharacteristic_error_
+01:17:23 peripheral_didUpdateValueForCharacteristic_error_
+01:17:23 peripheral_didUpdateValueForCharacteristic_error_
+01:17:23 SHIFT_DOWN ▲
+01:17:23 -> 010201
+01:17:23 peripheral_didUpdateValueForCharacteristic_error_
+01:17:24 peripheral_didUpdateValueForCharacteristic_error_
+01:17:24 -> 010200
+01:17:24 peripheral_didUpdateValueForCharacteristic_error_
+01:17:24 SHIFT_DOWN ▲
+01:17:24 -> 010201
+01:17:24 peripheral_didUpdateValueForCharacteristic_error_
+01:17:24 peripheral_didUpdateValueForCharacteristic_error_
+01:17:24 -> 010200
+01:17:24 ping from app, replying with status 024601
+01:17:24 peripheral_didUpdateValueForCharacteristic_error_
+01:17:24 SHIFT_DOWN ▲
+01:17:24 -> 010201
+01:17:24 peripheral_didUpdateValueForCharacteristic_error_
+01:17:24 -> 010200
+01:17:24 peripheral_didUpdateValueForCharacteristic_error_
+01:17:24 peripheral_didUpdateValueForCharacteristic_error_
+01:17:24 peripheral_didUpdateValueForCharacteristic_error_
+01:17:25 peripheral_didUpdateValueForCharacteristic_error_
+01:17:25 peripheral_didUpdateValueForCharacteristic_error_
+01:17:25 peripheral_didUpdateValueForCharacteristic_error_
+01:17:25 peripheral_didUpdateValueForCharacteristic_error_
+01:17:25 peripheral_didUpdateValueForCharacteristic_error_
+01:17:25 peripheral_didUpdateValueForCharacteristic_error_
+01:17:25 peripheral_didUpdateValueForCharacteristic_error_
+01:17:25 SHIFT_UP ▲
+01:17:25 -> 010101
+01:17:25 peripheral_didUpdateValueForCharacteristic_error_
+01:17:25 -> 010100
+01:17:25 peripheral_didUpdateValueForCharacteristic_error_
+01:17:25 peripheral_didUpdateValueForCharacteristic_error_
+01:17:25 SHIFT_UP ▲
+01:17:25 -> 010101
+01:17:25 peripheral_didUpdateValueForCharacteristic_error_
+01:17:25 -> 010100
+01:17:26 peripheral_didUpdateValueForCharacteristic_error_
+01:17:26 SHIFT_UP ▲
+01:17:26 -> 010101
+01:17:26 peripheral_didUpdateValueForCharacteristic_error_
+01:17:26 -> 010100
+01:17:26 peripheral_didUpdateValueForCharacteristic_error_
+01:17:26 SHIFT_UP ▲
+01:17:26 -> 010101
+01:17:26 peripheral_didUpdateValueForCharacteristic_error_
+01:17:26 -> 010100
+01:17:26 peripheral_didUpdateValueForCharacteristic_error_
+01:17:26 SHIFT_UP ▲
+01:17:26 -> 010101
+01:17:26 peripheral_didUpdateValueForCharacteristic_error_
+01:17:26 -> 010100
+01:17:26 peripheral_didUpdateValueForCharacteristic_error_
+01:17:26 peripheral_didUpdateValueForCharacteristic_error_
+01:17:26 peripheral_didUpdateValueForCharacteristic_error_
+01:17:26 peripheral_didUpdateValueForCharacteristic_error_
+01:17:27 peripheral_didUpdateValueForCharacteristic_error_
+01:17:27 SHIFT_UP ▲
+01:17:27 -> 010101
+01:17:27 peripheral_didUpdateValueForCharacteristic_error_
+01:17:27 peripheral_didUpdateValueForCharacteristic_error_
+01:17:27 -> 010100
+01:17:27 peripheral_didUpdateValueForCharacteristic_error_
+01:17:27 peripheral_didUpdateValueForCharacteristic_error_
+01:17:27 SHIFT_UP ▲
+01:17:27 -> 010101
+01:17:27 peripheral_didUpdateValueForCharacteristic_error_
+01:17:27 -> 010100
+01:17:27 peripheral_didUpdateValueForCharacteristic_error_
+01:17:27 peripheral_didUpdateValueForCharacteristic_error_
+01:17:27 peripheral_didUpdateValueForCharacteristic_error_
+01:17:28 peripheral_didUpdateValueForCharacteristic_error_
+01:17:28 peripheral_didUpdateValueForCharacteristic_error_
+01:17:28 peripheral_didUpdateValueForCharacteristic_error_
+01:17:28 peripheral_didUpdateValueForCharacteristic_error_
+01:17:28 peripheral_didUpdateValueForCharacteristic_error_
+01:17:28 ping from app, replying with status 024601
+01:17:28 peripheral_didUpdateValueForCharacteristic_error_
+01:17:28 peripheral_didUpdateValueForCharacteristic_error_
+01:17:29 peripheral_didUpdateValueForCharacteristic_error_
+01:17:29 SELECT ▲
+01:17:29 -> 011401
+01:17:29 peripheral_didUpdateValueForCharacteristic_error_
+01:17:29 peripheral_didUpdateValueForCharacteristic_error_
+01:17:29 -> 011400
+01:17:30 peripheral_didUpdateValueForCharacteristic_error_
+01:17:30 peripheral_didUpdateValueForCharacteristic_error_
+01:17:30 peripheral_didUpdateValueForCharacteristic_error_
+01:17:30 peripheral_didUpdateValueForCharacteristic_error_
+01:17:30 peripheral_didUpdateValueForCharacteristic_error_
+01:17:30 peripheral_didUpdateValueForCharacteristic_error_
+01:17:30 peripheral_didUpdateValueForCharacteristic_error_
+01:17:30 MENU ▲
+01:17:30 -> 011601
+01:17:30 peripheral_didUpdateValueForCharacteristic_error_
+01:17:30 -> 011600
+01:17:30 peripheral_didUpdateValueForCharacteristic_error_
+01:17:30 peripheral_didUpdateValueForCharacteristic_error_
+01:17:30 STEER_RIGHT ▲
+01:17:30 -> 011901
+01:17:30 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 DOWN ▲
+01:17:31 -> 011101
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 -> 0119001100
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 STEER_LEFT ▲
+01:17:31 UP ▲
+01:17:31 -> 0118011001
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 peripheral_didUpdateValueForCharacteristic_error_
+01:17:31 -> 0118001000
+01:17:32 peripheral_didUpdateValueForCharacteristic_error_
+01:17:32 UP ▲
+01:17:32 -> 011001
+01:17:32 peripheral_didUpdateValueForCharacteristic_error_
+01:17:32 peripheral_didUpdateValueForCharacteristic_error_
+01:17:32 peripheral_didUpdateValueForCharacteristic_error_
+01:17:32 ping from app, replying with status 024601
+01:17:32 peripheral_didUpdateValueForCharacteristic_error_
+01:17:32 STEER_LEFT ▲
+01:17:32 -> 011801
+01:17:32 peripheral_didUpdateValueForCharacteristic_error_
+01:17:32 -> 011000
+01:17:32 peripheral_didUpdateValueForCharacteristic_error_
+01:17:32 UP ▲
+01:17:32 -> 011001
+01:17:32 peripheral_didUpdateValueForCharacteristic_error_
+01:17:32 peripheral_didUpdateValueForCharacteristic_error_
+01:17:32 peripheral_didUpdateValueForCharacteristic_error_
+01:17:33 peripheral_didUpdateValueForCharacteristic_error_
+01:17:33 peripheral_didUpdateValueForCharacteristic_error_
+01:17:33 -> 0118001000
+01:17:33 peripheral_didUpdateValueForCharacteristic_error_
+01:17:33 peripheral_didUpdateValueForCharacteristic_error_
+01:17:33 STEER_LEFT ▲
+01:17:33 -> 011801
+01:17:33 peripheral_didUpdateValueForCharacteristic_error_
+01:17:33 peripheral_didUpdateValueForCharacteristic_error_
+01:17:33 peripheral_didUpdateValueForCharacteristic_error_
+01:17:33 peripheral_didUpdateValueForCharacteristic_error_
+01:17:33 peripheral_didUpdateValueForCharacteristic_error_
+01:17:34 peripheral_didUpdateValueForCharacteristic_error_
+01:17:34 peripheral_didUpdateValueForCharacteristic_error_
+01:17:34 peripheral_didUpdateValueForCharacteristic_error_
+01:17:34 peripheral_didUpdateValueForCharacteristic_error_
+01:17:34 peripheral_didUpdateValueForCharacteristic_error_
+01:17:34 peripheral_didUpdateValueForCharacteristic_error_
+01:17:34 -> 011800
+01:17:34 peripheral_didUpdateValueForCharacteristic_error_
+01:17:34 STEER_LEFT ▲
+01:17:34 -> 011801
+01:17:34 peripheral_didUpdateValueForCharacteristic_error_
+01:17:34 peripheral_didUpdateValueForCharacteristic_error_
+01:17:34 -> 011800
+01:17:34 peripheral_didUpdateValueForCharacteristic_error_
+01:17:34 STEER_LEFT ▲
+01:17:34 -> 011801
+01:17:34 peripheral_didUpdateValueForCharacteristic_error_
+01:17:35 peripheral_didUpdateValueForCharacteristic_error_
+01:17:35 -> 011800
+01:17:35 peripheral_didUpdateValueForCharacteristic_error_
+01:17:35 STEER_LEFT ▲
+01:17:35 -> 011801
+01:17:35 peripheral_didUpdateValueForCharacteristic_error_
+01:17:35 peripheral_didUpdateValueForCharacteristic_error_
+01:17:35 -> 011800
+01:17:35 peripheral_didUpdateValueForCharacteristic_error_
+01:17:35 peripheral_didUpdateValueForCharacteristic_error_
+01:17:35 peripheral_didUpdateValueForCharacteristic_error_
+01:17:35 peripheral_didUpdateValueForCharacteristic_error_
+01:17:35 peripheral_didUpdateValueForCharacteristic_error_
+01:17:35 peripheral_didUpdateValueForCharacteristic_error_
+01:17:36 peripheral_didUpdateValueForCharacteristic_error_
+01:17:36 peripheral_didUpdateValueForCharacteristic_error_
+01:17:36 peripheral_didUpdateValueForCharacteristic_error_
+01:17:36 ping from app, replying with status 024601
+01:17:36 peripheral_didUpdateValueForCharacteristic_error_
+01:17:36 STEER_LEFT ▲
+01:17:36 -> 011801
+01:17:36 peripheral_didUpdateValueForCharacteristic_error_
+01:17:36 -> 011800
+01:17:36 peripheral_didUpdateValueForCharacteristic_error_
+01:17:36 peripheral_didUpdateValueForCharacteristic_error_
+01:17:36 peripheral_didUpdateValueForCharacteristic_error_
+01:17:37 peripheral_didUpdateValueForCharacteristic_error_
+01:17:37 STEER_LEFT ▲
+01:17:37 -> 011801
+01:17:37 peripheral_didUpdateValueForCharacteristic_error_
+01:17:37 peripheral_didUpdateValueForCharacteristic_error_
+01:17:37 peripheral_didUpdateValueForCharacteristic_error_
+01:17:37 peripheral_didUpdateValueForCharacteristic_error_
+01:17:37 peripheral_didUpdateValueForCharacteristic_error_
+01:17:37 peripheral_didUpdateValueForCharacteristic_error_
+01:17:37 peripheral_didUpdateValueForCharacteristic_error_
+01:17:37 peripheral_didUpdateValueForCharacteristic_error_
+01:17:37 peripheral_didUpdateValueForCharacteristic_error_
+01:17:37 -> 011800
+01:17:38 peripheral_didUpdateValueForCharacteristic_error_
+01:17:38 STEER_LEFT ▲
+01:17:38 -> 011801
+01:17:38 peripheral_didUpdateValueForCharacteristic_error_
+01:17:38 peripheral_didUpdateValueForCharacteristic_error_
+01:17:38 peripheral_didUpdateValueForCharacteristic_error_
+01:17:38 peripheral_didUpdateValueForCharacteristic_error_
+01:17:38 peripheral_didUpdateValueForCharacteristic_error_
+01:17:38 peripheral_didUpdateValueForCharacteristic_error_
+01:17:38 peripheral_didUpdateValueForCharacteristic_error_
+01:17:38 peripheral_didUpdateValueForCharacteristic_error_
+01:17:38 peripheral_didUpdateValueForCharacteristic_error_
+01:17:39 peripheral_didUpdateValueForCharacteristic_error_
+01:17:39 peripheral_didUpdateValueForCharacteristic_error_
+01:17:39 peripheral_didUpdateValueForCharacteristic_error_
+01:17:39 peripheral_didUpdateValueForCharacteristic_error_
+01:17:39 peripheral_didUpdateValueForCharacteristic_error_
+01:17:39 peripheral_didUpdateValueForCharacteristic_error_
+01:17:39 peripheral_didUpdateValueForCharacteristic_error_
+01:17:39 peripheral_didUpdateValueForCharacteristic_error_
+01:17:39 peripheral_didUpdateValueForCharacteristic_error_
+01:17:40 peripheral_didUpdateValueForCharacteristic_error_
+01:17:40 peripheral_didUpdateValueForCharacteristic_error_
+01:17:40 peripheral_didUpdateValueForCharacteristic_error_
+01:17:40 peripheral_didUpdateValueForCharacteristic_error_
+01:17:40 peripheral_didUpdateValueForCharacteristic_error_
+01:17:40 peripheral_didUpdateValueForCharacteristic_error_
+01:17:40 ping from app, replying with status 024601
+01:17:40 peripheral_didUpdateValueForCharacteristic_error_
+01:17:40 -> 011800
+01:17:40 peripheral_didUpdateValueForCharacteristic_error_
+01:17:40 peripheral_didUpdateValueForCharacteristic_error_
+01:17:40 peripheral_didUpdateValueForCharacteristic_error_
+01:17:40 peripheral_didUpdateValueForCharacteristic_error_
+01:17:41 peripheral_didUpdateValueForCharacteristic_error_
+01:17:41 peripheral_didUpdateValueForCharacteristic_error_
+01:17:41 peripheral_didUpdateValueForCharacteristic_error_
+01:17:41 peripheral_didUpdateValueForCharacteristic_error_
+01:17:42 peripheral_didUpdateValueForCharacteristic_error_
+01:17:42 STEER_LEFT ▲
+01:17:42 -> 011801
+01:17:42 peripheral_didUpdateValueForCharacteristic_error_
+01:17:42 peripheral_didUpdateValueForCharacteristic_error_
+01:17:42 -> 011800
+01:17:42 peripheral_didUpdateValueForCharacteristic_error_
+01:17:42 peripheral_didUpdateValueForCharacteristic_error_
+01:17:43 peripheral_didUpdateValueForCharacteristic_error_
+01:17:43 peripheral_didUpdateValueForCharacteristic_error_
+01:17:43 peripheral_didUpdateValueForCharacteristic_error_
+01:17:43 peripheral_didUpdateValueForCharacteristic_error_
+01:17:43 peripheral_didUpdateValueForCharacteristic_error_
+01:17:43 peripheral_didUpdateValueForCharacteristic_error_
+01:17:43 STEER_LEFT ▲
+01:17:43 -> 011801
+01:17:43 peripheral_didUpdateValueForCharacteristic_error_
+01:17:43 -> 011800
+01:17:43 peripheral_didUpdateValueForCharacteristic_error_
+01:17:43 STEER_LEFT ▲
+01:17:43 -> 011801
+01:17:43 peripheral_didUpdateValueForCharacteristic_error_
+01:17:43 peripheral_didUpdateValueForCharacteristic_error_
+01:17:43 -> 011800
+01:17:44 peripheral_didUpdateValueForCharacteristic_error_
+01:17:44 STEER_LEFT ▲
+01:17:44 -> 011801
+01:17:44 peripheral_didUpdateValueForCharacteristic_error_
+01:17:44 -> 011800
+01:17:44 peripheral_didUpdateValueForCharacteristic_error_
+01:17:44 STEER_LEFT ▲
+01:17:44 -> 011801
+01:17:44 peripheral_didUpdateValueForCharacteristic_error_
+01:17:44 -> 011800
+01:17:44 ping from app, replying with status 024601
+01:17:44 peripheral_didUpdateValueForCharacteristic_error_
+01:17:44 STEER_LEFT ▲
+01:17:44 -> 011801
+01:17:44 peripheral_didUpdateValueForCharacteristic_error_
+01:17:44 peripheral_didUpdateValueForCharacteristic_error_
+01:17:44 peripheral_didUpdateValueForCharacteristic_error_
+01:17:44 peripheral_didUpdateValueForCharacteristic_error_
+01:17:44 -> 011800
+01:17:44 peripheral_didUpdateValueForCharacteristic_error_
+01:17:45 peripheral_didUpdateValueForCharacteristic_error_
+01:17:45 STEER_RIGHT ▲
+01:17:45 -> 011901
+01:17:45 peripheral_didUpdateValueForCharacteristic_error_
+01:17:45 peripheral_didUpdateValueForCharacteristic_error_
+01:17:45 peripheral_didUpdateValueForCharacteristic_error_
+01:17:45 peripheral_didUpdateValueForCharacteristic_error_
+01:17:45 peripheral_didUpdateValueForCharacteristic_error_
+01:17:45 peripheral_didUpdateValueForCharacteristic_error_
+01:17:45 peripheral_didUpdateValueForCharacteristic_error_
+01:17:45 peripheral_didUpdateValueForCharacteristic_error_
+01:17:45 peripheral_didUpdateValueForCharacteristic_error_
+01:17:46 peripheral_didUpdateValueForCharacteristic_error_
+01:17:46 peripheral_didUpdateValueForCharacteristic_error_
+01:17:46 -> 011900
+01:17:46 peripheral_didUpdateValueForCharacteristic_error_
+01:17:46 peripheral_didUpdateValueForCharacteristic_error_
+01:17:46 peripheral_didUpdateValueForCharacteristic_error_
+01:17:46 DOWN ▲
+01:17:46 -> 011101
+01:17:46 peripheral_didUpdateValueForCharacteristic_error_
+01:17:46 peripheral_didUpdateValueForCharacteristic_error_
+01:17:46 peripheral_didUpdateValueForCharacteristic_error_
+01:17:46 peripheral_didUpdateValueForCharacteristic_error_
+01:17:46 peripheral_didUpdateValueForCharacteristic_error_
+01:17:47 peripheral_didUpdateValueForCharacteristic_error_
+01:17:47 peripheral_didUpdateValueForCharacteristic_error_
+01:17:47 peripheral_didUpdateValueForCharacteristic_error_
+01:17:47 peripheral_didUpdateValueForCharacteristic_error_
+01:17:47 peripheral_didUpdateValueForCharacteristic_error_
+01:17:47 peripheral_didUpdateValueForCharacteristic_error_
+01:17:47 peripheral_didUpdateValueForCharacteristic_error_
+01:17:47 peripheral_didUpdateValueForCharacteristic_error_
+01:17:47 peripheral_didUpdateValueForCharacteristic_error_
+01:17:47 peripheral_didUpdateValueForCharacteristic_error_
+01:17:48 peripheral_didUpdateValueForCharacteristic_error_
+01:17:48 peripheral_didUpdateValueForCharacteristic_error_
+01:17:48 peripheral_didUpdateValueForCharacteristic_error_
+01:17:48 peripheral_didUpdateValueForCharacteristic_error_
+01:17:48 ping from app, replying with status 024601
+01:17:48 peripheral_didUpdateValueForCharacteristic_error_
+01:17:48 peripheral_didUpdateValueForCharacteristic_error_
+01:17:48 peripheral_didUpdateValueForCharacteristic_error_
+01:17:48 peripheral_didUpdateValueForCharacteristic_error_
+01:17:48 peripheral_didUpdateValueForCharacteristic_error_
+01:17:48 -> 011100
+01:17:49 peripheral_didUpdateValueForCharacteristic_error_
+01:17:49 peripheral_didUpdateValueForCharacteristic_error_
+01:17:49 peripheral_didUpdateValueForCharacteristic_error_
+01:17:49 peripheral_didUpdateValueForCharacteristic_error_
+01:17:49 peripheral_didUpdateValueForCharacteristic_error_
+01:17:49 peripheral_didUpdateValueForCharacteristic_error_
+01:17:49 peripheral_didUpdateValueForCharacteristic_error_
+01:17:49 peripheral_didUpdateValueForCharacteristic_error_
+01:17:49 peripheral_didUpdateValueForCharacteristic_error_
+01:17:51 peripheral_didUpdateValueForCharacteristic_error_
+01:17:52 ping from app, replying with status 024601
+01:17:56 ping from app, replying with status 024601
+01:17:56 peripheral_didUpdateValueForCharacteristic_error_
+01:18:01 peripheral_didUpdateValueForCharacteristic_error_
+01:18:02 app disconnected (('192.168.1.7', 57879))
+01:18:07 peripheral_didUpdateValueForCharacteristic_error_
+01:18:12 peripheral_didUpdateValueForCharacteristic_error_
+01:18:18 peripheral_didUpdateValueForCharacteristic_error_
+01:18:23 peripheral_didUpdateValueForCharacteristic_error_
+01:18:29 peripheral_didUpdateValueForCharacteristic_error_
+01:18:34 peripheral_didUpdateValueForCharacteristic_error_
+01:18:40 peripheral_didUpdateValueForCharacteristic_error_
+01:18:45 peripheral_didUpdateValueForCharacteristic_error_
+01:18:51 peripheral_didUpdateValueForCharacteristic_error_
+01:18:56 peripheral_didUpdateValueForCharacteristic_error_
+01:19:02 peripheral_didUpdateValueForCharacteristic_error_
+01:19:07 peripheral_didUpdateValueForCharacteristic_error_
+01:19:13 peripheral_didUpdateValueForCharacteristic_error_
+01:19:18 peripheral_didUpdateValueForCharacteristic_error_
+01:19:24 peripheral_didUpdateValueForCharacteristic_error_

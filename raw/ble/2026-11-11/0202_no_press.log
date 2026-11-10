@@ -1,0 +1,27 @@
+scanning for left Click (press it to wake)...
+found 15018857-AF57-60C6-E4C3-49E31712DED0
+     1.58s rx 526964654f6e
+     2.06s rx 2a08031211120f0818100018482205ffffffff1f2800
+     2.06s rx ff0500fa05180a0c443835324641413932443745205028ff0130fd153800
+    wrote 02 02 -> 0100
+    >>> PRESS CLICK BUTTONS NOW for 40 s <<<
+     2.91s rx 0a
+     3.56s rx ff0500fa05120a0c44383532464141393244374510131800
+     4.13s rx ff0500ea05190a0c443835324641413932443745100018cf0d200028023000
+     6.17s rx 191050
+    ... 5 s, buttons so far 0
+    11.24s rx 191050
+    ... 10 s, buttons so far 0
+    16.31s rx 191050
+    ... 15 s, buttons so far 0
+    21.38s rx 191050
+    ... 20 s, buttons so far 0
+    26.48s rx 191050
+    ... 25 s, buttons so far 0
+    31.55s rx 191050
+    ... 30 s, buttons so far 0
+    36.62s rx 191050
+    ... 35 s, buttons so far 0
+    41.69s rx 191050
+    ... 40 s, buttons so far 0
+RESULT 0202: frames=14 buttons=0

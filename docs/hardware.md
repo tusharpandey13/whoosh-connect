@@ -83,6 +83,8 @@ Measured facts (11-Nov-2026):
 
 ### What the challenge does *not* do
 
+Evidence: `raw/ble/2026-11-11/` (verbose bridge log of a working ride, plus captures).
+
 It does not gate button reporting on firmware 1.2.0. A puck whose every challenge
 went unanswered streamed all presses for a full ride. What ends a session is the
 unit's own `ff 05 00 ea/fa 05` "stopped" frame, roughly **50 s after the press
