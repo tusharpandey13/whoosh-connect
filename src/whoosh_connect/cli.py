@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import logging
+import signal
 import sys
 import time
 
@@ -259,7 +260,14 @@ async def _replay(args) -> int:
     return OK
 
 
+def _sigterm(signum, frame):
+    # Make launchd's SIGTERM graceful: surface it as KeyboardInterrupt so the
+    # run path's `finally` still closes the BLE link and OBC server.
+    raise KeyboardInterrupt
+
+
 def main(argv=None) -> int:
+    signal.signal(signal.SIGTERM, _sigterm)
     args = _parser().parse_args(argv)
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO, stream=sys.stderr,
                         format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
@@ -285,7 +293,6 @@ def main(argv=None) -> int:
         print(f"error: {e}", file=sys.stderr)
         return USAGE
     except KeyboardInterrupt:
-        return OK
         return OK
 
 
