@@ -206,3 +206,80 @@ notifications (not just `23 08`), and records write errors instead of aborting.
    fix latency before drawing conclusions.
 4. Confirm the exact validity window: our unlock was recorded by Zwift at
    ~19:24 (10-Nov); poll with `scripts/spy.py` until `ff 03` reappears.
+
+## Second pass, late 10-Nov (21:20–22:00): the service is deterministic, the shape is everything
+
+### The D-Lock service does not throttle, expire or vary
+
+Re-POSTing the exact 100 B challenge that was signed at 20:50, two hours later,
+returned **HTTP 200 and a byte-identical 23 B answer** (`0a153507…044b6d`). So:
+
+- answers do not expire server-side and are a pure function of the payload;
+- 204 is **not** throttling or rate limiting — it is a decision about the payload;
+- a captured answer stays valid for its own challenge for ever.
+
+### Which challenges get signed, all of 10-Nov
+
+| payload | `field 3` (nonce) | host had sent | POST |
+|---|---|---|---|
+| 94 B | 52 B | nothing (spontaneous) | **200, 23 B** |
+| 100 B | 58 B | `RideOn` (+`ff 04 00` earlier) | **200, 23 B** |
+| 82/85 B | 40 B | `RideOn`, `RideOn+ff0400`, `RideOn+02 03` | **204** (8+ times) |
+| 100 B | 58 B | replay of the 20:50 bytes | **200**, same 23 B |
+
+Every 40 B-`f3` challenge we have ever POSTed got 204; every 52/58 B one got 200.
+The shape, not the host command, decides it: this pass `ff 04 00` produced a
+40 B `f3` and 204, so the earlier "`ff0400` → signable 100 B" rule (n=1) does
+not reproduce.
+
+### Signing latency is a non-issue
+
+`sign()` over a fresh TLS connection measured **0.31–0.34 s**, against a 2.4 s
+grace window. Latency was never the blocker; drop that suspect.
+
+### `ff 04 00` silences a locked unit's button stream
+
+`probe5` (unlocked) streamed 675 `23 08` idle frames *through* a `ff 04 00`
+write; `probe4` (locked) emitted **zero** after it. So `ff 04 00` is not a
+harmless wake: on a locked puck it costs the stream you are trying to observe.
+
+### Press-free unlock indicator (when a unit is awake)
+
+An unlocked Click streams `23 08 ff ff ff ff 0f` continuously (`probe5`: past
+75 s); a locked one bursts and goes quiet about 2.4 s after `ff 03`
+(`probe2`: nothing after ~12 s). A sleeping unit sends nothing at all, so a
+press is still required to start the stream — silence with no press proves
+nothing (again).
+
+### `02 02` on char `0100` is still untested
+
+`probe_0202.py` wrote `ff 04 00` first and no button was pressed in any window,
+so its silence is confounded twice over. `02 02` and `00 09 00` both earned a
+one-byte reply (`0a` and `10`) — the unit acknowledges the write, and with
+`02 02` the `ff 03` challenge did not reappear in that connection.
+
+### One challenge per wake cycle
+
+A unit answers with at most one `ff 03` per wake-up: after a 204 (or an ignored
+challenge) every reconnect in the same wake returns nothing, including passive
+connections that write no commands at all. Re-arming needs the unit to sleep
+(~2 min idle, it then stops advertising) and a fresh button press. Experiments
+must therefore be one-shot per cycle, and the wake press has to be coordinated
+with the run (`SLEEP` + 3 beeps before the scan).
+
+### Tooling used in this pass
+
+- `/tmp/unlock_shot.py` — one shot per wake: `MODE=passive|rideon|ff0400`,
+  optional `SLEEP` (quiet, then 3 beeps = press now), signs, then pushes every
+  framing with beeps before each press window. Beeps: 1 = challenge, 2 = press
+  now, 3+3 = accepted.
+- `whoosh-connect dlock --live --push` does the same without the beeps.
+
+### Still open
+
+1. Why the unit offers a 40 B `f3` (204) instead of the 52/58 B shape (200):
+   it is not the host command and not attempt count. Candidates: time since the
+   unit's own last successful auth, or a payload variant the service rejects.
+2. `02 02` / `00 09 00` on `0100`, with a real press in the window.
+3. Whether `0x18` RESET restores an unpaired state that streams buttons, as
+   clickbridge claims ("restarts and works for another short time").
