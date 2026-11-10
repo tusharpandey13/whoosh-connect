@@ -11,10 +11,12 @@ from .zwift import BatteryFrame, ButtonsFrame, ChallengeFrame, Frame
 
 log = logging.getLogger(__name__)
 LOCKED_AFTER_S = 60
-LOCKED_MSG = ("Click sent an unlock challenge (ff 03): the pucks are locked. "
-              "Run `whoosh-connect unlock` (or `dlock --live`) to sign it.")
-UNLOCK_HINT = ("No button frames 60 s after connecting: the Clicks are probably locked. "
-               "Run `whoosh-connect unlock`.")
+# An unanswered challenge does NOT stop button reporting (verified 11-Nov-2026):
+# what limits a session is the unit's own "stopped" frame ~50 s after a press.
+LOCKED_MSG = ("Click asked for an unlock (ff 03); ignoring it. Buttons keep working for ~50 s "
+              "after each press, then press again. `unlock` is optional (longer windows).")
+UNLOCK_HINT = ("No button frames 60 s after connecting: press a Click button to open a window "
+               "(`unlock` only makes the window last longer).")
 
 
 class Sink(Protocol):

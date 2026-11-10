@@ -86,7 +86,7 @@ async def test_p4b_challenge_frame_warns_locked_immediately(caplog):
     caplog.set_level(logging.INFO)
     await p.on_frame(parse_frame(bytes.fromhex(TEST_CHAL)))
     assert p.locked is True
-    assert "pucks are locked" in caplog.text
+    assert "asked for an unlock" in caplog.text
     t[0] = 200
     p.tick()  # the challenge is better evidence than the 60 s timer; do not double-log
     assert caplog.text.count("probably locked") == 0
