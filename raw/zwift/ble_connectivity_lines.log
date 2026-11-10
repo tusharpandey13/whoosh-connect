@@ -1,0 +1,343 @@
+[16:57:32] INFO LEVEL: [Connectivity] Gearing: data/gearing/category.xml loaded successfully
+[16:57:32] INFO LEVEL: [Connectivity] Gearing: Front 1, Back 24
+[16:57:32] INFO LEVEL: [Connectivity] Gearing: 0-8
+[16:57:32] INFO LEVEL: [Connectivity] Gearing: data/gearing/GEAR24MAN.xml loaded successfully
+[16:57:33] INFO LEVEL: [Connectivity] Trainer Difficulty: 0.526031
+[16:57:33] INFO LEVEL: [Connectivity] Tire Size: 2105
+[16:57:56] [VIDEO_CAPTURE] Video Capture Feature Flag: ENABLED, ramClips=false, CloseClips=true
+[16:57:56] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:57:56] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:57:56] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:57:56] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:57:56] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:57:56] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:57:57] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:57:57] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:57:57] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:57:57] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:57:57] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:57:57] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:57:58] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:57:58] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:57:58] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:57:58] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:57:58] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:57:58] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:57:59] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:57:59] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:57:59] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:57:59] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:57:59] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:57:59] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:58:00] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:58:00] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:58:00] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:58:00] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:58:00] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:58:00] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:58:02] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:58:02] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:58:02] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:58:02] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:58:02] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:58:02] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:58:02] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:58:02] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:58:02] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:58:03] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:58:03] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:58:03] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:58:03] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:58:03] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:58:03] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:58:04] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:58:04] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:58:04] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:58:04] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:58:04] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:58:04] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:58:05] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:58:05] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:58:05] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:58:05] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:58:05] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:58:05] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:58:06] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:58:06] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:58:06] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:58:06] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:58:06] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:58:06] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:58:07] [BLE] BLEModule: Called function 'HasBLE' before BLE has been initialized
+[16:58:07] [BLE] BLEModule: Called function 'IsScanning' before BLE has been initialized
+[16:58:07] [BLE] BLEModule: Called function 'EnableDeviceDiscovery' before BLE has been initialized
+[16:58:09] INFO LEVEL: [Connectivity] Last Selected Device List:
+[16:58:09] INFO LEVEL: [Connectivity]   prefsId=285965095  id=0x00000000  roles=[Power & Controllable Trainer]  status=not ready
+[16:58:09] INFO LEVEL: [Connectivity]   prefsId=339851998  id=0x00000000  roles=[Cadence]  status=not ready
+[16:58:09] INFO LEVEL: [Connectivity]   prefsId=292068488  id=0x00000000  roles=[HR]  status=not ready
+[16:58:09] INFO LEVEL: [Connectivity]   prefsId=408185629  id=0x00000000  roles=[ZP User Input]  status=not ready
+[16:58:09] INFO LEVEL: [Connectivity] Last Selected Device List:
+[16:58:09] INFO LEVEL: [Connectivity]   prefsId=285965095  id=0x00000000  roles=[Power & Controllable Trainer]  status=not ready
+[16:58:09] INFO LEVEL: [Connectivity]   prefsId=339851998  id=0x00000000  roles=[Cadence]  status=not ready
+[16:58:09] INFO LEVEL: [Connectivity]   prefsId=292068488  id=0x00000000  roles=[HR]  status=not ready
+[16:58:09] INFO LEVEL: [Connectivity]   prefsId=408185629  id=0x00000000  roles=[ZP User Input]  status=not ready
+[16:58:10] Using BLE Middleware
+[16:58:10] BLEMW::Info [SwiftBLEInterface.swift:32 (init(bridgeInterface:))]: initial central manager state CBManagerState(rawValue: 0)
+[16:58:10] BLEMW::Info [ZwiftBLEMiddleware.cpp:71 (requestBluetoothAccess)]: Requested access to Bluetooth adapter
+[16:58:10] INFO LEVEL: [BLE] ScanManager: Native BLE unavailable, deferring scan
+[16:58:10] BLEMW::Info [SwiftBLEInterface.swift:457 (centralManagerDidUpdateState(_:))]: CBCentralManager state change: CBManagerState(rawValue: 5)
+[16:58:11] INFO LEVEL: [BLE] ScanManager: Starting Native BLE scan (reasons = HomeScreen)
+[16:58:11] BLEMW::Info [ZwiftBLEMiddleware.cpp:146 (scanForPeripherals)]: Scanning for peripherals
+[16:58:37] BLEMW::Info [SwiftBLEInterface.swift:491 (centralManager(_:didDiscover:advertisementData:rssi:))]: Discovered peripheral "VANRYSEL-HT-b50b" with RSSI value of -64
+[16:58:37] [BLE] FTMS Service Data for Unknown device: 01, 20, 00
+[16:58:37] "VANRYSEL-HT-b50b" adding component type: 6 (BLE)
+[16:58:37] BLEMW::Info [ZwiftBLEMiddleware.cpp:180 (connectToPeripheral)]: Connecting to peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:37] INFO LEVEL: [Connectivity] Device: "VANRYSEL-HT-b50b" has new connection status: connecting
+[16:58:37] INFO LEVEL: [BLE] Device selected for role (device: VANRYSEL-HT-b50b, role: Power)
+[16:58:37] BLEMW::Info [SwiftBLEInterface.swift:192 (connectToPeripheralOnQueue(_:))]: Connecting to peripheral <CBPeripheral: 0xbe3092a00, identifier = BB48099E-F6E0-EDBB-DC8E-E471222C122F, name = VANRYSEL-HT-b50b, mtu = 0, state = disconnected>
+[16:58:37] "VANRYSEL-HT-b50b" adding component type: 1 (BLE)
+[16:58:37] "VANRYSEL-HT-b50b" adding component type: 8 (BLE)
+[16:58:37] BLEMW::Info [ZwiftBLEMiddleware.cpp:180 (connectToPeripheral)]: Connecting to peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:37] INFO LEVEL: [BLE] Device selected for role (device: VANRYSEL-HT-b50b, role: Controllable Trainer)
+[16:58:37] BLEMW::Error [SwiftBLEInterface.swift:169 (connectToPeripheralOnQueue(_:))]: Cannot connect peripheral <CBPeripheral: 0xbe3092a00, identifier = BB48099E-F6E0-EDBB-DC8E-E471222C122F, name = VANRYSEL-HT-b50b, mtu = 0, state = connecting> while it is already connecting/connected
+[16:58:37] [BLE] Device use 1 for "VANRYSEL-HT-b50b" configured for Zwift Protocol.
+[16:58:37] "VANRYSEL-HT-b50b" adding component type: 19 (BLE)
+[16:58:37] "VANRYSEL-HT-b50b" adding component type: 2 (BLE)
+[16:58:37]                     Power: VANRYSEL-HT-b50b (0x18437B27) [BLE]
+[16:58:37]      Controllable Trainer: VANRYSEL-HT-b50b (0x18437B27) [BLE]
+[16:58:37] [ZwiftProtocol] Disabled virtual shifting on VANRYSEL-HT-b50b.
+[16:58:37] DEBUG LEVEL: [BLE] BLE_MW | Peripheral BB48099E-F6E0-EDBB-DC8E-E471222C122F is already connected
+[16:58:37] BLEMW::Info [SwiftBLEInterface.swift:491 (centralManager(_:didDiscover:advertisementData:rssi:))]: Discovered peripheral "VANRYSEL-HT-b50b" with RSSI value of -62
+[16:58:37] [BLE] FTMS Service Data for VANRYSEL-HT-b50b: 01, 20, 00
+[16:58:37] [BLE] Device use 1 for "VANRYSEL-HT-b50b" configured for Zwift Protocol.
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:533 (centralManager(_:didConnect:))]: Connected to peripheral VANRYSEL-HT-b50b
+[16:58:38] [BLE] Sending DEVICE - BLE CONNECTED [ UUID: BB48099E-F6E0-EDBB-DC8E-E471222C122F ] VANRYSEL-HT-b50b
+[16:58:38] INFO LEVEL: [Connectivity] Device: "VANRYSEL-HT-b50b" has new connection status: connected
+[16:58:38] INFO LEVEL: [Connectivity] Last Selected Device List:
+[16:58:38] INFO LEVEL: [Connectivity]   prefsId=285965095  id=0x18437B27  roles=[Power & Controllable Trainer]  status=not ready
+[16:58:38] INFO LEVEL: [Connectivity]   prefsId=339851998  id=0x00000000  roles=[Cadence]  status=not ready
+[16:58:38] INFO LEVEL: [Connectivity]   prefsId=292068488  id=0x00000000  roles=[HR]  status=not ready
+[16:58:38] INFO LEVEL: [Connectivity]   prefsId=408185629  id=0x00000000  roles=[ZP User Input]  status=not ready
+[16:58:38] INFO LEVEL: [Connectivity] Last Selected Device List:
+[16:58:38] INFO LEVEL: [Connectivity]   prefsId=285965095  id=0x18437B27  roles=[Power & Controllable Trainer]  status=not ready
+[16:58:38] INFO LEVEL: [Connectivity]   prefsId=339851998  id=0x00000000  roles=[Cadence]  status=not ready
+[16:58:38] INFO LEVEL: [Connectivity]   prefsId=292068488  id=0x00000000  roles=[HR]  status=not ready
+[16:58:38] INFO LEVEL: [Connectivity]   prefsId=408185629  id=0x00000000  roles=[ZP User Input]  status=not ready
+[16:58:38] INFO LEVEL: [Connectivity] Last Selected Device List:
+[16:58:38] INFO LEVEL: [Connectivity]   prefsId=285965095  id=0x18437B27  roles=[Power & Controllable Trainer]  status=not ready
+[16:58:38] INFO LEVEL: [Connectivity]   prefsId=339851998  id=0x00000000  roles=[Cadence]  status=not ready
+[16:58:38] INFO LEVEL: [Connectivity]   prefsId=292068488  id=0x00000000  roles=[HR]  status=not ready
+[16:58:38] INFO LEVEL: [Connectivity]   prefsId=408185629  id=0x00000000  roles=[ZP User Input]  status=not ready
+[16:58:38] INFO LEVEL: [ZwiftProtocol] Component on "VANRYSEL-HT-b50b" changed state from 0 to 1
+[16:58:38] [BLE] Time until device connection for "VANRYSEL-HT-b50b": 0 seconds.
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:220 (discoverServices)]: Running service discovery for peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:227 (discoverServicesOnQueue(forPeripheral:withUUIDs:))]: VANRYSEL-HT-b50b attempting to discover services
+[16:58:38] INFO LEVEL: [ZwiftProtocol] Component on "VANRYSEL-HT-b50b" changed state from 1 to 2
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:654 (peripheral(_:didDiscoverServices:))]: Did discover service for VANRYSEL-HT-b50b: <CBService: 0xbe9565e00, isPrimary = YES, UUID = Cycling Power>
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:654 (peripheral(_:didDiscoverServices:))]: Did discover service for VANRYSEL-HT-b50b: <CBService: 0xbe9566340, isPrimary = YES, UUID = 1826>
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:654 (peripheral(_:didDiscoverServices:))]: Did discover service for VANRYSEL-HT-b50b: <CBService: 0xbe9566380, isPrimary = YES, UUID = Device Information>
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:654 (peripheral(_:didDiscoverServices:))]: Did discover service for VANRYSEL-HT-b50b: <CBService: 0xbe95663c0, isPrimary = YES, UUID = 00000001-19CA-4651-86E5-FA29DCDD09D1>
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:240 (discoverCharacteristics)]: Running characteristic discovery for service [UUID = 1818] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:240 (discoverCharacteristics)]: Running characteristic discovery for service [UUID = 1826] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:258 (discoverCharacteristicsOnQueue(forPeripheral:serviceUUIDString:withUUIDs:))]: VANRYSEL-HT-b50b attempting to discover characteristics for service Cycling Power
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:240 (discoverCharacteristics)]: Running characteristic discovery for service [UUID = 180A] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:240 (discoverCharacteristics)]: Running characteristic discovery for service [UUID = 00000001-19CA-4651-86E5-FA29DCDD09D1] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:258 (discoverCharacteristicsOnQueue(forPeripheral:serviceUUIDString:withUUIDs:))]: VANRYSEL-HT-b50b attempting to discover characteristics for service 1826
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:258 (discoverCharacteristicsOnQueue(forPeripheral:serviceUUIDString:withUUIDs:))]: VANRYSEL-HT-b50b attempting to discover characteristics for service Device Information
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:258 (discoverCharacteristicsOnQueue(forPeripheral:serviceUUIDString:withUUIDs:))]: VANRYSEL-HT-b50b attempting to discover characteristics for service 00000001-19CA-4651-86E5-FA29DCDD09D1
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic 2A63 on VANRYSEL-HT-b50b for service Cycling Power: CBCharacteristicProperties(rawValue: 16)
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:321 (setNotificationsForCharacteristic)]: Enabling notifications for characteristic [UUID = 2A63] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic 2ACC on VANRYSEL-HT-b50b for service 1826: CBCharacteristicProperties(rawValue: 2)
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic 2AD2 on VANRYSEL-HT-b50b for service 1826: CBCharacteristicProperties(rawValue: 16)
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic 2AD9 on VANRYSEL-HT-b50b for service 1826: CBCharacteristicProperties(rawValue: 44)
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic 2ADA on VANRYSEL-HT-b50b for service 1826: CBCharacteristicProperties(rawValue: 16)
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2ACC] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:321 (setNotificationsForCharacteristic)]: Enabling notifications for characteristic [UUID = 2AD2] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:349 (setIndicationsForCharacteristic)]: Enabling indications for characteristic [UUID = 2AD9] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:321 (setNotificationsForCharacteristic)]: Enabling notifications for characteristic [UUID = 2ADA] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic Manufacturer Name String on VANRYSEL-HT-b50b for service Device Information: CBCharacteristicProperties(rawValue: 2)
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic Model Number String on VANRYSEL-HT-b50b for service Device Information: CBCharacteristicProperties(rawValue: 2)
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic Serial Number String on VANRYSEL-HT-b50b for service Device Information: CBCharacteristicProperties(rawValue: 2)
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic Hardware Revision String on VANRYSEL-HT-b50b for service Device Information: CBCharacteristicProperties(rawValue: 2)
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic Firmware Revision String on VANRYSEL-HT-b50b for service Device Information: CBCharacteristicProperties(rawValue: 2)
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic Software Revision String on VANRYSEL-HT-b50b for service Device Information: CBCharacteristicProperties(rawValue: 2)
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic System ID on VANRYSEL-HT-b50b for service Device Information: CBCharacteristicProperties(rawValue: 2)
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2A29] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2A24] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2A25] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2A27] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2A26] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2A28] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2A23] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic 00000002-19CA-4651-86E5-FA29DCDD09D1 on VANRYSEL-HT-b50b for service 00000001-19CA-4651-86E5-FA29DCDD09D1: CBCharacteristicProperties(rawValue: 16)
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic 00000003-19CA-4651-86E5-FA29DCDD09D1 on VANRYSEL-HT-b50b for service 00000001-19CA-4651-86E5-FA29DCDD09D1: CBCharacteristicProperties(rawValue: 4)
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic 00000004-19CA-4651-86E5-FA29DCDD09D1 on VANRYSEL-HT-b50b for service 00000001-19CA-4651-86E5-FA29DCDD09D1: CBCharacteristicProperties(rawValue: 32)
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:321 (setNotificationsForCharacteristic)]: Enabling notifications for characteristic [UUID = 00000002-19CA-4651-86E5-FA29DCDD09D1] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:349 (setIndicationsForCharacteristic)]: Enabling indications for characteristic [UUID = 00000004-19CA-4651-86E5-FA29DCDD09D1] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [ZwiftBLEMiddleware.cpp:293 (writeCharacteristic)]: Performing characteristic write [UUID = 00000003-19CA-4651-86E5-FA29DCDD09D1] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:342 (writeCharacteristicOnQueue(_:characteristicUUIDString:value:))]: Leaving writeCharacteristic
+[16:58:38] BLEMW::Info [SwiftBLEInterface.swift:770 (peripheral(_:didUpdateNotificationStateFor:error:))]: Updated notification state for characteristic 2A63
+[16:58:39] BLEMW::Info [SwiftBLEInterface.swift:770 (peripheral(_:didUpdateNotificationStateFor:error:))]: Updated notification state for characteristic 2AD2
+[16:58:39] BLEMW::Info [SwiftBLEInterface.swift:770 (peripheral(_:didUpdateNotificationStateFor:error:))]: Updated notification state for characteristic 2AD9
+[16:58:39] BLEMW::Info [SwiftBLEInterface.swift:770 (peripheral(_:didUpdateNotificationStateFor:error:))]: Updated notification state for characteristic 2ADA
+[16:58:39] [BLE] "VANRYSEL-HT-b50b" firmware version: 0.108
+[16:58:39] [BLE] "VANRYSEL-HT-b50b" software version: Jan  7 2025 - 10:09:19
+[16:58:39] BLEMW::Info [SwiftBLEInterface.swift:770 (peripheral(_:didUpdateNotificationStateFor:error:))]: Updated notification state for characteristic 00000002-19CA-4651-86E5-FA29DCDD09D1
+[16:58:40] BLEMW::Info [SwiftBLEInterface.swift:770 (peripheral(_:didUpdateNotificationStateFor:error:))]: Updated notification state for characteristic 00000004-19CA-4651-86E5-FA29DCDD09D1
+[16:58:40] [ZwiftProtocol] Version: 2.0
+[16:58:40] INFO LEVEL: [ZwiftProtocol] Component on "VANRYSEL-HT-b50b" changed state from 2 to 3
+[16:58:40] INFO LEVEL: [Connectivity] Last Selected Device List:
+[16:58:40] INFO LEVEL: [Connectivity]   prefsId=285965095  id=0x18437B27  roles=[Power & Controllable Trainer]  status=ready
+[16:58:40] INFO LEVEL: [Connectivity]   prefsId=339851998  id=0x00000000  roles=[Cadence]  status=not ready
+[16:58:40] INFO LEVEL: [Connectivity]   prefsId=292068488  id=0x00000000  roles=[HR]  status=not ready
+[16:58:40] INFO LEVEL: [Connectivity]   prefsId=408185629  id=0x00000000  roles=[ZP User Input]  status=not ready
+[16:58:40] INFO LEVEL: [Connectivity] Last Selected Device List:
+[16:58:40] INFO LEVEL: [Connectivity]   prefsId=285965095  id=0x18437B27  roles=[Power & Controllable Trainer]  status=ready
+[16:58:40] INFO LEVEL: [Connectivity]   prefsId=339851998  id=0x00000000  roles=[Cadence]  status=not ready
+[16:58:40] INFO LEVEL: [Connectivity]   prefsId=292068488  id=0x00000000  roles=[HR]  status=not ready
+[16:58:40] INFO LEVEL: [Connectivity]   prefsId=408185629  id=0x00000000  roles=[ZP User Input]  status=not ready
+[16:58:40] INFO LEVEL: [Connectivity] Last Selected Device List:
+[16:58:40] INFO LEVEL: [Connectivity]   prefsId=285965095  id=0x18437B27  roles=[Power & Controllable Trainer]  status=ready
+[16:58:40] INFO LEVEL: [Connectivity]   prefsId=339851998  id=0x00000000  roles=[Cadence]  status=not ready
+[16:58:40] INFO LEVEL: [Connectivity]   prefsId=292068488  id=0x00000000  roles=[HR]  status=not ready
+[16:58:40] INFO LEVEL: [Connectivity]   prefsId=408185629  id=0x00000000  roles=[ZP User Input]  status=not ready
+[16:58:40] INFO LEVEL: [ZwiftProtocol] Requesting Client Server Config
+[16:58:40] INFO LEVEL: [ZwiftProtocol] Comms established with VANRYSEL-HT-b50b.
+[16:58:40] BLEMW::Info [ZwiftBLEMiddleware.cpp:293 (writeCharacteristic)]: Performing characteristic write [UUID = 00000003-19CA-4651-86E5-FA29DCDD09D1] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:40] BLEMW::Info [ZwiftBLEMiddleware.cpp:293 (writeCharacteristic)]: Performing characteristic write [UUID = 00000003-19CA-4651-86E5-FA29DCDD09D1] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:40] BLEMW::Info [SwiftBLEInterface.swift:342 (writeCharacteristicOnQueue(_:characteristicUUIDString:value:))]: Leaving writeCharacteristic
+[16:58:40] BLEMW::Info [SwiftBLEInterface.swift:342 (writeCharacteristicOnQueue(_:characteristicUUIDString:value:))]: Leaving writeCharacteristic
+[16:58:40] [ZwiftProtocol] System Version: 0.108.0
+[16:58:40] INFO LEVEL: [ZwiftProtocol] System HW Version: 1
+[16:58:40] [ZwiftProtocol] Device name: VANR-HT-b50b
+[16:58:40] [ZwiftProtocol] Device serial number: 262501495
+[16:58:40] [ZwiftProtocol] Manufacturer ID: 3
+[16:58:40] [ZwiftProtocol] Device ID: 27514
+[16:58:40] BLEMW::Info [ZwiftBLEMiddleware.cpp:293 (writeCharacteristic)]: Performing characteristic write [UUID = 00000003-19CA-4651-86E5-FA29DCDD09D1] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:40] BLEMW::Info [ZwiftBLEMiddleware.cpp:293 (writeCharacteristic)]: Performing characteristic write [UUID = 00000003-19CA-4651-86E5-FA29DCDD09D1] of peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[16:58:40] BLEMW::Info [SwiftBLEInterface.swift:342 (writeCharacteristicOnQueue(_:characteristicUUIDString:value:))]: Leaving writeCharacteristic
+[16:58:40] BLEMW::Info [SwiftBLEInterface.swift:342 (writeCharacteristicOnQueue(_:characteristicUUIDString:value:))]: Leaving writeCharacteristic
+[16:58:40] ERROR LEVEL: [ZwiftProtocol] "VANRYSEL-HT-b50b" decoding msg type 60 failed: (none)
+[17:00:28] BLEMW::Info [SwiftBLEInterface.swift:491 (centralManager(_:didDiscover:advertisementData:rssi:))]: Discovered peripheral "Polar H10 06083F3F" with RSSI value of -66
+[17:00:28] BLEMW::Info [SwiftBLEInterface.swift:491 (centralManager(_:didDiscover:advertisementData:rssi:))]: Discovered peripheral "Polar H10 06083F3F" with RSSI value of -66
+[17:00:28] "Polar H10 06083F3F" adding component type: 4 (BLE)
+[17:00:28] BLEMW::Info [ZwiftBLEMiddleware.cpp:180 (connectToPeripheral)]: Connecting to peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:28] INFO LEVEL: [Connectivity] Device: "Polar H10 06083F3F" has new connection status: connecting
+[17:00:28] INFO LEVEL: [BLE] Device selected for role (device: Polar H10 06083F3F, role: HR)
+[17:00:28] BLEMW::Info [SwiftBLEInterface.swift:192 (connectToPeripheralOnQueue(_:))]: Connecting to peripheral <CBPeripheral: 0xbe3092840, identifier = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4, name = Polar H10 06083F3F, mtu = 0, state = disconnected>
+[17:00:28]                        HR: Polar H10 06083F3F (0x12269C88) [BLE]
+[17:00:28]                     Power: VANRYSEL-HT-b50b (0x18437B27) [BLE]
+[17:00:28]      Controllable Trainer: VANRYSEL-HT-b50b (0x18437B27) [BLE]
+[17:00:28] BLEMW::Info [SwiftBLEInterface.swift:491 (centralManager(_:didDiscover:advertisementData:rssi:))]: Discovered peripheral "Polar H10 06083F3F" with RSSI value of -68
+[17:00:29] BLEMW::Info [SwiftBLEInterface.swift:533 (centralManager(_:didConnect:))]: Connected to peripheral Polar H10 06083F3F
+[17:00:29] [BLE] Sending DEVICE - BLE CONNECTED [ UUID: 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4 ] Polar H10 06083F3F
+[17:00:29] INFO LEVEL: [Connectivity] Device: "Polar H10 06083F3F" has new connection status: connected
+[17:00:29] INFO LEVEL: [Connectivity] Last Selected Device List:
+[17:00:29] INFO LEVEL: [Connectivity]   prefsId=285965095  id=0x18437B27  roles=[Power & Controllable Trainer]  status=ready
+[17:00:29] INFO LEVEL: [Connectivity]   prefsId=339851998  id=0x00000000  roles=[Cadence]  status=not ready
+[17:00:29] INFO LEVEL: [Connectivity]   prefsId=292068488  id=0x12269C88  roles=[HR]  status=ready
+[17:00:29] INFO LEVEL: [Connectivity]   prefsId=408185629  id=0x00000000  roles=[ZP User Input]  status=not ready
+[17:00:29] INFO LEVEL: [Connectivity] Last Selected Device List:
+[17:00:29] INFO LEVEL: [Connectivity]   prefsId=285965095  id=0x18437B27  roles=[Power & Controllable Trainer]  status=ready
+[17:00:29] INFO LEVEL: [Connectivity]   prefsId=339851998  id=0x00000000  roles=[Cadence]  status=not ready
+[17:00:29] INFO LEVEL: [Connectivity]   prefsId=292068488  id=0x12269C88  roles=[HR]  status=ready
+[17:00:29] INFO LEVEL: [Connectivity]   prefsId=408185629  id=0x00000000  roles=[ZP User Input]  status=not ready
+[17:00:29] [BLE] Time until device connection for "Polar H10 06083F3F": 1 second.
+[17:00:29] BLEMW::Info [ZwiftBLEMiddleware.cpp:220 (discoverServices)]: Running service discovery for peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:29] BLEMW::Info [SwiftBLEInterface.swift:227 (discoverServicesOnQueue(forPeripheral:withUUIDs:))]: Polar H10 06083F3F attempting to discover services
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:654 (peripheral(_:didDiscoverServices:))]: Did discover service for Polar H10 06083F3F: <CBService: 0xbe9566880, isPrimary = YES, UUID = Device Information>
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:654 (peripheral(_:didDiscoverServices:))]: Did discover service for Polar H10 06083F3F: <CBService: 0xbe9566840, isPrimary = YES, UUID = Heart Rate>
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:654 (peripheral(_:didDiscoverServices:))]: Did discover service for Polar H10 06083F3F: <CBService: 0xbe9566800, isPrimary = YES, UUID = FB005C80-02E7-F387-1CAD-8ACD2D8DF0C8>
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:654 (peripheral(_:didDiscoverServices:))]: Did discover service for Polar H10 06083F3F: <CBService: 0xbe9565f40, isPrimary = YES, UUID = Battery>
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:240 (discoverCharacteristics)]: Running characteristic discovery for service [UUID = 180A] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:258 (discoverCharacteristicsOnQueue(forPeripheral:serviceUUIDString:withUUIDs:))]: Polar H10 06083F3F attempting to discover characteristics for service Device Information
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:240 (discoverCharacteristics)]: Running characteristic discovery for service [UUID = 180D] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:240 (discoverCharacteristics)]: Running characteristic discovery for service [UUID = FB005C80-02E7-F387-1CAD-8ACD2D8DF0C8] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:240 (discoverCharacteristics)]: Running characteristic discovery for service [UUID = 180F] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:258 (discoverCharacteristicsOnQueue(forPeripheral:serviceUUIDString:withUUIDs:))]: Polar H10 06083F3F attempting to discover characteristics for service Heart Rate
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:258 (discoverCharacteristicsOnQueue(forPeripheral:serviceUUIDString:withUUIDs:))]: Polar H10 06083F3F attempting to discover characteristics for service FB005C80-02E7-F387-1CAD-8ACD2D8DF0C8
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:258 (discoverCharacteristicsOnQueue(forPeripheral:serviceUUIDString:withUUIDs:))]: Polar H10 06083F3F attempting to discover characteristics for service Battery
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic Manufacturer Name String on Polar H10 06083F3F for service Device Information: CBCharacteristicProperties(rawValue: 2)
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic Model Number String on Polar H10 06083F3F for service Device Information: CBCharacteristicProperties(rawValue: 2)
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic Serial Number String on Polar H10 06083F3F for service Device Information: CBCharacteristicProperties(rawValue: 2)
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic Hardware Revision String on Polar H10 06083F3F for service Device Information: CBCharacteristicProperties(rawValue: 2)
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic Firmware Revision String on Polar H10 06083F3F for service Device Information: CBCharacteristicProperties(rawValue: 2)
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic Software Revision String on Polar H10 06083F3F for service Device Information: CBCharacteristicProperties(rawValue: 2)
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic System ID on Polar H10 06083F3F for service Device Information: CBCharacteristicProperties(rawValue: 2)
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2A29] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2A24] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2A25] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2A27] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2A26] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2A28] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2A23] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic 2A37 on Polar H10 06083F3F for service Heart Rate: CBCharacteristicProperties(rawValue: 16)
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:321 (setNotificationsForCharacteristic)]: Enabling notifications for characteristic [UUID = 2A37] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic FB005C81-02E7-F387-1CAD-8ACD2D8DF0C8 on Polar H10 06083F3F for service FB005C80-02E7-F387-1CAD-8ACD2D8DF0C8: CBCharacteristicProperties(rawValue: 42)
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic FB005C82-02E7-F387-1CAD-8ACD2D8DF0C8 on Polar H10 06083F3F for service FB005C80-02E7-F387-1CAD-8ACD2D8DF0C8: CBCharacteristicProperties(rawValue: 16)
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:349 (setIndicationsForCharacteristic)]: Enabling indications for characteristic [UUID = FB005C81-02E7-F387-1CAD-8ACD2D8DF0C8] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = FB005C81-02E7-F387-1CAD-8ACD2D8DF0C8] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:321 (setNotificationsForCharacteristic)]: Enabling notifications for characteristic [UUID = FB005C82-02E7-F387-1CAD-8ACD2D8DF0C8] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:679 (peripheral(_:didDiscoverCharacteristicsFor:error:))]: Did discover characteristic Battery Level on Polar H10 06083F3F for service Battery: CBCharacteristicProperties(rawValue: 18)
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:321 (setNotificationsForCharacteristic)]: Enabling notifications for characteristic [UUID = 2A19] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] BLEMW::Info [ZwiftBLEMiddleware.cpp:266 (readCharacteristic)]: Performing characteristic read [UUID = 2A19] of peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:00:30] "Polar H10 06083F3F" adding component type: 31 (BLE)
+[17:00:30] [BLE] "Polar H10 06083F3F" firmware version: 5.0.0
+[17:00:30] [BLE] "Polar H10 06083F3F" software version: 4.2.0
+[17:00:30] BLEMW::Info [SwiftBLEInterface.swift:770 (peripheral(_:didUpdateNotificationStateFor:error:))]: Updated notification state for characteristic 2A37
+[17:00:31] BLEMW::Info [SwiftBLEInterface.swift:770 (peripheral(_:didUpdateNotificationStateFor:error:))]: Updated notification state for characteristic FB005C81-02E7-F387-1CAD-8ACD2D8DF0C8
+[17:00:31] BLEMW::Info [SwiftBLEInterface.swift:770 (peripheral(_:didUpdateNotificationStateFor:error:))]: Updated notification state for characteristic FB005C82-02E7-F387-1CAD-8ACD2D8DF0C8
+[17:00:31] BLEMW::Info [SwiftBLEInterface.swift:770 (peripheral(_:didUpdateNotificationStateFor:error:))]: Updated notification state for characteristic Battery Level
+[17:00:31] INFO LEVEL: [BLE] "Polar H10 06083F3F" battery level: 100%
+[17:04:03] INFO LEVEL: [BLE] BLE Stack: 2
+[17:04:03] INFO LEVEL: [BLE] Max BLE events received in a frame: 7
+[17:04:04] INFO LEVEL: [BLE] BLE Stack: 2
+[17:04:04] INFO LEVEL: [BLE] Max BLE events received in a frame: 7
+[17:04:06] [BLE] UnpairAllPairedDevices
+[17:04:06] [BLE] Unpair "Polar H10 06083F3F", address = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4 (previously paired)
+[17:04:06] BLEMW::Info [ZwiftBLEMiddleware.cpp:370 (disconnectFromPeripheral)]: Disconnecting from peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:04:06] INFO LEVEL: [Connectivity] Device: "Polar H10 06083F3F" has new connection status: disconnected
+[17:04:06] INFO LEVEL: [Connectivity] Last Selected Device List:
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=285965095  id=0x18437B27  roles=[Power & Controllable Trainer]  status=ready
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=339851998  id=0x00000000  roles=[Cadence]  status=not ready
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=292068488  id=0x12269C88  roles=[HR]  status=not ready
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=408185629  id=0x00000000  roles=[ZP User Input]  status=not ready
+[17:04:06] INFO LEVEL: [Connectivity] Last Selected Device List:
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=285965095  id=0x18437B27  roles=[Power & Controllable Trainer]  status=ready
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=339851998  id=0x00000000  roles=[Cadence]  status=not ready
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=292068488  id=0x12269C88  roles=[HR]  status=not ready
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=408185629  id=0x00000000  roles=[ZP User Input]  status=not ready
+[17:04:06] [BLE] Unpair "VANRYSEL-HT-b50b", address = BB48099E-F6E0-EDBB-DC8E-E471222C122F (previously paired)
+[17:04:06] BLEMW::Info [ZwiftBLEMiddleware.cpp:370 (disconnectFromPeripheral)]: Disconnecting from peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[17:04:06] INFO LEVEL: [Connectivity] Device: "VANRYSEL-HT-b50b" has new connection status: disconnected
+[17:04:06] INFO LEVEL: [Connectivity] Last Selected Device List:
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=285965095  id=0x18437B27  roles=[Power & Controllable Trainer]  status=not ready
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=339851998  id=0x00000000  roles=[Cadence]  status=not ready
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=292068488  id=0x12269C88  roles=[HR]  status=not ready
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=408185629  id=0x00000000  roles=[ZP User Input]  status=not ready
+[17:04:06] INFO LEVEL: [Connectivity] Last Selected Device List:
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=285965095  id=0x18437B27  roles=[Power & Controllable Trainer]  status=not ready
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=339851998  id=0x00000000  roles=[Cadence]  status=not ready
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=292068488  id=0x12269C88  roles=[HR]  status=not ready
+[17:04:06] INFO LEVEL: [Connectivity]   prefsId=408185629  id=0x00000000  roles=[ZP User Input]  status=not ready
+[17:04:06] [BLE] Unpair "Polar H10 06083F3F", address = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4 (unpaired)
+[17:04:06] BLEMW::Info [ZwiftBLEMiddleware.cpp:370 (disconnectFromPeripheral)]: Disconnecting from peripheral [Addr = 5DE512DC-BAE5-75F5-E199-EFAFE42A12A4]
+[17:04:06] [BLE] Unpair "VANRYSEL-HT-b50b", address = BB48099E-F6E0-EDBB-DC8E-E471222C122F (unpaired)
+[17:04:06] BLEMW::Info [ZwiftBLEMiddleware.cpp:370 (disconnectFromPeripheral)]: Disconnecting from peripheral [Addr = BB48099E-F6E0-EDBB-DC8E-E471222C122F]
+[17:04:06] BLEMW::Info [SwiftBLEInterface.swift:573 (centralManager(_:didDisconnectPeripheral:error:))]: Disconnected from peripheral Polar H10 06083F3F
+[17:04:06] BLEMW::Info [SwiftBLEInterface.swift:573 (centralManager(_:didDisconnectPeripheral:error:))]: Disconnected from peripheral VANRYSEL-HT-b50b
+[17:04:06] [VIDEO_CAPTURE] Video Capture Feature Flag: DISABLED
+[17:04:07] BLEMW::Info [SwiftBLEInterface.swift:491 (centralManager(_:didDiscover:advertisementData:rssi:))]: Discovered peripheral "VANRYSEL-HT-b50b" with RSSI value of -76
+[17:04:07] BLEMW::Info [SwiftBLEInterface.swift:491 (centralManager(_:didDiscover:advertisementData:rssi:))]: Discovered peripheral "VANRYSEL-HT-b50b" with RSSI value of -76
+[17:04:07] BLEMW::Info [SwiftBLEInterface.swift:491 (centralManager(_:didDiscover:advertisementData:rssi:))]: Discovered peripheral "Polar H10 06083F3F" with RSSI value of -36
+[17:04:07] BLEMW::Info [SwiftBLEInterface.swift:491 (centralManager(_:didDiscover:advertisementData:rssi:))]: Discovered peripheral "Polar H10 06083F3F" with RSSI value of -36
+[17:04:07] BLEMW::Info [ZwiftBLEMiddleware.cpp:161 (stopScanningForPeripherals)]: Stopped scanning for peripherals
+[17:04:07] BLEMW::Info [SwiftBLEInterface.swift:401 (teardownOnQueue())]: Tearing down BLE middleware
+[16:54:40] INFO LEVEL: [Connectivity] Gearing: data/gearing/category.xml loaded successfully
+[16:54:40] INFO LEVEL: [Connectivity] Gearing: Front 1, Back 24
+[16:54:40] INFO LEVEL: [Connectivity] Gearing: 0-8
+[16:54:40] INFO LEVEL: [Connectivity] Gearing: data/gearing/GEAR24MAN.xml loaded successfully
+[16:54:41] INFO LEVEL: [Connectivity] Trainer Difficulty: 0.526031
+[16:54:41] INFO LEVEL: [Connectivity] Tire Size: 2105
+[16:56:51] [BLE] BLEModule: Called function 'StopBackgroundBLECommunication' before BLE has been initialized
+[16:56:51] [BLE] BLEModule: Called function 'StopScan' before BLE has been initialized

@@ -1,0 +1,36 @@
+adv None 15018857-AF57-60C6-E4C3-49E31712DED0 -76 {'0x94a': '0b2d7e'} ['0000fc82-0000-1000-8000-00805f9b34fb']
+adv None F2640CDB-976F-2DB0-8780-2AA8386B5FFE -69 {'0x94a': '0ae89b'} ['0000fc82-0000-1000-8000-00805f9b34fb']
+
+## Zwift Click 15018857-AF57-60C6-E4C3-49E31712DED0
+ svc 0000180a-0000-1000-8000-00805f9b34fb Device Information
+   ch 00002a29-0000-1000-8000-00805f9b34fb ['read'] 5a7769667420496e63
+   ch 00002a25-0000-1000-8000-00805f9b34fb ['read'] 30422d443835324641413932443745
+   ch 00002a27-0000-1000-8000-00805f9b34fb ['read'] 422e30
+   ch 00002a26-0000-1000-8000-00805f9b34fb ['read'] 312e322e30
+ svc 0000fc82-0000-1000-8000-00805f9b34fb Vendor specific
+   ch 00000002-19ca-4651-86e5-fa29dcdd09d1 ['notify'] 
+   ch 00000003-19ca-4651-86e5-fa29dcdd09d1 ['write-without-response'] 
+   ch 00000004-19ca-4651-86e5-fa29dcdd09d1 ['read', 'indicate'] 
+   ch 00000100-19ca-4651-86e5-fa29dcdd09d1 ['write', 'notify', 'write-without-response'] 
+   ch 00000101-19ca-4651-86e5-fa29dcdd09d1 ['write', 'notify', 'write-without-response'] 
+   ch 00000102-19ca-4651-86e5-fa29dcdd09d1 ['notify', 'write-without-response'] 
+ svc 0000180f-0000-1000-8000-00805f9b34fb Battery Service
+   ch 00002a19-0000-1000-8000-00805f9b34fb ['read', 'notify'] 50
+ERR 15018857-AF57-60C6-E4C3-49E31712DED0 (3, 'GATT Protocol Error: Write Not Permitted')
+
+## Zwift Click F2640CDB-976F-2DB0-8780-2AA8386B5FFE
+ svc 0000180a-0000-1000-8000-00805f9b34fb Device Information
+   ch 00002a29-0000-1000-8000-00805f9b34fb ['read'] 5a7769667420496e63
+   ch 00002a25-0000-1000-8000-00805f9b34fb ['read'] 30412d364331414541443945383942
+   ch 00002a27-0000-1000-8000-00805f9b34fb ['read'] 422e30
+   ch 00002a26-0000-1000-8000-00805f9b34fb ['read'] 312e322e30
+ svc 0000fc82-0000-1000-8000-00805f9b34fb Vendor specific
+   ch 00000002-19ca-4651-86e5-fa29dcdd09d1 ['notify'] 
+   ch 00000003-19ca-4651-86e5-fa29dcdd09d1 ['write-without-response'] 
+   ch 00000004-19ca-4651-86e5-fa29dcdd09d1 ['read', 'indicate'] 
+   ch 00000100-19ca-4651-86e5-fa29dcdd09d1 ['write', 'notify', 'write-without-response'] 
+   ch 00000101-19ca-4651-86e5-fa29dcdd09d1 ['write', 'notify', 'write-without-response'] 
+   ch 00000102-19ca-4651-86e5-fa29dcdd09d1 ['notify', 'write-without-response'] 
+ svc 0000180f-0000-1000-8000-00805f9b34fb Battery Service
+   ch 00002a19-0000-1000-8000-00805f9b34fb ['read', 'notify'] 50
+ERR F2640CDB-976F-2DB0-8780-2AA8386B5FFE (3, 'GATT Protocol Error: Write Not Permitted')
