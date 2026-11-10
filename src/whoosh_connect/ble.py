@@ -33,7 +33,8 @@ def _map_error(e: Exception) -> Exception:
 class ClickLink:
     def __init__(self, on_frame, on_link, scanner_factory=None, client_factory=None,
                  clock=time.monotonic, sleep=asyncio.sleep, zwift_running=state.zwift_running,
-                 capture=None, handshake_timeout=5.0, pair_wait=10.0, reset_cooldown=2.0):
+                 capture=None, handshake_timeout=5.0, pair_wait=10.0, reset_cooldown=30.0,
+                 reset_settle=3.0, max_resets=3, reset_enabled=True):
         if scanner_factory is None or client_factory is None:
             from bleak import BleakClient, BleakScanner
             scanner_factory = scanner_factory or BleakScanner
@@ -43,6 +44,9 @@ class ClickLink:
         self.clock, self.sleep, self.zwift_running = clock, sleep, zwift_running
         self.capture, self.handshake_timeout, self.pair_wait = capture, handshake_timeout, pair_wait
         self.reset_cooldown = reset_cooldown
+        self.reset_settle = reset_settle
+        self.max_resets = max_resets
+        self.reset_enabled = reset_enabled
         self._closed = False
         self._client = None
 
@@ -86,9 +90,10 @@ class ClickLink:
     async def _reset(self, client, tag) -> None:
         """Restart a unit that announced it stopped talking (clickbridge's 0x18).
 
-        A Click goes quiet roughly a minute after waking, or shortly after it has
-        asked for an unlock it never got. `0x18` brings the button engine back for
-        another window, which is enough to keep a ride alive without an unlock.
+        Off by default (`reset_enabled`): on a *locked* Click v2 the reset restarts
+        the unit, it drops the link, reconnects and says "stopped" again seconds
+        later, which turns into a reconnect loop that hammers the radio. Keep it
+        for unlocked units, where it does buy another window.
         """
         try:
             await client.write_gatt_char(SYNC_RX, RESET, response=False)
@@ -102,16 +107,29 @@ class ClickLink:
         queue: asyncio.Queue = asyncio.Queue()
         ack, gone = asyncio.Event(), asyncio.Event()
         last_reset = [-1e9]
+        connected_at = [0.0]
+        resets_done = [0]
         resets: set = set()
 
         def on_notify(char):
             def cb(_, data):
                 data = bytes(data)
                 self._cap("rx", tag, ch=char[:8], hex=data.hex())
-                if data.startswith(STOPPED_PREFIXES) and self._client is client:
+                if (data.startswith(STOPPED_PREFIXES) and self._client is client
+                        and self.reset_enabled):
                     now = self.clock()
-                    if now - last_reset[0] >= self.reset_cooldown:
+                    # A stopped frame right after subscribing is the previous boot's
+                    # leftovers: resetting on it restarts the unit in a loop.
+                    if now - connected_at[0] < self.reset_settle:
+                        log.debug("ignoring stopped frame during settle window")
+                    elif resets_done[0] >= self.max_resets:
+                        if resets_done[0] == self.max_resets:
+                            resets_done[0] += 1
+                            log.warning("Click keeps stopping; it probably needs an unlock "
+                                        "(whoosh-connect unlock)")
+                    elif now - last_reset[0] >= self.reset_cooldown:
                         last_reset[0] = now
+                        resets_done[0] += 1
                         task = asyncio.create_task(self._reset(client, tag))
                         resets.add(task)
                         task.add_done_callback(resets.discard)
@@ -127,6 +145,7 @@ class ClickLink:
         try:
             try:
                 await client.connect()
+                connected_at[0] = self.clock()
                 await client.start_notify(ASYNC, on_notify(ASYNC))
                 await client.start_notify(SYNC_TX, on_notify(SYNC_TX))
                 await client.write_gatt_char(SYNC_RX, RIDE_ON, response=False)

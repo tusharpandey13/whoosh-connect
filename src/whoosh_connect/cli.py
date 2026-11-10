@@ -31,6 +31,8 @@ def _parser() -> argparse.ArgumentParser:
     r.add_argument("--sink", choices=["obc", "keyboard"], default="obc")
     r.add_argument("--config")
     r.add_argument("--capture")
+    r.add_argument("--reset", action="store_true",
+                   help="send 0x18 when a Click stops talking (can loop on a locked unit)")
     r.add_argument("--port", type=int, default=DEFAULT_PORT)
     u = sub.add_parser("unlock", help="guide the daily Zwift unlock")
     u.add_argument("--capture", help="also record the BLE traffic (catches the ff 03 challenge)")
@@ -89,7 +91,8 @@ async def _run(args) -> int:
     sink = await _make_sink(args.sink, args.port)
     pipeline = Pipeline(m, [sink])
     cap = CaptureWriter(args.capture) if args.capture else None
-    link = ClickLink(pipeline.on_frame, pipeline.on_link, capture=cap)
+    link = ClickLink(pipeline.on_frame, pipeline.on_link, capture=cap,
+                     reset_enabled=getattr(args, "reset", False))
 
     async def ticker():
         while True:

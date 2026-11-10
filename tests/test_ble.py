@@ -201,7 +201,7 @@ async def test_b9_reset_on_device_stopped(caplog):
     caplog.set_level(logging.INFO)
     clock = Clock()
     c = FakeClient(None)
-    link, frames, links = make_link(clock, [("L", LEFT)], [c])
+    link, frames, links = make_link(clock, [("L", LEFT)], [c], reset_settle=0.0)
     task = asyncio.create_task(link.run())
     while not links:
         await asyncio.sleep(0.01)
@@ -216,5 +216,32 @@ async def test_b9_reset_on_device_stopped(caplog):
         ("write", SYNC_RX[:8], RESET, False)]
     # and the stopped frame is still delivered as a vendor frame, not swallowed
     assert any(type(f).__name__ == "VendorFrame" for f in frames)
+    await link.close()
+    task.cancel()
+
+
+async def test_b10_stopped_frame_settle_and_cap(caplog):
+    """Leftover stopped frames must not restart the unit in a loop."""
+    caplog.set_level(logging.INFO)
+    clock = Clock()
+    c = FakeClient(None)
+    link, frames, links = make_link(clock, [("L", LEFT)], [c], reset_settle=3.0,
+                                    reset_cooldown=30.0, max_resets=1)
+    task = asyncio.create_task(link.run())
+    while not links:
+        await asyncio.sleep(0.01)
+    stopped = bytearray.fromhex("ff0500ea05190a0c44383532464141")
+    c.cbs[ASYNC](None, stopped)          # t=0: inside the settle window
+    await asyncio.sleep(0.02)
+    assert not [e for e in c.log if e[:3] == ("write", SYNC_RX[:8], RESET)]
+    clock.t = 5.0                        # past settle: one reset is allowed
+    c.cbs[ASYNC](None, stopped)
+    await asyncio.sleep(0.02)
+    assert len([e for e in c.log if e[:3] == ("write", SYNC_RX[:8], RESET)]) == 1
+    clock.t = 100.0                      # cap reached: warn, do not reset again
+    c.cbs[ASYNC](None, stopped)
+    await asyncio.sleep(0.02)
+    assert len([e for e in c.log if e[:3] == ("write", SYNC_RX[:8], RESET)]) == 1
+    assert "keeps stopping" in caplog.text
     await link.close()
     task.cancel()
