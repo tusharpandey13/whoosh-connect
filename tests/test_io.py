@@ -5,7 +5,7 @@ import sys
 
 import pytest
 
-from whoosh_connect import cli, obc, state
+from whoosh_connect import cli, messages, obc, state
 from whoosh_connect.capture import replay
 from whoosh_connect.keyboard import KeyboardSink
 from whoosh_connect.mapping import DEFAULT_MAP, action
@@ -245,7 +245,7 @@ async def test_c3_preflight(tmp_path):
         pass
 
     await cli.preflight(st, ps=lambda: next(seq), clock=lambda: 1e6, sleep=nosleep, say=msgs.append)
-    assert "Zwift is running" in msgs[0]
+    assert msgs[0] == messages.ZWIFT.text  # rider-facing sentence, not process jargon (#7)
 
 
 def test_c4_exit_codes(tmp_path, monkeypatch):

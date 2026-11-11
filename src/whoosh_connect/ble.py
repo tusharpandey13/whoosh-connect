@@ -15,7 +15,9 @@ _BT_ERRORS = ("turned off", "powered off", "unauthori", "not authori", "permissi
 
 
 class BluetoothUnavailable(Exception):
-    pass
+    def __init__(self, msg: str = "", reason: str = "off"):
+        super().__init__(msg)
+        self.reason = reason  # "off" or "denied" (macOS privacy settings)
 
 
 class HandshakeTimeout(Exception):
@@ -23,10 +25,13 @@ class HandshakeTimeout(Exception):
 
 
 def _map_error(e: Exception) -> Exception:
-    if any(k in str(e).lower() for k in _BT_ERRORS):
+    text = str(e).lower()
+    if any(k in text for k in _BT_ERRORS):
+        denied = any(k in text for k in ("unauthori", "not authori", "permission"))
         return BluetoothUnavailable(
             "Bluetooth unavailable or permission denied: turn Bluetooth on and enable your terminal "
-            "in System Settings -> Privacy & Security -> Bluetooth")
+            f"in System Settings -> Privacy & Security -> Bluetooth ({e})",
+            reason="denied" if denied else "off")
     return e
 
 

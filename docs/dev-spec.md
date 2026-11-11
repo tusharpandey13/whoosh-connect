@@ -20,6 +20,7 @@ src/whoosh_connect/
   keyboard.py   I/O: macOS key injection via osascript (injectable runner)
   state.py      unlock timestamp store, Zwift process detection (injectable)
   capture.py    JSONL capture writer and reader (probe2.py format)
+  messages.py   pure: one rider-facing sentence (+ next action) per failure; detail goes to the log
   cli.py        argparse: run | unlock | replay; exit codes
 ```
 

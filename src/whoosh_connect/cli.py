@@ -8,7 +8,7 @@ import signal
 import sys
 import time
 
-from . import dlock
+from . import dlock, messages
 from .ble import BluetoothUnavailable, ClickLink
 from .capture import CaptureWriter, replay
 from .keyboard import KeyboardSink
@@ -67,7 +67,7 @@ def _config_path(arg):
 
 async def preflight(store, ps=zwift_running, clock=time.time, sleep=asyncio.sleep, say=print) -> None:
     if ps():
-        say("Zwift is running and will grab the Clicks; quit it (Cmd-Q)")
+        say(messages.ZWIFT.text)
         while ps():
             await sleep(2)
     age = store.unlock_age(clock())
@@ -280,15 +280,10 @@ def main(argv=None) -> int:
     except ConfigError as e:
         print(f"config error: {e}", file=sys.stderr)
         return USAGE
-    except BluetoothUnavailable as e:
-        print(str(e), file=sys.stderr)
-        return BT
-    except AlreadyRunning as e:
-        print(str(e), file=sys.stderr)
-        return RUNNING
-    except PortsBusy as e:
-        print(str(e), file=sys.stderr)
-        return PORTS
+    except (BluetoothUnavailable, AlreadyRunning, PortsBusy) as e:
+        # one plain sentence for the rider; the technical text is logged just above it
+        print(messages.explain(e).text, file=sys.stderr)
+        return {BluetoothUnavailable: BT, AlreadyRunning: RUNNING, PortsBusy: PORTS}[type(e)]
     except FileNotFoundError as e:
         print(f"error: {e}", file=sys.stderr)
         return USAGE
