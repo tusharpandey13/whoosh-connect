@@ -396,3 +396,60 @@ def test_startup_failure_exits_zero_so_launchd_does_not_loop():
     def broken(model):
         raise ImportError("No module named 'pystray'")
     assert app.main([], tray_factory=lambda quit: None, bridge_factory=broken) == 0
+
+
+# -- #31: Zwift opened mid-session --------------------------------------------------------
+async def test_zwift_mid_session_shown_then_cleared(tmp_path, monkeypatch):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    zwift = [False]
+    model = StatusModel()
+    b, _ = make_bridge(model, ps=lambda: zwift[0], ps_every_s=0)
+    task = asyncio.create_task(b.run())
+    await until(lambda: model.snapshot().phase is Phase.WAITING)
+    assert not b.zwift_seen
+    zwift[0] = True
+    await until(lambda: model.error is messages.ZWIFT)
+    assert b.zwift_seen
+    await asyncio.sleep(0.1)  # outlives clear_after_s: the link loop must not wipe it
+    assert model.error is messages.ZWIFT
+    zwift[0] = False
+    await until(lambda: model.error is None)
+    assert model.snapshot().phase is Phase.WAITING
+    await b.stop()
+    task.cancel()
+
+
+async def test_zwift_mid_session_does_not_hide_or_clear_other_errors(tmp_path, monkeypatch):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    zwift = [False]
+    model = StatusModel()
+    b, _ = make_bridge(model, ps=lambda: zwift[0], ps_every_s=0)
+    task = asyncio.create_task(b.run())
+    await until(lambda: model.snapshot().phase is Phase.WAITING)
+    await asyncio.sleep(0.1)  # past the link loop's own deferred clear (clear_after_s)
+    model.set_error(messages.BT_OFF)
+    zwift[0] = True
+    await until(lambda: b.zwift_seen)
+    assert model.error is messages.BT_OFF  # not replaced by the Zwift line
+    zwift[0] = False
+    await asyncio.sleep(0.05)
+    assert model.error is messages.BT_OFF  # and not cleared on Zwift's behalf
+    await b.stop()
+    task.cancel()
+
+
+async def test_zwift_scan_is_throttled(tmp_path, monkeypatch):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    now = [0.0]
+    calls = []
+    model = StatusModel()
+    b, _ = make_bridge(model, ps=lambda: calls.append(1) or False, clock=lambda: now[0],
+                       ps_every_s=5.0)
+    task = asyncio.create_task(b.run())
+    await until(lambda: len(calls) >= 2)  # one before start-up, one on the first poll
+    await asyncio.sleep(0.05)  # several polls, clock frozen
+    assert len(calls) == 2
+    now[0] = 5.0
+    await until(lambda: len(calls) == 3)
+    await b.stop()
+    task.cancel()
