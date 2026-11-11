@@ -4,7 +4,7 @@ import socket
 
 import pytest
 
-from whoosh_connect import cli, obc
+from whoosh_connect import cli, obc, state
 from whoosh_connect.capture import replay
 from whoosh_connect.keyboard import KeyboardSink
 from whoosh_connect.mapping import DEFAULT_MAP, action
@@ -194,6 +194,38 @@ async def test_c2_unlock_flow(tmp_path):
 def test_zwift_running_injectable():
     assert zwift_running(ps=lambda: {"ZwiftApp", "bash"})
     assert not zwift_running(ps=lambda: {"MyWhoosh"})
+
+
+def test_zwift_running_windows_names():
+    # psutil on Windows reports executable names with .exe, in any case
+    assert zwift_running(ps=lambda: {"System Idle Process", "explorer.exe", "ZwiftApp.exe"})
+    assert zwift_running(ps=lambda: {"ZWIFTLAUNCHER.EXE"}) is False  # names stay case-sensitive
+    assert zwift_running(ps=lambda: {"ZwiftLauncher.EXE"})
+    assert not zwift_running(ps=lambda: {"MyWhooshGame.exe", "svchost.exe"})
+    assert not zwift_running(ps=lambda: {"ZwiftApp.exe.bak"})
+
+
+def test_ps_names_uses_psutil_shape():
+    class P:
+        def __init__(self, name):
+            self.info = {"name": name}
+
+    asked = []
+
+    def fake_iter(attrs):
+        asked.append(attrs)
+        # None = psutil.AccessDenied ad_value; "" = kernel/zombie entries
+        return iter([P("ZwiftApp.exe"), P(None), P(""), P("explorer.exe")])
+
+    names = state._ps_names(process_iter=fake_iter)
+    assert asked == [["name"]]
+    assert names == {"ZwiftApp.exe", "explorer.exe"}
+    assert zwift_running(ps=lambda: state._ps_names(process_iter=fake_iter))
+
+
+def test_ps_names_never_shells_out():
+    # the real psutil path must not spawn `ps` (the conftest guard would raise if it did)
+    assert isinstance(state._ps_names(), set)
 
 
 async def test_c3_preflight(tmp_path):

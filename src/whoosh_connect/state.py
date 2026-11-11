@@ -3,11 +3,11 @@ from __future__ import annotations
 
 import asyncio
 import json
-import os
-import subprocess
 import time
 from datetime import datetime
 from pathlib import Path
+
+import psutil
 
 ZWIFT_NAMES = {"ZwiftApp", "Zwift", "ZwiftLauncher"}
 UNLOCK_VALID_S = 24 * 3600
@@ -37,14 +37,19 @@ class StateStore:
         return None if t is None else now - t
 
 
-def _ps_names() -> set[str]:
-    out = subprocess.run(["ps", "-axo", "comm="], capture_output=True, text=True, timeout=5).stdout
-    return {os.path.basename(line.strip()) for line in out.splitlines()}
+def _ps_names(process_iter=psutil.process_iter) -> set[str]:
+    """Names of running processes, on every platform. A name psutil may not read is skipped."""
+    return {n for p in process_iter(["name"]) if (n := p.info.get("name"))}
+
+
+def _strip_exe(name: str) -> str:
+    return name[:-4] if name.lower().endswith(".exe") else name
 
 
 def zwift_running(ps=_ps_names) -> bool:
-    """ps: callable returning the set of running process names (injectable)."""
-    return bool(ZWIFT_NAMES & set(ps()))
+    """ps: callable returning the set of running process names (injectable).
+    Windows names carry ``.exe`` (``ZwiftApp.exe``); it is ignored when matching."""
+    return bool(ZWIFT_NAMES & {_strip_exe(n) for n in ps()})
 
 
 def _hhmm(ts: float) -> str:
