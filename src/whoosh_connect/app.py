@@ -25,6 +25,7 @@ from .status import Phase, StatusModel
 log = logging.getLogger(__name__)
 STOP_TIMEOUT_S = 3.0
 MDNS_STOP_S = 1.5  # mDNS goodbye + TCP close; the BLE disconnect gets the rest
+PS_EVERY_S = 5.0  # how often a running session looks for Zwift (#31); a process scan isn't free
 
 
 def default_link(on_frame, on_link):
@@ -37,12 +38,13 @@ class Bridge:
                  server_factory=None, link_factory=default_link, ps=zwift_running,
                  sleep=asyncio.sleep, retry_s=5.0, poll_s=1.0, clear_after_s=2.0,
                  stop_s=STOP_TIMEOUT_S, mdns_stop_s=MDNS_STOP_S, clock=time.monotonic,
-                 notify=None):
+                 notify=None, ps_every_s=PS_EVERY_S):
         self.model, self.config, self.port = model, config, port
         self.server_factory = server_factory or (lambda port: ObcServer(port=port))
         self.link_factory, self.ps, self.sleep = link_factory, ps, sleep
         self.retry_s, self.poll_s, self.clear_after_s = retry_s, poll_s, clear_after_s
         self.stop_s, self.mdns_stop_s = stop_s, mdns_stop_s
+        self.clock, self.ps_every_s = clock, ps_every_s
         self.server = self.pipeline = self.link = None
         self.watch = SleepWatch(clock=clock)
         self.notify = notify or (macos.notify if sys.platform == "darwin" else (lambda text: None))
@@ -111,7 +113,7 @@ class Bridge:
             self.link = self.link_factory(self._on_frame, self._on_link)
             # Leave an error up until the new attempt has survived a moment, so a
             # still-denied permission doesn't flicker Searching/Error every retry.
-            clear = loop.call_later(self.clear_after_s, self.model.clear_error)
+            clear = loop.call_later(self.clear_after_s, self._clear_link_error)
             try:
                 await self.link.run()
             except BluetoothUnavailable as e:  # off or denied: explain, retry, recover (#4)
@@ -126,11 +128,29 @@ class Bridge:
             if not self._stopping:
                 await self.sleep(self.retry_s)
 
+    def _clear_link_error(self) -> None:
+        if self.model.error is not messages.ZWIFT:  # that one is _poll's to clear
+            self.model.clear_error()
+
     async def _poll(self) -> None:
+        checked = None
         while True:
             self.model.set_apps(len(self.server.app_infos))
             self.model.set_battery(self.pipeline.battery)
+            if checked is None or self.clock() - checked >= self.ps_every_s:
+                checked = self.clock()
+                await self._check_zwift()
             await self.sleep(self.poll_s)
+
+    async def _check_zwift(self) -> None:
+        """#31: Zwift opened mid-session takes the Click; say so, and clear it when it quits."""
+        running = await asyncio.to_thread(self.ps)  # off the loop: a scan must not delay a shift
+        if running:
+            self.zwift_seen = True
+            if self.model.error is None:  # don't hide a Bluetooth error behind it
+                self.model.set_error(messages.ZWIFT)
+        elif self.model.error is messages.ZWIFT:
+            self.model.clear_error()
 
     async def _tick(self) -> None:
         while True:
