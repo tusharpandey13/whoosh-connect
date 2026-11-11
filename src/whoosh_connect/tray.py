@@ -10,6 +10,7 @@ import signal
 import subprocess
 import sys
 
+from . import messages
 from .status import Phase, Status
 
 log = logging.getLogger(__name__)
@@ -60,12 +61,12 @@ class Tray:
     """Owns the pystray icon. ``update`` may be called from any thread."""
 
     def __init__(self, quit, pystray=None, on_main=None, image=draw, opener=open_url,
-                 signals=None):
+                 signals=None, login=None):
         if pystray is None:
             import pystray
         self.pystray, self._quit, self.image, self.opener = pystray, quit, image, opener
         self.on_main = on_main or (_on_main_darwin if sys.platform == "darwin" else (lambda f: f()))
-        self.signals = signals
+        self.signals, self.login = signals, login
         self.status = Status(Phase.SEARCHING, Phase.SEARCHING.value)
         self.icon = pystray.Icon(TITLE, image(self.status.phase), TITLE, menu=self._menu())
         self._quitting = False
@@ -73,13 +74,32 @@ class Tray:
     # -- menu ---------------------------------------------------------------------------
     def _menu(self):
         Item, Menu = self.pystray.MenuItem, self.pystray.Menu
-        return Menu(
+        items = [
             Item(lambda _i: self.status.line, None, enabled=False),
             Item("Open Bluetooth Settings", self._open_settings,
                  visible=lambda _i: bool(self.status.error and self.status.error.settings_url)),
             Menu.SEPARATOR,
-            Item("Quit whoosh-connect", self.quit),
-        )
+        ]
+        if self.login is not None:
+            items.append(Item(self._login_label, self._toggle_login,
+                              checked=lambda _i: self.login.enabled(),
+                              enabled=lambda _i: self.login.available()))
+        items.append(Item("Quit whoosh-connect", self.quit))
+        return Menu(*items)
+
+    def _login_label(self, _item=None) -> str:
+        if self.login.available():
+            return "Start at login"
+        return f"Start at login - {messages.MOVE_TO_APPS.text}"
+
+    def _toggle_login(self, *_) -> None:
+        on = not self.login.enabled()
+        try:
+            self.login.set(on)
+            log.info("start at login: %s", "on" if on else "off")
+        except Exception as e:  # noqa: BLE001 - a menu click must never kill the app
+            log.warning("start at login: %r", e)
+        self.icon.update_menu()
 
     def _open_settings(self, *_):
         if self.status.error and self.status.error.settings_url:

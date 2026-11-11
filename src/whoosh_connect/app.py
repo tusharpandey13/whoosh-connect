@@ -215,12 +215,20 @@ def main(argv=None, tray_factory=None, bridge_factory=Bridge) -> int:
 
 
 def _main(tray_factory, bridge_factory) -> int:
+    from .launchagent import LoginItem
     from .tray import Tray
 
     model = StatusModel()
     bridge = bridge_factory(model)
     runner = LoopThread()
-    tray = (tray_factory or Tray)(quit=lambda: shutdown(bridge, runner))
+    quit = lambda: shutdown(bridge, runner)  # noqa: E731
+    if tray_factory:
+        tray = tray_factory(quit=quit)
+    else:
+        login = LoginItem()
+        if login.refresh():
+            log.info("start at login: app moved, LaunchAgent updated to %s", login.args()[0])
+        tray = Tray(quit=quit, login=login)
     model.on_change = tray.update
     tray.update(model.snapshot())
     fut = runner.start(bridge.run())

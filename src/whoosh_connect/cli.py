@@ -50,6 +50,11 @@ def _parser() -> argparse.ArgumentParser:
                    help="--live: send ff 04 00 after RideOn (the 100 B / signable challenge shape)")
     sub.add_parser("check", help="show the version and whether the Bluetooth backend is bundled")
     sub.add_parser("app", help="menu-bar app (what the bundled .app runs)")
+    li = sub.add_parser("login-item", help="start the menu-bar app at login (LaunchAgent)")
+    g = li.add_mutually_exclusive_group()
+    g.add_argument("--print", action="store_true", help="print the LaunchAgent plist, change nothing")
+    g.add_argument("--on", action="store_true")
+    g.add_argument("--off", action="store_true")
     p2 = sub.add_parser("replay", help="feed a capture through the pipeline")
     p2.add_argument("file")
     p2.add_argument("--sink", choices=["print", "obc", "keyboard"], default="print")
@@ -268,6 +273,24 @@ def _sigterm(signum, frame):
     raise KeyboardInterrupt
 
 
+def _login_item(args, item=None, out=None) -> int:
+    from .launchagent import LoginItem, NotMovable
+
+    item = item or LoginItem()
+    out = out or sys.stdout
+    if args.print:
+        out.write(item.render().decode())
+        return OK
+    try:
+        if args.on or args.off:
+            item.set(args.on)
+    except NotMovable:
+        print(messages.MOVE_TO_APPS.text, file=sys.stderr)
+        return USAGE
+    print(f"start at login: {'on' if item.enabled() else 'off'} ({item.path})", file=out)
+    return OK
+
+
 def main(argv=None) -> int:
     signal.signal(signal.SIGTERM, _sigterm)
     args = _parser().parse_args(argv)
@@ -281,6 +304,8 @@ def main(argv=None) -> int:
         if args.cmd == "app":
             from .app import main as app_main
             return app_main(["-v"] if args.verbose else [])
+        if args.cmd == "login-item":
+            return _login_item(args)
         if args.cmd == "check":
             from .bundle import check
             return check()
