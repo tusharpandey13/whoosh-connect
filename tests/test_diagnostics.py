@@ -142,3 +142,29 @@ async def test_bridge_remembers_zwift_was_seen(tmp_path, monkeypatch):
     except Stop:
         pass
     assert b.zwift_seen is True
+
+
+def test_review_leaks_are_closed():
+    cases = [
+        "{'access_token': 'abcd1234opaque', 'expires_in': 3600}",
+        """ZwiftApp --token '{"access_token": "xyz opaque"}' --other""",
+        "Authorization: Basic dXNlcjpwYXNzd29yZA==",
+        "refresh_token=opaque123&x=1",
+    ]
+    out = d.redact("\n".join(cases))
+    for secret in ("abcd1234opaque", "xyz opaque", "dXNlcjpwYXNzd29yZA", "opaque123"):
+        assert secret not in out
+    assert "--other" in out and "expires_in" in out
+
+
+def test_gatt_uuids_and_prose_survive():
+    line = "char 00002a19-0000-1000-8000-00805f9b34fb; next token = 5"
+    assert d.redact(line) == line
+
+
+def test_tail_reads_only_the_end_of_a_huge_log(tmp_path):
+    p = tmp_path / "ride.log"
+    p.write_text("".join(f"line {i}\n" for i in range(20000)))
+    out = d.tail(p, n=3, max_bytes=100).splitlines()
+    assert out == ["line 19997", "line 19998", "line 19999"]
+    assert all(line.startswith("line ") for line in d.tail(p, max_bytes=1000).splitlines())

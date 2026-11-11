@@ -18,13 +18,19 @@ LOG_LINES = 500
 CUT = "[redacted]"
 
 _SECRETS = [
-    # Authorization headers, --token=..., "access_token": "...", token=..., JWTs
-    (re.compile(r"(?i)(bearer\s+)\S+"), r"\1" + CUT),
-    (re.compile(r"(?i)(--token[=\s]+)(\{.*?\}|\S+)"), r"\1" + CUT),
-    (re.compile(r'(?i)("?(?:access|refresh|id)?_?token"?\s*[:=]\s*)("[^"]*"|\S+)'), r"\1" + CUT),
+    # Authorization: Bearer/Basic ...
+    (re.compile(r"(?i)\b(bearer|basic)(\s+)[^\s'\",}]+"), r"\1\2" + CUT),
+    # --token=<json or word>, also quoted ('{...}' / "...") as ps shows it
+    (re.compile(r"(?i)(--token[=\s]+)('[^']*'|\"[^\"]*\"|\{[^\n]*\}|\S+)"), r"\1" + CUT),
+    # key/value: "access_token": "...", 'refresh_token': '...', token=..., id_token:...
+    # (an unquoted key must touch its = or :, so prose like "next token = 5" survives)
+    (re.compile(r"""(?i)((?:['"](?:\w+_)?token['"]\s*|\b(?:\w+_)?token)[:=]\s*)"""
+                r"""('[^']*'|"[^"]*"|[^\s,}]+)"""), r"\1" + CUT),
+    # a JWT with no label at all
     (re.compile(r"\beyJ[\w-]+\.[\w-]+\.[\w-]+"), CUT),
 ]
-_UUID = re.compile(r"\b[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{8}([0-9A-Fa-f]{4})\b")
+# CoreBluetooth device ids; standard GATT UUIDs (Bluetooth base UUID) are not identifiers
+_UUID = re.compile(r"\b(?![0-9A-Fa-f]{8}-0000-1000-8000-00805[Ff]9[Bb]34[Ff][Bb])[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{8}([0-9A-Fa-f]{4})\b")
 _MAC = re.compile(r"\b(?:[0-9A-Fa-f]{2}[:-]){4}([0-9A-Fa-f]{2})[:-]([0-9A-Fa-f]{2})\b")
 
 
@@ -35,10 +41,18 @@ def redact(text: str) -> str:
     return _MAC.sub(lambda m: f"…{(m.group(1) + m.group(2)).upper()}", text)
 
 
-def tail(path, n: int = LOG_LINES) -> str:
+TAIL_BYTES = 512 * 1024  # ride.log is never rotated; don't read months of it from a menu click
+
+
+def tail(path, n: int = LOG_LINES, max_bytes: int = TAIL_BYTES) -> str:
     try:
-        with open(path, encoding="utf-8", errors="replace") as f:
-            return "".join(collections.deque(f, n))
+        with open(path, "rb") as f:
+            size = f.seek(0, 2)
+            f.seek(max(0, size - max_bytes))
+            if size > max_bytes:
+                f.readline()  # drop the partial first line
+            lines = collections.deque(f, n)
+        return b"".join(lines).decode("utf-8", errors="replace")
     except OSError as e:
         return f"(no log: {e.strerror or e})\n"
 
