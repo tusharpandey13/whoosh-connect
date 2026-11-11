@@ -272,7 +272,8 @@ def items(t):
 
 def test_tray_menu_tracks_status():
     t, _, opened = tray()
-    line, settings, quit_item = items(t)
+    line, setup, settings, quit_item = items(t)
+    assert not setup.shown()
     assert line.enabled is False and "Searching" in line.label()
     assert not settings.shown() and quit_item.label() == "Quit whoosh-connect"
     t.update(Status(Phase.ERROR, messages.BT_DENIED.text, messages.BT_DENIED))
