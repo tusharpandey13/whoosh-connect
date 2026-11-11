@@ -53,6 +53,16 @@ def _on_main_darwin(fn) -> None:
     AppHelper.callAfter(fn)
 
 
+COPIED = "Diagnostics copied. Paste them into your message."
+NOT_COPIED = "Couldn't copy diagnostics. The log is in ~/Library/Logs/whoosh-connect."
+
+
+def _notify(text: str) -> None:
+    from .macos import notify
+
+    notify(text)
+
+
 def open_url(url: str, runner=subprocess.Popen) -> None:
     runner(["open", url])
 
@@ -61,12 +71,13 @@ class Tray:
     """Owns the pystray icon. ``update`` may be called from any thread."""
 
     def __init__(self, quit, pystray=None, on_main=None, image=draw, opener=open_url,
-                 signals=None, login=None):
+                 signals=None, login=None, diagnostics=None, notify=None):
         if pystray is None:
             import pystray
         self.pystray, self._quit, self.image, self.opener = pystray, quit, image, opener
         self.on_main = on_main or (_on_main_darwin if sys.platform == "darwin" else (lambda f: f()))
-        self.signals, self.login = signals, login
+        self.signals, self.login, self.diagnostics = signals, login, diagnostics
+        self.notify = notify or _notify
         self.status = Status(Phase.SEARCHING, Phase.SEARCHING.value)
         self.icon = pystray.Icon(TITLE, image(self.status.phase), TITLE, menu=self._menu())
         self._quitting = False
@@ -84,8 +95,18 @@ class Tray:
             items.append(Item(self._login_label, self._toggle_login,
                               checked=lambda _i: self.login.enabled(),
                               enabled=lambda _i: self.login.available()))
+        if self.diagnostics is not None:
+            items.append(Item("Copy diagnostics", self._copy_diagnostics))
         items.append(Item("Quit whoosh-connect", self.quit))
         return Menu(*items)
+
+    def _copy_diagnostics(self, *_) -> None:
+        try:
+            ok = self.diagnostics()
+        except Exception as e:  # noqa: BLE001 - a menu click must never kill the app
+            log.warning("copy diagnostics: %r", e)
+            ok = False
+        self.notify(COPIED if ok else NOT_COPIED)
 
     def _login_label(self, _item=None) -> str:
         if self.login.available():
