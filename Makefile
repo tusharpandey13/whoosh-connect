@@ -33,6 +33,8 @@ app:
 	$(VENV)/bin/pyinstaller --noconfirm --clean --log-level WARN \
 		--workpath build/pyinstaller --distpath dist packaging/whoosh-connect.spec
 	dist/whoosh-connect.app/Contents/MacOS/whoosh-connect check
+	plutil -extract NSBluetoothAlwaysUsageDescription raw dist/whoosh-connect.app/Contents/Info.plist
+	plutil -extract NSBluetoothPeripheralUsageDescription raw dist/whoosh-connect.app/Contents/Info.plist
 	@echo "built dist/whoosh-connect.app"
 
 install-launchd:

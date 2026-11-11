@@ -22,6 +22,7 @@ src/whoosh_connect/
   capture.py    JSONL capture writer and reader (probe2.py format)
   messages.py   pure: one rider-facing sentence (+ next action) per failure; detail goes to the log
   bundle.py     what the .app does on launch (no args = run, Finder launch logs to file), `check`
+  macos.py      macOS-only seams for the app: Bluetooth permission probe (no prompt), …
   cli.py        argparse: run | unlock | replay; exit codes
 ```
 
@@ -115,6 +116,7 @@ src/whoosh_connect/
 - `make app` installs the `bundle` extra (PyInstaller) and builds `dist/whoosh-connect.app` from `packaging/whoosh-connect.spec` (`--onedir`; the work dir is `build/pyinstaller`, ignored), then runs the bundled `whoosh-connect check`.
 - `packaging/launcher.py` -> `bundle.launch`: a double-click runs the bridge; any arguments go to the CLI as usual, so `whoosh-connect.app/Contents/MacOS/whoosh-connect replay …` works.
 - The spec collects `bleak.backends.corebluetooth` explicitly (bleak imports it inside functions) plus `CoreBluetooth` and `libdispatch`.
+- `bundle.info_plist()` holds the Info.plist entries, including `NSBluetoothAlwaysUsageDescription` and `NSBluetoothPeripheralUsageDescription` (without them CoreBluetooth is killed silently inside a bundle); `make app` checks both are in the built plist.
 - The bundle inherits the build Python's minimum macOS and architecture (`LSMinimumSystemVersion` comes from `MACOSX_DEPLOYMENT_TARGET`). Ad-hoc signed; Developer ID is issue #5.
 
 ## Repo hygiene
