@@ -26,10 +26,19 @@ stop:
 	-pkill -f 'whoosh[-]connect'
 	@echo "stopped (if a bridge was running)"
 
+# --- the double-clickable app (issue #1) ----------------------------------
+
+app:
+	$(VENV)/bin/pip install -q -e '.[bundle]'
+	$(VENV)/bin/pyinstaller --noconfirm --clean --log-level WARN \
+		--workpath build/pyinstaller --distpath dist packaging/whoosh-connect.spec
+	dist/whoosh-connect.app/Contents/MacOS/whoosh-connect check
+	@echo "built dist/whoosh-connect.app"
+
 install-launchd:
 	bash scripts/install_launchd.sh
 
 uninstall-launchd:
 	bash scripts/uninstall_launchd.sh
 
-.PHONY: install test lint ride ride-bg stop install-launchd uninstall-launchd
+.PHONY: install test lint ride ride-bg stop install-launchd uninstall-launchd app

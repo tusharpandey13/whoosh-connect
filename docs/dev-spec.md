@@ -21,6 +21,7 @@ src/whoosh_connect/
   state.py      unlock timestamp store, Zwift process detection (injectable)
   capture.py    JSONL capture writer and reader (probe2.py format)
   messages.py   pure: one rider-facing sentence (+ next action) per failure; detail goes to the log
+  bundle.py     what the .app does on launch (no args = run, Finder launch logs to file), `check`
   cli.py        argparse: run | unlock | replay; exit codes
 ```
 
@@ -109,6 +110,12 @@ src/whoosh_connect/
 - Exit codes: 0 ok, 2 usage/config error, 3 Bluetooth unavailable, 4 ports busy, 5 D-Lock signed nothing, 6 another bridge is already advertising.
 - Graceful Ctrl-C (journey C9): cancel tasks, then `sink.close()`, `server.stop()`, `link.close()`, all within 3 s.
 - Logging: `HH:MM:SS message` to stderr; `-v` sets DEBUG with hex.
+
+## Packaging (macOS app)
+- `make app` installs the `bundle` extra (PyInstaller) and builds `dist/whoosh-connect.app` from `packaging/whoosh-connect.spec` (`--onedir`; the work dir is `build/pyinstaller`, ignored), then runs the bundled `whoosh-connect check`.
+- `packaging/launcher.py` -> `bundle.launch`: a double-click runs the bridge; any arguments go to the CLI as usual, so `whoosh-connect.app/Contents/MacOS/whoosh-connect replay …` works.
+- The spec collects `bleak.backends.corebluetooth` explicitly (bleak imports it inside functions) plus `CoreBluetooth` and `libdispatch`.
+- The bundle inherits the build Python's minimum macOS and architecture (`LSMinimumSystemVersion` comes from `MACOSX_DEPLOYMENT_TARGET`). Ad-hoc signed; Developer ID is issue #5.
 
 ## Repo hygiene
 - `README.md` is the user-facing document (what it is, install, ride, controls, troubleshooting, how it works). Measured hardware/protocol facts live in `docs/hardware.md`; the unlock investigation in `notes/unlock-analysis.md`; `raw/` and `scripts/` stay as evidence and probes.

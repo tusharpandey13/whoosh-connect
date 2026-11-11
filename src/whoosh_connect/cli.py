@@ -48,6 +48,7 @@ def _parser() -> argparse.ArgumentParser:
     d.add_argument("--listen", type=float, default=8.0, help="seconds to watch for buttons per framing")
     d.add_argument("--ff0400", action="store_true",
                    help="--live: send ff 04 00 after RideOn (the 100 B / signable challenge shape)")
+    sub.add_parser("check", help="show the version and whether the Bluetooth backend is bundled")
     p2 = sub.add_parser("replay", help="feed a capture through the pipeline")
     p2.add_argument("file")
     p2.add_argument("--sink", choices=["print", "obc", "keyboard"], default="print")
@@ -276,6 +277,9 @@ def main(argv=None) -> int:
             return asyncio.run(_unlock(args))
         if args.cmd == "dlock":
             return asyncio.run(_dlock(args))
+        if args.cmd == "check":
+            from .bundle import check
+            return check()
         return asyncio.run(_run(args) if args.cmd == "run" else _replay(args))
     except ConfigError as e:
         print(f"config error: {e}", file=sys.stderr)
