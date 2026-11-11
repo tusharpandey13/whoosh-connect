@@ -11,14 +11,16 @@ import asyncio
 import logging
 import sys
 import threading
+import time
 
-from . import messages
+from . import macos, messages
+from .asleep import Event, SleepWatch
 from .ble import BluetoothUnavailable, ClickLink
 from .mapping import ConfigError, load_map
 from .obc_server import DEFAULT_PORT, AlreadyRunning, ObcServer, ObcSink, PortsBusy
 from .pipeline import Pipeline
 from .state import default_config_path, zwift_running
-from .status import StatusModel
+from .status import Phase, StatusModel
 
 log = logging.getLogger(__name__)
 STOP_TIMEOUT_S = 3.0
@@ -34,23 +36,38 @@ class Bridge:
     def __init__(self, model: StatusModel, *, config=None, port=DEFAULT_PORT,
                  server_factory=None, link_factory=default_link, ps=zwift_running,
                  sleep=asyncio.sleep, retry_s=5.0, poll_s=1.0, clear_after_s=2.0,
-                 stop_s=STOP_TIMEOUT_S, mdns_stop_s=MDNS_STOP_S):
+                 stop_s=STOP_TIMEOUT_S, mdns_stop_s=MDNS_STOP_S, clock=time.monotonic,
+                 notify=None):
         self.model, self.config, self.port = model, config, port
         self.server_factory = server_factory or (lambda port: ObcServer(port=port))
         self.link_factory, self.ps, self.sleep = link_factory, ps, sleep
         self.retry_s, self.poll_s, self.clear_after_s = retry_s, poll_s, clear_after_s
         self.stop_s, self.mdns_stop_s = stop_s, mdns_stop_s
         self.server = self.pipeline = self.link = None
+        self.watch = SleepWatch(clock=clock)
+        self.notify = notify or (macos.notify if sys.platform == "darwin" else (lambda text: None))
         self._stopping = False
         self._tasks: list[asyncio.Task] = []
 
     # -- callbacks handed to ClickLink -------------------------------------------------
     async def _on_frame(self, frame) -> None:
         await self.pipeline.on_frame(frame)
+        self._sleep_event(self.watch.on_frame(frame))
 
     async def _on_link(self, up: bool, battery=None) -> None:
+        self.watch.on_link(up)
         self.model.set_link(up, battery)
         await self.pipeline.on_link(up, battery)
+
+    def _sleep_event(self, event) -> None:
+        """#9: one notification per closed window, only while MyWhoosh is connected."""
+        if event is Event.ASLEEP:
+            log.info("gears asleep: the Click closed its press window")
+            self.model.set_asleep(True)
+            if self.model.snapshot().phase is Phase.RIDING:
+                self.notify(messages.ASLEEP.text.rstrip("."))
+        elif event is Event.AWAKE:
+            self.model.set_asleep(False)
 
     # -- lifecycle ---------------------------------------------------------------------
     async def run(self) -> None:
