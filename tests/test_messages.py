@@ -9,7 +9,7 @@ from whoosh_connect.mapping import ConfigError
 from whoosh_connect.obc_server import AlreadyRunning, PortsBusy
 
 RIDER = [m for m in vars(messages).values() if isinstance(m, messages.Message)]
-ACTIONS = ("Turn", "Open", "Quit", "look", "Fix", "Use")
+ACTIONS = ("Turn", "Open", "Quit", "look", "Fix", "Use", "Move")
 
 
 def test_message_table_is_complete():

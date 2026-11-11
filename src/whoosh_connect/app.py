@@ -215,12 +215,14 @@ def main(argv=None, tray_factory=None, bridge_factory=Bridge) -> int:
 
 
 def _main(tray_factory, bridge_factory) -> int:
+    from .launchagent import LoginItem
     from .tray import Tray
 
     model = StatusModel()
     bridge = bridge_factory(model)
     runner = LoopThread()
-    tray = (tray_factory or Tray)(quit=lambda: shutdown(bridge, runner))
+    quit = lambda: shutdown(bridge, runner)  # noqa: E731
+    tray = tray_factory(quit=quit) if tray_factory else Tray(quit=quit, login=LoginItem())
     model.on_change = tray.update
     tray.update(model.snapshot())
     fut = runner.start(bridge.run())

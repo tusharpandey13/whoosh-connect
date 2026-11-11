@@ -237,8 +237,9 @@ class FakeIcon:
 
 
 class FakeItem:
-    def __init__(self, text, action, enabled=True, visible=True):
+    def __init__(self, text, action, enabled=True, visible=True, checked=None):
         self.text, self.action, self.enabled, self.visible = text, action, enabled, visible
+        self.checked = checked
 
     def label(self):
         return self.text(self) if callable(self.text) else self.text

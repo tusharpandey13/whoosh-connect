@@ -31,6 +31,8 @@ RUNNING = Message("whoosh-connect is already running - look in the menu bar.")
 ZWIFT = Message("Zwift is holding your shifters. Quit Zwift, then carry on.")
 CONFIG = Message("Your whoosh-connect settings file has a mistake. Fix or delete config.toml, "
                  "then start again.")
+MOVE_TO_APPS = Message("Move whoosh-connect to your Applications folder first, then turn on "
+                       "Start at login.")
 UNKNOWN = Message("Something went wrong. Use Copy diagnostics in the menu and send it to us.")
 
 BY_CODE = {3: BT_OFF, 4: PORTS, 6: RUNNING, 2: CONFIG}  # 5 (dlock) is not rider-facing

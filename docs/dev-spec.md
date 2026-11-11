@@ -27,7 +27,9 @@ src/whoosh_connect/
   app.py        menu-bar app: Bridge (server -> pipeline -> link, never exits on a recoverable
                 error) on an asyncio thread; Quit closes BLE + mDNS within 3 s
   tray.py       pystray icon + menu on the main thread; SIGTERM -> Quit (optional extra [app])
-  cli.py        argparse: run | unlock | replay; exit codes
+  launchagent.py Start at login: writes/removes ~/Library/LaunchAgents/<label>.plist for the
+                app binary (no launchctl calls; effective at next login)
+  cli.py        argparse: run | unlock | replay | app | check | login-item; exit codes
 ```
 
 ### zwift.py
