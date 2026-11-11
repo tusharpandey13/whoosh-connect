@@ -39,3 +39,13 @@ class KeyboardSink:
 
     async def close(self):
         pass
+
+
+def keyboard_sink(platform: str | None = None):
+    """The keyboard fallback for this OS: SendInput on Windows (#13), osascript elsewhere."""
+    import sys
+
+    if (platform or sys.platform) == "win32":
+        from .winkeys import WindowsKeyboardSink
+        return WindowsKeyboardSink()
+    return KeyboardSink()
