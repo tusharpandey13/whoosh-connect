@@ -247,12 +247,16 @@ def _main(tray_factory, bridge_factory) -> int:
 
     if tray_factory:
         tray = tray_factory(quit=quit)
+        model.on_change = tray.update
     else:
+        from .onboarding import Onboarding
+
         login = LoginItem()
         if login.refresh():
             log.info("start at login: app moved, LaunchAgent updated to %s", login.args()[0])
         tray = Tray(quit=quit, login=login, diagnostics=diagnostics)
-    model.on_change = tray.update
+        guide = Onboarding(notify=macos.notify, show=tray.set_setup)
+        model.on_change = lambda s: (tray.update(s), guide.update(s))
     tray.update(model.snapshot())
     fut = runner.start(bridge.run())
     fut.add_done_callback(lambda f: _bridge_ended(f, model))

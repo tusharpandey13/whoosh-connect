@@ -79,6 +79,7 @@ class Tray:
         self.signals, self.login, self.diagnostics = signals, login, diagnostics
         self.notify = notify or _notify
         self.status = Status(Phase.SEARCHING, Phase.SEARCHING.value)
+        self.setup: str | None = None  # first-run step line (#8)
         self.icon = pystray.Icon(TITLE, image(self.status.phase), TITLE, menu=self._menu())
         self._quitting = False
 
@@ -87,6 +88,7 @@ class Tray:
         Item, Menu = self.pystray.MenuItem, self.pystray.Menu
         items = [
             Item(lambda _i: self.status.line, None, enabled=False),
+            Item(lambda _i: self.setup or "", None, enabled=False, visible=lambda _i: bool(self.setup)),
             Item("Open Bluetooth Settings", self._open_settings,
                  visible=lambda _i: bool(self.status.error and self.status.error.settings_url)),
             Menu.SEPARATOR,
@@ -129,6 +131,12 @@ class Tray:
     # -- state --------------------------------------------------------------------------
     def update(self, status: Status) -> None:
         self.on_main(lambda: self._apply(status))
+
+    def set_setup(self, line: str | None) -> None:
+        def apply():
+            self.setup = line
+            self.icon.update_menu()
+        self.on_main(apply)
 
     def _apply(self, status: Status) -> None:
         changed_phase = status.phase != self.status.phase

@@ -31,6 +31,8 @@ src/whoosh_connect/
                 quiet within 3 s of connect or 10 s of a press; a press re-arms (watch only)
   diagnostics.py Copy diagnostics: version, OS, BT access, status, unlock age (read-only),
                 Zwift seen, last 500 log lines; tokens removed, addresses cut to last 4
+  onboarding.py first run: 4 steps advanced by status (Zwift -> Searching -> Waiting -> Riding),
+                one notice each, forward only; done flag in app.json (not state.json)
   launchagent.py Start at login: writes/removes ~/Library/LaunchAgents/<label>.plist for the
                 app binary (no launchctl calls; effective at next login)
   cli.py        argparse: run | unlock | replay | app | check | login-item; exit codes
