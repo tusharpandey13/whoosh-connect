@@ -222,7 +222,13 @@ def _main(tray_factory, bridge_factory) -> int:
     bridge = bridge_factory(model)
     runner = LoopThread()
     quit = lambda: shutdown(bridge, runner)  # noqa: E731
-    tray = tray_factory(quit=quit) if tray_factory else Tray(quit=quit, login=LoginItem())
+    if tray_factory:
+        tray = tray_factory(quit=quit)
+    else:
+        login = LoginItem()
+        if login.refresh():
+            log.info("start at login: app moved, LaunchAgent updated to %s", login.args()[0])
+        tray = Tray(quit=quit, login=login)
     model.on_change = tray.update
     tray.update(model.snapshot())
     fut = runner.start(bridge.run())

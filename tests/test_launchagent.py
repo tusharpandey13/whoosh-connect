@@ -134,3 +134,23 @@ def test_cli_parser_accepts_login_item():
     assert a.cmd == "login-item" and a.print
     with pytest.raises(SystemExit):
         cli._parser().parse_args(["login-item", "--on", "--off"])
+
+
+def test_refresh_follows_a_moved_app(tmp_path):
+    exe = ["/Users/r/Downloads/whoosh-connect.app/Contents/MacOS/whoosh-connect"]
+    li = LoginItem(home=lambda: tmp_path, args=lambda: [exe[0], "app"],
+                   log_path=lambda: tmp_path / "ride.log")
+    assert li.refresh() is False  # not enabled: nothing to do
+    li.set(True)
+    assert li.refresh() is False  # same path
+    exe[0] = APP_EXE
+    assert li.refresh() is True
+    assert plistlib.loads(li.path.read_bytes())["ProgramArguments"] == [APP_EXE, "app"]
+
+
+def test_refresh_never_points_at_a_translocated_copy(tmp_path):
+    li = item(tmp_path)
+    li.set(True)
+    moved = item(tmp_path, exe=TRANSLOCATED)
+    assert moved.refresh() is False
+    assert plistlib.loads(li.path.read_bytes())["ProgramArguments"][0] == APP_EXE

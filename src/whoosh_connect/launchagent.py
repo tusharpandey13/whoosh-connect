@@ -60,6 +60,22 @@ class LoginItem:
     def enabled(self) -> bool:
         return self.path.exists()
 
+    def refresh(self) -> bool:
+        """If the app moved since Start at login was ticked, point the agent at the new path.
+
+        Otherwise the menu would show it ticked while launchd fails at every login.
+        """
+        if not self.enabled() or not self.available():
+            return False
+        try:
+            current = plistlib.loads(self.path.read_bytes()).get("ProgramArguments")
+        except Exception:  # noqa: BLE001 - unreadable plist: rewrite it
+            current = None
+        if current == self.args():
+            return False
+        self.set(True)
+        return True
+
     def render(self) -> bytes:
         return plistlib.dumps(plist(self.args(), self.log_path()))
 
