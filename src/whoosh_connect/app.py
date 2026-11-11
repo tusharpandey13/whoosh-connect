@@ -24,6 +24,7 @@ from .status import Phase, StatusModel
 
 log = logging.getLogger(__name__)
 STOP_TIMEOUT_S = 3.0
+QUIT_BUDGET_S = STOP_TIMEOUT_S + 0.5  # Bridge.stop + unwinding the loop, from the Quit click (#32)
 MDNS_STOP_S = 1.5  # mDNS goodbye + TCP close; the BLE disconnect gets the rest
 PS_EVERY_S = 5.0  # how often a running session looks for Zwift (#31); a process scan isn't free
 
@@ -50,6 +51,7 @@ class Bridge:
         self.notify = notify or (macos.notify if sys.platform == "darwin" else (lambda text: None))
         self.zwift_seen = False  # for Copy diagnostics (#10)
         self._stopping = False
+        self._starting: asyncio.Future | None = None  # server.start() in flight (#32)
         self._tasks: list[asyncio.Task] = []
 
     # -- callbacks handed to ClickLink -------------------------------------------------
@@ -84,7 +86,7 @@ class Bridge:
             self.model.set_error(messages.ZWIFT)
             await self.sleep(2)
         self.model.clear_error()
-        if not await self._start_server():
+        if not await self._start_server() or self._stopping:
             return
         self.pipeline = Pipeline(mapping, [ObcSink(self.server)])
         self._tasks = [asyncio.create_task(self._poll()), asyncio.create_task(self._tick())]
@@ -93,8 +95,10 @@ class Bridge:
     async def _start_server(self) -> bool:
         while not self._stopping:
             self.server = self.server_factory(self.port)
+            self._starting = asyncio.ensure_future(self.server.start())
             try:
-                await self.server.start()
+                # Shielded: Quit lets a registration finish, then sends the goodbye (#32).
+                await asyncio.shield(self._starting)
                 return True
             except AlreadyRunning as e:  # the other instance owns the shifters; say so and idle
                 self.model.set_error(messages.explain(e))
@@ -165,12 +169,22 @@ class Bridge:
             log.debug("releasing unused server: %r", e)
 
     async def stop(self) -> None:
-        """Unregister mDNS, then close the BLE link, within STOP_TIMEOUT_S in total.
+        """Unregister mDNS, then close the BLE link, within ``stop_s`` in total.
 
         mDNS goes first with its own budget: a stalled CoreBluetooth disconnect must not
-        leave MyWhoosh listing a whoosh-connect that is gone.
+        leave MyWhoosh listing a whoosh-connect that is gone. A registration still in
+        flight is allowed to finish first, or a late announce would outlive the goodbye.
         """
+        loop = asyncio.get_running_loop()
+        end = loop.time() + self.stop_s
+        left = lambda: max(0.0, end - loop.time())  # noqa: E731
         self._stopping = True
+        if self._starting is not None and not self._starting.done():
+            await asyncio.wait({self._starting}, timeout=min(self.mdns_stop_s, left()))
+            if not self._starting.done():
+                log.warning("shutdown: mDNS registration still running; cancelling it")
+                self._starting.cancel()
+                await asyncio.wait({self._starting}, timeout=min(0.2, left()))  # let it unwind
         for t in self._tasks:
             t.cancel()
         if self.pipeline:
@@ -180,9 +194,9 @@ class Bridge:
         else:
             closing = None
         if closing is not None:
-            await self._bounded("mDNS/server", closing, self.mdns_stop_s)
+            await self._bounded("mDNS/server", closing, min(self.mdns_stop_s, left()))
         if self.link:
-            await self._bounded("BLE link", self.link.close(), self.stop_s - self.mdns_stop_s)
+            await self._bounded("BLE link", self.link.close(), left())
 
     @staticmethod
     async def _bounded(what: str, coro, timeout: float) -> None:
@@ -207,29 +221,40 @@ class LoopThread:
     def call(self, coro, timeout: float):
         return asyncio.run_coroutine_threadsafe(coro, self.loop).result(timeout)
 
-    def stop(self) -> None:
-        """Cancel what is still running (Bridge.run), let it unwind, then stop the loop."""
+    def stop(self, timeout: float = 1.0, clock=time.monotonic) -> None:
+        """Cancel what is still running (Bridge.run), let it unwind, then stop the loop.
+
+        Everything here shares ``timeout``: Quit blocks the menu while it runs.
+        """
+        end = clock() + timeout
+        left = lambda: max(0.05, end - clock())  # noqa: E731
+
         async def drain():
             tasks = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
             for t in tasks:
                 t.cancel()
-            await asyncio.wait(tasks, timeout=1) if tasks else None
+            await asyncio.wait(tasks, timeout=timeout / 2) if tasks else None
 
         try:
-            self.call(drain(), 2)
+            self.call(drain(), left())
         except Exception as e:  # noqa: BLE001 - quitting must always finish
             log.warning("quit: tasks did not unwind: %r", e)
         self.loop.call_soon_threadsafe(self.loop.stop)
-        self.thread.join(timeout=1)
+        self.thread.join(timeout=left())
 
 
-def shutdown(bridge: Bridge, runner: LoopThread) -> None:
-    """Quit path: stop the bridge (BLE + mDNS) on its own loop, then the loop."""
+def shutdown(bridge: Bridge, runner: LoopThread, budget: float = QUIT_BUDGET_S,
+             clock=time.monotonic) -> None:
+    """Quit path: stop the bridge (BLE + mDNS) on its own loop, then the loop.
+
+    One deadline from the click (#32): each step only gets what the previous one left.
+    """
+    end = clock() + budget
     try:
-        runner.call(bridge.stop(), STOP_TIMEOUT_S + 1)
+        runner.call(bridge.stop(), max(0.1, end - clock()))
     except Exception as e:  # noqa: BLE001 - quitting must always finish
         log.warning("quit: %r", e)
-    runner.stop()
+    runner.stop(max(0.1, end - clock()), clock=clock)
 
 
 def _bridge_ended(fut, model: StatusModel) -> None:
