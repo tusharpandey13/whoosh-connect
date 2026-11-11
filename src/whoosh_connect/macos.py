@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import subprocess
 
 log = logging.getLogger(__name__)
 
@@ -25,3 +26,16 @@ def bt_authorization(cb=None) -> str:
 
 def bt_denied(cb=None) -> bool:
     return bt_authorization(cb) in ("denied", "restricted")
+
+
+_NOTIFY = ["-e", "on run argv", "-e",
+           "display notification (item 1 of argv) with title (item 2 of argv)", "-e", "end run"]
+
+
+def notify(text: str, title: str = "whoosh-connect", runner=subprocess.Popen) -> None:
+    """A system notification. Text goes in as an argument, never spliced into the script."""
+    try:
+        runner(["osascript", *_NOTIFY, text, title],
+               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception as e:  # noqa: BLE001 - a missed notification must not stop the bridge
+        log.debug("notification failed: %r", e)

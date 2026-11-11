@@ -4,7 +4,7 @@ from __future__ import annotations
 import enum
 from dataclasses import dataclass
 
-from .messages import Message
+from .messages import ASLEEP, Message
 
 
 class Phase(enum.Enum):
@@ -37,6 +37,7 @@ class StatusModel:
         self.apps = 0
         self.battery: int | None = None
         self.error: Message | None = None
+        self.asleep = False
         self._last: Status | None = None
 
     def snapshot(self) -> Status:
@@ -49,7 +50,9 @@ class StatusModel:
         else:
             phase = Phase.RIDING
         line = phase.value
-        if phase in HINTS:
+        if self.asleep:
+            line += f" - {ASLEEP.text.rstrip('.')}"
+        elif phase in HINTS:
             line += f" - {HINTS[phase]}"
         if self.link_up and self.battery is not None:
             line += f" (battery {self.battery} %)"
@@ -63,6 +66,7 @@ class StatusModel:
 
     def set_link(self, up: bool, battery: int | None = None) -> None:
         self.link_up = up
+        self.asleep = False
         if battery is not None:
             self.battery = battery
         self._changed()
@@ -75,6 +79,10 @@ class StatusModel:
         if battery is not None:
             self.battery = battery
             self._changed()
+
+    def set_asleep(self, asleep: bool) -> None:
+        self.asleep = asleep
+        self._changed()
 
     def set_error(self, msg: Message | None) -> None:
         self.error = msg
