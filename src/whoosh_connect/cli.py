@@ -16,7 +16,7 @@ from .mapping import ConfigError, load_map
 from .obc_server import DEFAULT_PORT, AlreadyRunning, ObcServer, ObcSink, PortsBusy
 from .pipeline import Pipeline, PrintSink
 from .spy import Spy
-from .state import StateStore, default_state_path, unlock_flow, zwift_running
+from .state import StateStore, default_config_path, unlock_flow, zwift_running
 from .zwift import POST_HANDSHAKE, TYPE_CLICK_V2_LEFT
 
 log = logging.getLogger("whoosh_connect")
@@ -61,7 +61,7 @@ def _parser() -> argparse.ArgumentParser:
 def _config_path(arg):
     if arg:
         return arg
-    default = default_state_path().parent / "config.toml"
+    default = default_config_path()
     return default if default.exists() else None
 
 

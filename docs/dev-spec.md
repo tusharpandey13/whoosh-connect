@@ -4,7 +4,7 @@ Implements docs/journey.md (journey and failure IDs F1–F12 are referenced belo
 
 ## Stack
 - Python ≥ 3.11, `src/` layout, package `whoosh_connect`, console script `whoosh-connect`.
-- Runtime deps: `bleak` (BLE), `zeroconf` (mDNS) and `psutil` (process list, every platform). Dev deps: `pytest` and `pytest-asyncio`. Use the stdlib for everything else (`asyncio`, `argparse`, `tomllib`, `json`, `logging`, `subprocess`).
+- Runtime deps: `bleak` (BLE), `zeroconf` (mDNS), `psutil` (process list, every platform) and `platformdirs` (per-user config and log dirs). Dev deps: `pytest` and `pytest-asyncio`. Use the stdlib for everything else (`asyncio`, `argparse`, `tomllib`, `json`, `logging`, `subprocess`).
 - `pyproject.toml` (hatchling or setuptools) plus a `Makefile` with `install` (venv `.venv`, `pip install -e '.[dev]'`), `test`, and `lint` (`python -m compileall`; no extra linters required).
 - License: MIT.
 
@@ -88,7 +88,8 @@ src/whoosh_connect/
 - All subprocess calls go through `runner` (injectable). Never shell=True.
 
 ### state.py
-- `StateStore(path=~/.config/whoosh-connect/state.json)` with `record_unlock(ts)`, `last_unlock()`, and `unlock_age(now)`.
+- Paths come from `platformdirs`: `config_dir()` holds `state.json` and `config.toml` (macOS `~/Library/Application Support/whoosh-connect`), `default_log_path()` is `log_dir()/ride.log` (macOS `~/Library/Logs/whoosh-connect/ride.log`). `resolve(name)` falls back to the legacy `~/.config/whoosh-connect/<name>` when only that copy exists, so older installs keep working.
+- `StateStore(path=default_state_path())` with `record_unlock(ts)`, `last_unlock()`, and `unlock_age(now)`.
 - `zwift_running(ps=…) -> bool`: scans `psutil.process_iter(['name'])` (names `ZwiftApp`, `Zwift`, `ZwiftLauncher`; a Windows `.exe` suffix is ignored); `ps` is an injectable callable returning process names. No subprocess, so the test guard still forbids `ps` and `pgrep` outright.
 - `unlock_flow(clock, ps, store, sleep)` covers journey B (detect start → exit; at least 20 s of runtime to record).
 
