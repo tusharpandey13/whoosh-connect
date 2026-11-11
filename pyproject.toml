@@ -9,7 +9,7 @@ description = "Bridge Zwift Click v2 controllers to MyWhoosh over OpenBikeContro
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
-dependencies = ["bleak>=0.22", "zeroconf>=0.130"]
+dependencies = ["bleak>=0.22", "zeroconf>=0.130", "psutil>=5.9"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "pytest-asyncio>=0.24"]
