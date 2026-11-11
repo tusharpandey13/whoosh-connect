@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import socket
+import sys
 
 import pytest
 
@@ -307,3 +308,49 @@ async def test_c6_second_instance_says_so(monkeypatch):
         await adv.register("whoosh-connect", 36867, "192.168.1.7", {"version": "1"})
     assert "already advertised" in str(e.value)
     assert adv._az is None
+
+
+def test_paths_prefer_new_dir(tmp_path):
+    new, old = tmp_path / "new", tmp_path / "old"
+    # fresh install: neither exists -> new location
+    assert state.resolve("state.json", new, old) == new / "state.json"
+    # existing macOS install: only ~/.config copy -> keep reading it
+    old.mkdir()
+    (old / "state.json").write_text('{"unlock": 5}')
+    assert state.resolve("state.json", new, old) == old / "state.json"
+    assert StateStore(state.resolve("state.json", new, old)).last_unlock() == 5.0
+    # both exist -> the new one wins
+    new.mkdir()
+    (new / "state.json").write_text('{"unlock": 9}')
+    assert state.resolve("state.json", new, old) == new / "state.json"
+    # no home dir at all (packaged app on Windows) -> new location, no crash
+    assert state.resolve("config.toml", new, None) == new / "config.toml"
+
+
+def test_legacy_dir_without_home(tmp_path):
+    def no_home():
+        raise RuntimeError("Could not determine home directory.")
+
+    assert state.legacy_dir(home=no_home) is None
+    assert state.legacy_dir(home=lambda: tmp_path) == tmp_path / ".config" / "whoosh-connect"
+
+
+def test_default_paths_follow_home(tmp_path, monkeypatch):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    assert state.config_dir().is_relative_to(tmp_path)
+    assert state.default_state_path() == state.config_dir() / "state.json"
+    legacy = tmp_path / ".config" / "whoosh-connect"
+    legacy.mkdir(parents=True)
+    (legacy / "config.toml").write_text('[map]\nZ = "NONE"\n')
+    if state.config_dir() != legacy:  # on Linux XDG and legacy are the same dir
+        assert state.default_config_path() == legacy / "config.toml"
+        assert cli._config_path(None) == legacy / "config.toml"
+    assert cli._config_path("x.toml") == "x.toml"
+
+
+@pytest.mark.skipif(sys.platform != "darwin", reason="macOS log location")
+def test_log_path_matches_launchd(tmp_path, monkeypatch):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    # the location scripts/install_launchd.sh and `make ride-bg` already write to (#3, #10)
+    assert state.default_log_path() == tmp_path / "Library" / "Logs" / "whoosh-connect" / "ride.log"
+    assert state.config_dir() == tmp_path / "Library" / "Application Support" / "whoosh-connect"

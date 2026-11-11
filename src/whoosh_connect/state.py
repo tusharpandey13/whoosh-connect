@@ -7,6 +7,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+import platformdirs
 import psutil
 
 ZWIFT_NAMES = {"ZwiftApp", "Zwift", "ZwiftLauncher"}
@@ -14,8 +15,47 @@ UNLOCK_VALID_S = 24 * 3600
 MIN_RUN_S = 20
 
 
+APP = "whoosh-connect"
+
+
+def config_dir() -> Path:
+    """Per-user config/state dir (macOS: ~/Library/Application Support/whoosh-connect)."""
+    return Path(platformdirs.user_config_dir(APP, appauthor=False))
+
+
+def log_dir() -> Path:
+    """Per-user log dir (macOS: ~/Library/Logs/whoosh-connect)."""
+    return Path(platformdirs.user_log_dir(APP, appauthor=False))
+
+
+def default_log_path() -> Path:
+    return log_dir() / "ride.log"
+
+
+def legacy_dir(home=Path.home) -> Path | None:
+    """Where state and config lived before platformdirs; None if there is no home."""
+    try:
+        return home() / ".config" / APP
+    except RuntimeError:
+        return None
+
+
+def resolve(name: str, new: Path | None = None, legacy: Path | None = None) -> Path:
+    """The file in the new dir, unless only the legacy copy exists (old installs keep working)."""
+    new_path = (new or config_dir()) / name
+    legacy = legacy if legacy is not None else legacy_dir()
+    old_path = legacy / name if legacy is not None else None
+    if old_path is not None and not new_path.exists() and old_path.exists():
+        return old_path
+    return new_path
+
+
 def default_state_path() -> Path:
-    return Path.home() / ".config" / "whoosh-connect" / "state.json"
+    return resolve("state.json")
+
+
+def default_config_path() -> Path:
+    return resolve("config.toml")
 
 
 class StateStore:
