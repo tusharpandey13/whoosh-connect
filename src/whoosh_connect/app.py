@@ -24,9 +24,14 @@ log = logging.getLogger(__name__)
 STOP_TIMEOUT_S = 3.0
 
 
+def default_link(on_frame, on_link):
+    """Same link as ``whoosh-connect run`` without ``--reset``: the 0x18 reset loops a locked unit."""
+    return ClickLink(on_frame, on_link, reset_enabled=False)
+
+
 class Bridge:
     def __init__(self, model: StatusModel, *, config=None, port=DEFAULT_PORT,
-                 server_factory=None, link_factory=ClickLink, ps=zwift_running,
+                 server_factory=None, link_factory=default_link, ps=zwift_running,
                  sleep=asyncio.sleep, retry_s=5.0, poll_s=1.0, clear_after_s=2.0):
         self.model, self.config, self.port = model, config, port
         self.server_factory = server_factory or (lambda port: ObcServer(port=port))

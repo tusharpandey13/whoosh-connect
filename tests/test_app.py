@@ -354,6 +354,14 @@ def test_main_quit_closes_ble_and_mdns(tmp_path, monkeypatch):
     assert made["adv"].calls == ["register", "unregister"]
 
 
+def test_app_link_matches_run_defaults():
+    """`run` only resets with --reset (hardware.md: reset loops a locked unit); the app must agree."""
+    from whoosh_connect.ble import ClickLink
+    link = app.default_link(lambda f: None, lambda up, b=None: None)
+    assert isinstance(link, ClickLink) and link.reset_enabled is False
+    assert app.Bridge(StatusModel()).link_factory is app.default_link
+
+
 def test_bridge_crash_turns_icon_red():
     model = StatusModel()
     fut = asyncio.Future(loop=asyncio.new_event_loop())
