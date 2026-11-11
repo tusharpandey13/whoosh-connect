@@ -14,6 +14,25 @@ def version() -> str:
         return "unknown"
 
 
+BT_WHY = ("whoosh-connect listens to your Zwift Click shifters over Bluetooth and passes the "
+          "presses to MyWhoosh.")
+
+
+def info_plist(version: str, min_macos: str) -> dict:
+    """Info.plist entries for the .app (read by packaging/whoosh-connect.spec)."""
+    return {
+        "CFBundleName": "whoosh-connect",
+        "CFBundleDisplayName": "whoosh-connect",
+        "CFBundleShortVersionString": version,
+        "CFBundleVersion": version,
+        "LSMinimumSystemVersion": min_macos,
+        "NSHighResolutionCapable": True,
+        # Without these macOS kills CoreBluetooth silently in a bundle (issue #4).
+        "NSBluetoothAlwaysUsageDescription": BT_WHY,
+        "NSBluetoothPeripheralUsageDescription": BT_WHY,
+    }
+
+
 def app_args(argv: list[str]) -> list[str]:
     """Finder may pass a -psn_… process serial number; no real args means `run`."""
     args = [a for a in argv if not a.startswith("-psn_")]
@@ -46,5 +65,8 @@ def check(say=print, importer=__import__) -> int:
         except Exception as e:  # noqa: BLE001 - report every failure, not the first
             ok = False
             say(f"  ERR {m}: {e!r}")
+    if sys.platform == "darwin":
+        from .macos import bt_authorization
+        say(f"  bluetooth permission: {bt_authorization()}")
     say(f"  log {state.default_log_path()}")
     return 0 if ok else 1

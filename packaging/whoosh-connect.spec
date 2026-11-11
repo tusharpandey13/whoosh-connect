@@ -6,6 +6,8 @@ from importlib.metadata import version
 
 from PyInstaller.utils.hooks import collect_submodules, copy_metadata
 
+from whoosh_connect.bundle import info_plist
+
 ROOT = os.path.abspath(os.path.join(SPECPATH, ".."))
 VERSION = version("whoosh-connect")
 # The bundle can't run on an older macOS than the Python it carries (Homebrew's 3.15: 26.0,
@@ -38,12 +40,5 @@ app = BUNDLE(
     name="whoosh-connect.app",
     bundle_identifier="com.tusharpandey13.whoosh-connect",
     version=VERSION,
-    info_plist={
-        "CFBundleName": "whoosh-connect",
-        "CFBundleDisplayName": "whoosh-connect",
-        "CFBundleShortVersionString": VERSION,
-        "CFBundleVersion": VERSION,
-        "LSMinimumSystemVersion": MIN_MACOS,
-        "NSHighResolutionCapable": True,
-    },
+    info_plist=info_plist(VERSION, MIN_MACOS),
 )

@@ -11,7 +11,9 @@ from .zwift import (ASYNC, BATTERY_CHAR, POST_HANDSHAKE, RESET, RIDE_ON, STOPPED
 
 log = logging.getLogger(__name__)
 WAKE_HINT = "Press a Click button to wake it"
-_BT_ERRORS = ("turned off", "powered off", "unauthori", "not authori", "permission")
+_BT_ERRORS = ("turned off", "powered off", "unauthori", "not authori", "permission", "denied",
+              "restricted")
+_DENIED = ("unauthori", "not authori", "permission", "denied", "restricted")
 
 
 class BluetoothUnavailable(Exception):
@@ -26,8 +28,10 @@ class HandshakeTimeout(Exception):
 
 def _map_error(e: Exception) -> Exception:
     text = str(e).lower()
-    if any(k in text for k in _BT_ERRORS):
-        denied = any(k in text for k in ("unauthori", "not authori", "permission"))
+    # bleak >= 2 says why (BleakBluetoothNotAvailableError.reason); older bleak only has text
+    why = getattr(getattr(e, "reason", None), "name", "")
+    if why or any(k in text for k in _BT_ERRORS):
+        denied = why.startswith("DENIED") or (not why and any(k in text for k in _DENIED))
         return BluetoothUnavailable(
             "Bluetooth unavailable or permission denied: turn Bluetooth on and enable your terminal "
             f"in System Settings -> Privacy & Security -> Bluetooth ({e})",
