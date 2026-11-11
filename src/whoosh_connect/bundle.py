@@ -27,6 +27,7 @@ def info_plist(version: str, min_macos: str) -> dict:
         "CFBundleVersion": version,
         "LSMinimumSystemVersion": min_macos,
         "NSHighResolutionCapable": True,
+        "LSUIElement": True,  # menu-bar only: no Dock icon, no app menu (#2)
         # Without these macOS kills CoreBluetooth silently in a bundle (issue #4).
         "NSBluetoothAlwaysUsageDescription": BT_WHY,
         "NSBluetoothPeripheralUsageDescription": BT_WHY,
@@ -34,9 +35,9 @@ def info_plist(version: str, min_macos: str) -> dict:
 
 
 def app_args(argv: list[str]) -> list[str]:
-    """Finder may pass a -psn_… process serial number; no real args means `run`."""
+    """Finder may pass a -psn_… process serial number; no real args means the menu-bar app."""
     args = [a for a in argv if not a.startswith("-psn_")]
-    return args or ["run"]
+    return args or ["app"]
 
 
 def launch(argv: list[str], main=cli.main, stderr=None, log_path=None) -> int:
@@ -54,10 +55,10 @@ def check(say=print, importer=__import__) -> int:
     ok = True
     say(f"whoosh-connect {version()} on Python {sys.version.split()[0]} "
         f"({'bundled' if getattr(sys, 'frozen', False) else 'source'})")
-    mods = ["bleak", "zeroconf", "psutil", "platformdirs"]
+    mods = ["bleak", "zeroconf", "psutil", "platformdirs", "pystray", "PIL"]
     if sys.platform == "darwin":
         mods += ["bleak.backends.corebluetooth.scanner", "bleak.backends.corebluetooth.client",
-                 "CoreBluetooth"]
+                 "CoreBluetooth", "PyObjCTools.AppHelper", "PyObjCTools.MachSignals"]
     for m in mods:
         try:
             importer(m)

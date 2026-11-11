@@ -49,6 +49,7 @@ def _parser() -> argparse.ArgumentParser:
     d.add_argument("--ff0400", action="store_true",
                    help="--live: send ff 04 00 after RideOn (the 100 B / signable challenge shape)")
     sub.add_parser("check", help="show the version and whether the Bluetooth backend is bundled")
+    sub.add_parser("app", help="menu-bar app (what the bundled .app runs)")
     p2 = sub.add_parser("replay", help="feed a capture through the pipeline")
     p2.add_argument("file")
     p2.add_argument("--sink", choices=["print", "obc", "keyboard"], default="print")
@@ -277,6 +278,9 @@ def main(argv=None) -> int:
             return asyncio.run(_unlock(args))
         if args.cmd == "dlock":
             return asyncio.run(_dlock(args))
+        if args.cmd == "app":
+            from .app import main as app_main
+            return app_main(["-v"] if args.verbose else [])
         if args.cmd == "check":
             from .bundle import check
             return check()

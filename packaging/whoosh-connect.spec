@@ -16,6 +16,8 @@ MIN_MACOS = sysconfig.get_config_var("MACOSX_DEPLOYMENT_TARGET") or "11.0"
 
 # bleak imports its platform backend inside functions; collect it explicitly.
 hidden = collect_submodules("bleak.backends.corebluetooth") + ["CoreBluetooth", "libdispatch"]
+# the menu bar: pystray picks its backend at import time; AppKit helpers for the main thread
+hidden += ["pystray._darwin", "PyObjCTools.AppHelper", "PyObjCTools.MachSignals"]
 
 a = Analysis(
     [os.path.join(SPECPATH, "launcher.py")],
