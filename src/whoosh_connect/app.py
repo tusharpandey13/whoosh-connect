@@ -46,6 +46,7 @@ class Bridge:
         self.server = self.pipeline = self.link = None
         self.watch = SleepWatch(clock=clock)
         self.notify = notify or (macos.notify if sys.platform == "darwin" else (lambda text: None))
+        self.zwift_seen = False  # for Copy diagnostics (#10)
         self._stopping = False
         self._tasks: list[asyncio.Task] = []
 
@@ -77,6 +78,7 @@ class Bridge:
             self.model.set_error(messages.explain(e))
             return
         while self.ps() and not self._stopping:
+            self.zwift_seen = True
             self.model.set_error(messages.ZWIFT)
             await self.sleep(2)
         self.model.clear_error()
@@ -239,13 +241,17 @@ def _main(tray_factory, bridge_factory) -> int:
     bridge = bridge_factory(model)
     runner = LoopThread()
     quit = lambda: shutdown(bridge, runner)  # noqa: E731
+    def diagnostics() -> bool:
+        from . import diagnostics as d
+        return d.copy(d.collect(model.snapshot().line, bridge.zwift_seen))
+
     if tray_factory:
         tray = tray_factory(quit=quit)
     else:
         login = LoginItem()
         if login.refresh():
             log.info("start at login: app moved, LaunchAgent updated to %s", login.args()[0])
-        tray = Tray(quit=quit, login=login)
+        tray = Tray(quit=quit, login=login, diagnostics=diagnostics)
     model.on_change = tray.update
     tray.update(model.snapshot())
     fut = runner.start(bridge.run())

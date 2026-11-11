@@ -29,6 +29,8 @@ src/whoosh_connect/
   tray.py       pystray icon + menu on the main thread; SIGTERM -> Quit (optional extra [app])
   asleep.py     pure: "gears asleep" - first ff 05 00 ea/fa 05 of a window -> one notice;
                 quiet within 3 s of connect or 10 s of a press; a press re-arms (watch only)
+  diagnostics.py Copy diagnostics: version, OS, BT access, status, unlock age (read-only),
+                Zwift seen, last 500 log lines; tokens removed, addresses cut to last 4
   launchagent.py Start at login: writes/removes ~/Library/LaunchAgents/<label>.plist for the
                 app binary (no launchctl calls; effective at next login)
   cli.py        argparse: run | unlock | replay | app | check | login-item; exit codes
