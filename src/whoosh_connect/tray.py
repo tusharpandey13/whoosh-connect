@@ -154,7 +154,7 @@ class Tray:
         self._quitting = True
         log.info("quitting")
         try:
-            self._quit()  # closes BLE + mDNS; returns within ~4 s
+            self._quit()  # closes BLE + mDNS; returns within ~3.5 s (app.QUIT_BUDGET_S)
         finally:
             self.icon.stop()
 
