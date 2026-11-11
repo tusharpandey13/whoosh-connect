@@ -21,8 +21,12 @@ src/whoosh_connect/
   state.py      unlock timestamp store, Zwift process detection (injectable)
   capture.py    JSONL capture writer and reader (probe2.py format)
   messages.py   pure: one rider-facing sentence (+ next action) per failure; detail goes to the log
-  bundle.py     what the .app does on launch (no args = run, Finder launch logs to file), `check`
+  bundle.py     what the .app does on launch (no args = menu-bar app, Finder launch logs to file), `check`
   macos.py      macOS-only seams for the app: Bluetooth permission probe (no prompt), …
+  status.py     pure: menu-bar phase (Searching / Waiting for MyWhoosh / Riding / Error) + one line
+  app.py        menu-bar app: Bridge (server -> pipeline -> link, never exits on a recoverable
+                error) on an asyncio thread; Quit closes BLE + mDNS within 3 s
+  tray.py       pystray icon + menu on the main thread; SIGTERM -> Quit (optional extra [app])
   cli.py        argparse: run | unlock | replay; exit codes
 ```
 

@@ -11,8 +11,8 @@ class Tty(io.StringIO):
 
 
 def test_app_args_default_to_run():
-    assert bundle.app_args([]) == ["run"]
-    assert bundle.app_args(["-psn_0_12345"]) == ["run"]  # Finder's process serial number
+    assert bundle.app_args([]) == ["app"]
+    assert bundle.app_args(["-psn_0_12345"]) == ["app"]  # Finder's process serial number
     assert bundle.app_args(["replay", "x.jsonl"]) == ["replay", "x.jsonl"]
 
 
@@ -28,7 +28,7 @@ def test_finder_launch_logs_to_file(tmp_path, monkeypatch):
     log = tmp_path / "Logs" / "ride.log"
     assert bundle.launch([], main=fake_main, log_path=log) == 0
     sys.stderr.close()
-    assert seen == [["run"]]
+    assert seen == [["app"]]
     assert log.read_text() == "hello log\n"
 
 
