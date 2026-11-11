@@ -164,14 +164,19 @@ async def test_already_running_is_explained_not_retried(tmp_path, monkeypatch):
 
     class Taken:
         app_infos = []
+        stopped = False
 
         async def start(self):
             raise AlreadyRunning("whoosh-connect is already advertised")
+
+        async def stop(self):
+            Taken.stopped = True
 
     model = StatusModel()
     b, _ = make_bridge(model, server_factory=lambda port: Taken())
     await asyncio.wait_for(b.run(), 1)
     assert model.error is messages.RUNNING and b.link is None
+    assert Taken.stopped  # the TCP port it had already bound is released
     await b.stop()
 
 
@@ -368,3 +373,24 @@ def test_bridge_crash_turns_icon_red():
     fut.set_exception(RuntimeError("boom"))
     app._bridge_ended(fut, model)
     assert model.error is messages.UNKNOWN
+
+
+async def test_stalled_ble_disconnect_still_unregisters_mdns(tmp_path, monkeypatch):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    model = StatusModel()
+    b, adv = make_bridge(model, stop_s=0.3, mdns_stop_s=0.2)
+    task = asyncio.create_task(b.run())
+    await until(lambda: model.snapshot().phase is Phase.WAITING)
+
+    async def hang():
+        await asyncio.Event().wait()
+    b.link.close = hang
+    await b.stop()
+    task.cancel()
+    assert adv.calls == ["register", "unregister"]
+
+
+def test_startup_failure_exits_zero_so_launchd_does_not_loop():
+    def broken(model):
+        raise ImportError("No module named 'pystray'")
+    assert app.main([], tray_factory=lambda quit: None, bridge_factory=broken) == 0

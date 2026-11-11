@@ -22,6 +22,7 @@ from .status import StatusModel
 
 log = logging.getLogger(__name__)
 STOP_TIMEOUT_S = 3.0
+MDNS_STOP_S = 1.5  # mDNS goodbye + TCP close; the BLE disconnect gets the rest
 
 
 def default_link(on_frame, on_link):
@@ -32,11 +33,13 @@ def default_link(on_frame, on_link):
 class Bridge:
     def __init__(self, model: StatusModel, *, config=None, port=DEFAULT_PORT,
                  server_factory=None, link_factory=default_link, ps=zwift_running,
-                 sleep=asyncio.sleep, retry_s=5.0, poll_s=1.0, clear_after_s=2.0):
+                 sleep=asyncio.sleep, retry_s=5.0, poll_s=1.0, clear_after_s=2.0,
+                 stop_s=STOP_TIMEOUT_S, mdns_stop_s=MDNS_STOP_S):
         self.model, self.config, self.port = model, config, port
         self.server_factory = server_factory or (lambda port: ObcServer(port=port))
         self.link_factory, self.ps, self.sleep = link_factory, ps, sleep
         self.retry_s, self.poll_s, self.clear_after_s = retry_s, poll_s, clear_after_s
+        self.stop_s, self.mdns_stop_s = stop_s, mdns_stop_s
         self.server = self.pipeline = self.link = None
         self._stopping = False
         self._tasks: list[asyncio.Task] = []
@@ -74,6 +77,7 @@ class Bridge:
                 return True
             except AlreadyRunning as e:  # the other instance owns the shifters; say so and idle
                 self.model.set_error(messages.explain(e))
+                await self._release(self.server)  # start() bound the TCP port before it found out
                 self.server = None
                 return False
             except PortsBusy as e:
@@ -114,21 +118,40 @@ class Bridge:
             await self.sleep(5)
             self.pipeline.tick()
 
+    @staticmethod
+    async def _release(server) -> None:
+        try:
+            await server.stop()
+        except Exception as e:  # noqa: BLE001
+            log.debug("releasing unused server: %r", e)
+
     async def stop(self) -> None:
-        """Close the BLE link and unregister mDNS (via the sink) within STOP_TIMEOUT_S."""
+        """Unregister mDNS, then close the BLE link, within STOP_TIMEOUT_S in total.
+
+        mDNS goes first with its own budget: a stalled CoreBluetooth disconnect must not
+        leave MyWhoosh listing a whoosh-connect that is gone.
+        """
         self._stopping = True
         for t in self._tasks:
             t.cancel()
+        if self.pipeline:
+            closing = self.pipeline.close()  # ObcSink.close -> server.stop -> mDNS unregister
+        elif self.server:
+            closing = self.server.stop()
+        else:
+            closing = None
+        if closing is not None:
+            await self._bounded("mDNS/server", closing, self.mdns_stop_s)
+        if self.link:
+            await self._bounded("BLE link", self.link.close(), self.stop_s - self.mdns_stop_s)
+
+    @staticmethod
+    async def _bounded(what: str, coro, timeout: float) -> None:
         try:
-            async with asyncio.timeout(STOP_TIMEOUT_S):
-                if self.link:
-                    await self.link.close()
-                if self.pipeline:
-                    await self.pipeline.close()  # ObcSink.close -> server.stop -> mDNS unregister
-                elif self.server:
-                    await self.server.stop()
+            async with asyncio.timeout(timeout):
+                await coro
         except (TimeoutError, Exception) as e:  # noqa: BLE001
-            log.warning("shutdown incomplete: %r", e)
+            log.warning("shutdown incomplete (%s): %r", what, e)
 
 
 class LoopThread:
@@ -182,6 +205,16 @@ def _bridge_ended(fut, model: StatusModel) -> None:
 def main(argv=None, tray_factory=None, bridge_factory=Bridge) -> int:
     logging.basicConfig(level=logging.DEBUG if argv and "-v" in argv else logging.INFO,
                         stream=sys.stderr, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
+    try:
+        return _main(tray_factory, bridge_factory)
+    except Exception:  # noqa: BLE001
+        # Exit 0 on purpose: the LaunchAgent (#3) restarts non-zero exits every 10 s,
+        # and a broken install (e.g. pystray missing) would otherwise loop forever.
+        log.exception("whoosh-connect could not start")
+        return 0
+
+
+def _main(tray_factory, bridge_factory) -> int:
     from .tray import Tray
 
     model = StatusModel()
