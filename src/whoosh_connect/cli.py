@@ -11,7 +11,7 @@ import time
 from . import dlock, messages
 from .ble import BluetoothUnavailable, ClickLink
 from .capture import CaptureWriter, replay
-from .keyboard import KeyboardSink
+from .keyboard import keyboard_sink
 from .mapping import ConfigError, load_map
 from .obc_server import DEFAULT_PORT, AlreadyRunning, ObcServer, ObcSink, PortsBusy
 from .pipeline import Pipeline, PrintSink
@@ -88,7 +88,7 @@ async def _make_sink(kind: str, port: int):
     if kind == "print":
         return PrintSink()
     if kind == "keyboard":
-        return KeyboardSink()
+        return keyboard_sink()
     server = ObcServer(port=port)
     await server.start()
     log.info(WAIT_MSG)

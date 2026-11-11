@@ -18,6 +18,7 @@ src/whoosh_connect/
   ble.py        I/O: bleak scan/select/connect/handshake/reconnect (injectable factories)
   obc_server.py I/O: asyncio TCP server + zeroconf advertiser (injectable advertiser)
   keyboard.py   I/O: macOS key injection via osascript (injectable runner)
+  winkeys.py    I/O: Windows key injection via SendInput/ctypes (injectable; FFI unverified)
   state.py      unlock timestamp store, Zwift process detection (injectable)
   capture.py    JSONL capture writer and reader (probe2.py format)
   messages.py   pure: one rider-facing sentence (+ next action) per failure; detail goes to the log
