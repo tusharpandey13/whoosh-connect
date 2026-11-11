@@ -58,14 +58,18 @@ def _user32():
     return ctypes.WinDLL("user32", use_last_error=True)  # type: ignore[attr-defined]
 
 
-def _send_input(code: int, up: bool) -> bool:
+def inputs(events: list[tuple[int, bool]], scan=lambda code: 0):
+    """One INPUT array for ``[(vk, up), ...]``: a tap goes to Windows as a single call."""
+    return (INPUT * len(events))(*(key_input(code, up, scan(code)) for code, up in events))
+
+
+def _send_input(events: list[tuple[int, bool]]) -> bool:
     u = _user32()
-    scan = u.MapVirtualKeyW(code, MAPVK_VK_TO_VSC)
-    event = key_input(code, up, scan)
-    sent = u.SendInput(1, ctypes.byref(event), ctypes.sizeof(INPUT))
-    if sent != 1:  # e.g. UIPI: MyWhoosh running elevated
+    arr = inputs(events, scan=lambda code: u.MapVirtualKeyW(code, MAPVK_VK_TO_VSC))
+    sent = u.SendInput(len(events), arr, ctypes.sizeof(INPUT))
+    if sent != len(events):  # e.g. UIPI: MyWhoosh running elevated
         log.warning("SendInput refused (error %d)", ctypes.get_last_error())
-    return sent == 1
+    return sent == len(events)
 
 
 def _foreground() -> str:
@@ -97,10 +101,9 @@ class WindowsKeyboardSink:
                 continue
             code = vk(a.key)
             if a.hold:
-                self._send(code, not down)
-            else:  # a tap is a full press: down then up
-                self._send(code, False)
-                self._send(code, True)
+                self._send([(code, not down)])
+            else:  # a tap is a full press, down+up in one SendInput so it can't be split
+                self._send([(code, False), (code, True)])
 
     async def status(self, battery, connected):
         pass

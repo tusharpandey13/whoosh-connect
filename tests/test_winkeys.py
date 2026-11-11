@@ -5,7 +5,7 @@ from whoosh_connect import keyboard
 from whoosh_connect.keyboard import KeyboardSink
 from whoosh_connect.mapping import Action
 from whoosh_connect.winkeys import (INPUT, INPUT_KEYBOARD, KEYEVENTF_KEYUP, WindowsKeyboardSink,
-                                    key_input, vk)
+                                    inputs, key_input, vk)
 
 UP = Action("SHIFT_UP", 0, key="k", hold=False)
 STEER = Action("STEER_LEFT", 0, key="a", hold=True)
@@ -15,7 +15,7 @@ BADKEY = Action("ODD", 0, key="F1")
 
 def sink(front="MyWhoosh.exe"):
     sent = []
-    s = WindowsKeyboardSink(send_input=lambda code, up: sent.append((code, up)) or True,
+    s = WindowsKeyboardSink(send_input=lambda evs: sent.extend(evs) or True,
                             foreground=lambda: front)
     return s, sent
 
@@ -42,7 +42,7 @@ async def test_refuses_to_type_when_mywhoosh_not_foreground():
 async def test_never_skips_a_key_up_even_after_focus_moves():
     front = ["MyWhoosh.exe"]
     sent = []
-    s = WindowsKeyboardSink(send_input=lambda c, up: sent.append((c, up)), foreground=lambda: front[0])
+    s = WindowsKeyboardSink(send_input=lambda evs: sent.extend(evs), foreground=lambda: front[0])
     await s.send([(STEER, True)])
     front[0] = "explorer.exe"
     await s.send([(STEER, False)])
@@ -75,3 +75,16 @@ def test_platform_pick_keeps_macos_path():
 
 def test_constructing_the_windows_sink_off_windows_touches_no_ffi():
     WindowsKeyboardSink()  # user32 is only loaded on first send
+
+
+async def test_tap_is_one_sendinput_call():
+    calls = []
+    s = WindowsKeyboardSink(send_input=calls.append, foreground=lambda: "MyWhoosh.exe")
+    await s.send([(UP, True), (STEER, True)])
+    assert calls == [[(ord("K"), False), (ord("K"), True)], [(ord("A"), False)]]
+
+
+def test_input_array_for_a_tap():
+    arr = inputs([(0x4B, False), (0x4B, True)], scan=lambda c: 0x25)
+    assert len(arr) == 2 and ctypes.sizeof(arr) == 2 * ctypes.sizeof(INPUT)
+    assert [e.ki.dwFlags for e in arr] == [0, KEYEVENTF_KEYUP] and arr[1].ki.wScan == 0x25
